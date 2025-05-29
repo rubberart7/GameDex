@@ -1,12 +1,13 @@
+import cors from 'cors';
 import express from 'express';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+
+app.use(cors({ origin: 'http://localhost:3000' })); // allow frontend origin
 
 app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from Express backend!' });
+  res.json({ message: 'Hello from backend!' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const PORT = 4000;
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
