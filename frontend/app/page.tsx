@@ -1,21 +1,30 @@
-'use client';
+import React from 'react';
 
-import { useEffect, useState } from 'react';
+interface Platform {
+	id: number,
+	name: string,
+	slug: string
+}
 
-export default function Home() {
-  const [message, setMessage] = useState('');
+interface Game {
+	slug: string;
+	name: string;
+	parent_platforms: Platform[]
+}
 
-  useEffect(() => {
-    fetch('http://localhost:4000/api/hello')
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message))
-      .catch((err) => console.error(err));
-  }, []);
+export default async function Home() {
+	
+	const res = await (await fetch('http://localhost:4000/api/games')).json();
+	const games: Game[] = res.results;
 
-  return (
-    <div>
-      <h1>Message from backend:</h1>
-      <p>{message}</p>
-    </div>
-  );
+	return (
+		<div className='games-list'>
+			<ul>
+				{games.map((game) => (
+				<li key={game.slug}>{game.name}</li>
+				))}
+			</ul>
+		</div>
+		
+	);
 }

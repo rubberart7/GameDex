@@ -4,8 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config()
 
 const gamesApiKey = process.env.RAWG_API_KEY;
-const startDate = '2024-01-01';
-const endDate = `2024-06-30`;
+const startDate = '2023-01-01';
+const endDate = `2024-01-01`;
 
 export const getGamesData = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -13,7 +13,7 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
             params: {
                 key: gamesApiKey,
                 dates: `${startDate},${endDate}`,
-                page_size: 5
+                page_size: 20,
             }
         });
         res.status(200).json(response.data);
