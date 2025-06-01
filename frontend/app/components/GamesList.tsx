@@ -1,30 +1,36 @@
-import React from 'react'
+'use client';
+import React, { useEffect, useState } from 'react';
+import GameCard, { Game } from './GameCard';
 
-interface Platform {
-	id: number,
-	name: string,
-	slug: string
-}
+const GamesList: React.FC = () => {
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
 
-interface Game {
-	slug: string;
-	name: string;
-	parent_platforms: Platform[]
-}
+  useEffect(() => {
+    async function fetchGames() {
+      try {
+        const res = await fetch('http://localhost:4000/api/games');
+        const data = await res.json();
+        setGames(data.results);
+      } catch (error) {
+        console.error('Failed to fetch games', error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-const GamesList = async () => {
-	const res = await (await fetch('http://localhost:4000/api/games')).json();
-	const games: Game[] = res.results;
+    fetchGames();
+  }, []);
 
- 	return (
-    	<div className='games-list'>
-			<ul>
-				{games.map((game) => (
-				<li key={game.slug}>{game.name}</li>
-				))}
-			</ul>
-		</div>
-  	)
-}
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <div className="games-list grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+      {games.map((game) => (
+        <GameCard key={game.name} game={game} />
+      ))}
+    </div>
+  );
+};
 
 export default GamesList;
