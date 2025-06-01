@@ -1,31 +1,19 @@
-'use client';
-import React, { useEffect, useState } from 'react';
+// components/GamesList.tsx
+import React from 'react';
 import GameCard, { Game } from './GameCard';
 
-const GamesList: React.FC = () => {
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
+const GamesList = async () => {
+  // Fetch games on server
+  const res = await fetch('http://localhost:4000/api/games', { cache: 'no-store' }); // no-store to disable caching during dev
+  if (!res.ok) {
+    throw new Error('Failed to fetch games');
+  }
+  const data = await res.json();
 
-  useEffect(() => {
-    async function fetchGames() {
-      try {
-        const res = await fetch('http://localhost:4000/api/games');
-        const data = await res.json();
-        setGames(data.results);
-      } catch (error) {
-        console.error('Failed to fetch games', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchGames();
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
+  const games: Game[] = data.results;
 
   return (
-    <div className="games-list grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+    <div className="games-list grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1 p-4">
       {games.map((game) => (
         <GameCard key={game.name} game={game} />
       ))}

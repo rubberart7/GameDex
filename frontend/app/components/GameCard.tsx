@@ -1,3 +1,4 @@
+// components/GameCard.tsx
 import React from 'react';
 
 export interface Platform {
@@ -24,14 +25,11 @@ interface GameCardProps {
 const GameCard: React.FC<GameCardProps> = ({ game }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-xs">
-      {/* Game Image */}
       <img
         src={game.background_image}
         alt={game.name}
         className="w-full h-48 object-cover"
       />
-
-      {/* Game Info */}
       <div className="p-4">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-lg font-semibold">{game.name}</h2>
@@ -39,10 +37,7 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
             {game.rating.toFixed(1)}
           </span>
         </div>
-
-        {/* Bottom Info */}
         <div className="flex justify-between items-center text-gray-600 text-sm mt-2">
-          {/* Platforms */}
           <div className="flex flex-wrap gap-1">
             {game.platforms.map((platformObj) => (
               <span
@@ -53,8 +48,6 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
               </span>
             ))}
           </div>
-
-          {/* Release Date */}
           <span>{game.released}</span>
         </div>
       </div>
