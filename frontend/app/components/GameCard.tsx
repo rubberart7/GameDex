@@ -1,4 +1,3 @@
-// components/GameCard.tsx
 import React from 'react';
 
 export interface Platform {
@@ -14,7 +13,8 @@ export interface Game {
   background_image: string;
   name: string;
   rating: number;
-  platforms: PlatformObj[];
+  platforms: PlatformObj[]; // still needed in the type for type safety
+  parent_platforms: PlatformObj[];
   released: string;
 }
 
@@ -37,17 +37,21 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
             {game.rating.toFixed(1)}
           </span>
         </div>
-        <div className="flex justify-between items-center text-gray-600 text-sm mt-2">
-          <div className="flex flex-wrap gap-1">
-            {game.platforms.map((platformObj) => (
-              <span
-                key={platformObj.platform.id}
-                className="bg-gray-200 rounded px-2 py-0.5 text-xs"
-              >
-                {platformObj.platform.name}
-              </span>
-            ))}
-          </div>
+
+        {/* Parent Platforms */}
+        <div className="flex flex-wrap gap-1 mb-2">
+          {game.parent_platforms.map((platformObj) => (
+            <span
+              key={`parent-${platformObj.platform.id}`}
+              className="bg-blue-200 rounded px-2 py-0.5 text-xs"
+            >
+              {platformObj.platform.name}
+            </span>
+          ))}
+        </div>
+
+        {/* Released date */}
+        <div className="flex justify-end text-gray-600 text-sm mt-2">
           <span>{game.released}</span>
         </div>
       </div>
