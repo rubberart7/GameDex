@@ -13,7 +13,7 @@ export interface Game {
   background_image: string;
   name: string;
   rating: number;
-  platforms: PlatformObj[]; // still needed in the type for type safety
+  platforms: PlatformObj[];
   parent_platforms: PlatformObj[];
   released: string;
 }
@@ -24,36 +24,45 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-xs">
+    <div className="relative bg-slate-800 rounded-lg shadow-md overflow-hidden w-full min-h-[450px]">
       <img
         src={game.background_image}
         alt={game.name}
-        className="w-full h-48 object-cover"
+        className="w-full h-67 object-cover"
       />
+
       <div className="p-4">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold">{game.name}</h2>
-          <span className="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded">
-            {game.rating.toFixed(1)}
-          </span>
+
+        <div className="fullCard flex flex-col gap-1">
+
+          <div className="top-card">
+            <div className="flex justify-between items-center mb-2 gap-1.25">
+              <h2 className="text-stone-300 text-lg font-semibold line-clamp-2">
+                {game.name}
+              </h2>
+              <span className="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded">
+                {game.rating.toFixed(1)}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-1 mb-2 mt-1">
+              {game.parent_platforms.map((platformObj) => (
+                <span
+                  key={`parent-${platformObj.platform.id}`}
+                  className="bg-blue-200 rounded px-2 py-0.5 text-xs"
+                >
+                  {platformObj.platform.name}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="absolute bottom-2 right-2 text-slate-200 text-sm bg-slate-700 bg-opacity-75 px-2 py-1 rounded">
+            <span>{game.released}</span>
+          </div>
+
         </div>
 
-        {/* Parent Platforms */}
-        <div className="flex flex-wrap gap-1 mb-2">
-          {game.parent_platforms.map((platformObj) => (
-            <span
-              key={`parent-${platformObj.platform.id}`}
-              className="bg-blue-200 rounded px-2 py-0.5 text-xs"
-            >
-              {platformObj.platform.name}
-            </span>
-          ))}
-        </div>
-
-        {/* Released date */}
-        <div className="flex justify-end text-gray-600 text-sm mt-2">
-          <span>{game.released}</span>
-        </div>
       </div>
     </div>
   );
