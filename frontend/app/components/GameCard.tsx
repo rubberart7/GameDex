@@ -24,7 +24,7 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game }) => {
   return (
-    <div className="relative bg-slate-800 rounded-lg shadow-md overflow-hidden w-full min-h-[450px]">
+    <div className="relative bg-slate-800 rounded-lg shadow-md overflow-hidden w-full min-h-[475px]">
       <img
         src={game.background_image}
         alt={game.name}
@@ -37,7 +37,7 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
 
           <div className="top-card">
             <div className="flex justify-between items-center mb-2 gap-1.25">
-              <h2 className="text-stone-300 text-lg font-semibold line-clamp-2">
+              <h2 className="text-stone-300 text-lg font-semibold cursor-pointer line-clamp-2">
                 {game.name}
               </h2>
               <span className="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded">
@@ -58,7 +58,7 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
           </div>
 
           <div className="absolute bottom-2 right-2 text-slate-200 text-sm bg-slate-700 bg-opacity-75 px-2 py-1 rounded">
-            <span>{game.released}</span>
+            <span>Released: {game.released}</span>
           </div>
 
         </div>

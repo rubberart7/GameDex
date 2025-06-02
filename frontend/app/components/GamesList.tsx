@@ -11,7 +11,7 @@ const GamesList = async () => {
   const games: Game[] = data.results;
 
   return (
-    <div className="games-list bg-slate-950 grid grid-cols-[repeat(auto-fit,minmax(175px,1fr))] gap-4 p-4">
+    <div className="games-list bg-slate-950 grid grid-cols-[repeat(auto-fit,minmax(205px,1fr))] gap-4 p-4">
       {games.map((game) => (
         <GameCard key={game.name} game={game} />
       ))}

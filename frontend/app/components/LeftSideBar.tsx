@@ -1,51 +1,50 @@
 import React from 'react';
+import Link from 'next/link';
+import HomeIcon from './icons/HomeIcon';
+import BrowseGamesIcon from './icons/BrowseGamesIcon';
 
 const LeftSideBar = () => {
-  return (
-    <div className="w-60 h-screen bg-gray-900 text-gray-300 flex flex-col px-4 py-6 select-none">
-      {/* Section 1: Home Store */}
-      <nav className="mb-12">
-        <ul className="space-y-3">
-          {[
-            'Home',
-            'Store',
-            'Browse Games',
-            'Genres',
-            'New Releases',
-            'Top Sellers',
-            'Upcoming Games',
-            'Free Games',
-          ].map((item) => (
-            <li
-              key={item}
-              className="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer hover:bg-gray-700 transition"
-            >
-              {/* Icon placeholder */}
-              <div className="w-5 h-5 bg-gray-600 rounded-sm flex items-center justify-center text-xs text-gray-400">
-                I
-              </div>
-              <span className="text-sm font-medium">{item}</span>
-            </li>
-          ))}
-        </ul>
-      </nav>
+    const navTopLinks = [
+  { name: 'Home', path: '/home' },
+  { name: 'Store', path: '/store' },
+  { name: 'Browse Games', path: '/browse-games'},
+  { name: 'Genres', path: '/genres' },
+  { name: 'New Releases', path: '/new-releases' },
+  { name: 'Top Sellers', path: '/top-sellers' },
+  { name: 'Upcoming Games', path: '/upcoming-games' },
+  { name: 'Free Games', path: '/free-games' },
+];
 
-      {/* Section 2: User Area */}
-      <nav>
-        <ul className="space-y-3">
-          {['Profile', 'Wishlist', 'Library', 'Settings'].map((item) => (
-            <li
-              key={item}
-              className="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer hover:bg-gray-700 transition"
-            >
-              {/* Icon placeholder */}
-              <div className="w-5 h-5 bg-gray-600 rounded-sm flex items-center justify-center text-xs text-gray-400">
-                I
-              </div>
-              <span className="text-sm font-medium">{item}</span>
+const navBottomLinks = [
+  { name: 'Profile', path: '/profile' },
+  { name: 'Wishlist', path: '/wishlist' },
+  { name: 'Library', path: '/library' },
+  { name: 'Settings', path: '/settings' },
+];
+
+
+  return (
+    <div className='w-60 h-screen bg-gray-900 text-gray-100 flex flex-col px-4 py-7'>
+      <nav className='full-navbar flex flex-col pb-12 gap-40'>
+        <ul className='nav-top flex flex-col gap-3'>
+          {navTopLinks.map((link) => (
+            <li className="flex gap-1" key={link.path}>
+                <BrowseGamesIcon className="w-5 h-5 text-white"></BrowseGamesIcon>
+              <Link href={link.path}>{link.name}</Link>
             </li>
           ))}
         </ul>
+        
+
+        <ul className='nav-bottom flex flex-col gap-3'>
+          {navBottomLinks.map((link) => (
+            <li className="flex gap-1"key={link.path}>
+                
+              <Link href={link.path}>{link.name}</Link>
+            </li>
+          ))}
+        </ul>
+
       </nav>
     </div>
   );
