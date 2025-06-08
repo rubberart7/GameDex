@@ -2,18 +2,23 @@ import React from 'react';
 
 const BrowseGamesIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
-    <svg
+    <div><svg
       viewBox="0 0 48 48"
       xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      stroke="currentColor"
+      fill="#000000"
       {...props}
     >
       <defs>
         <style>
           {`
-            .b { fill: currentColor; }
-            .c { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+            .b { fill: #000000; }
+            .c { 
+              fill: none; 
+              stroke: #FFFFFF; 
+              stroke-linecap: round; 
+              stroke-linejoin: round; 
+              stroke-width: 2; 
+            }
           `}
         </style>
       </defs>
@@ -35,9 +40,9 @@ const BrowseGamesIcon = (props: React.SVGProps<SVGSVGElement>) => {
         <circle className="b" cx="31.03" cy="20.9814" r=".75" />
         <circle className="b" cx="36.4634" cy="20.9814" r=".75" />
         <circle className="b" cx="33.75" cy="18.2679" r=".75" />
-        <circle className="b" cx="33.75" cy="23.6948" r=".785" />
       </g>
-    </svg>
+    </svg></div>
+    
   );
 };
 

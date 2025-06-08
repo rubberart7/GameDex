@@ -1,2 +1,19 @@
 @import "tailwindcss";
 
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.full-link-itm {
+  transition: background-color 0.6s ease, color 0.6s ease;
+  cursor: pointer;
+}
+
+.full-link-itm:hover {
+  background-color: blue; 
+  color: white;
+}
+
+

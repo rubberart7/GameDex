@@ -1,62 +1,33 @@
-import React from 'react'
+import React from 'react';
 
 const UpcomingGamesIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <div>
       <svg
-      viewBox="0 0 48 48"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      height="48"
-      width="48"
-    >
-      <path
-        d="M10.8376,25a5.9314,5.9314,0,0,1,5.7777-6,5.9712,5.9712,0,0,1,4.2222,10.2222c-2.4444,2-10,7.7778-10,7.7778H22.6153"
+        viewBox="0 0 64 64"
+        xmlns="http://www.w3.org/2000/svg"
         fill="none"
-        stroke="#ffffff"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1"
-      />
-      <polyline
-        points="27.561 37 37.236 19 25.311 19"
-        fill="none"
-        stroke="#ffffff"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1"
-      />
-      <circle
-        cx="32.5"
-        cy="11"
-        r="2.5"
-        fill="none"
-        stroke="#ffffff"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1"
-      />
-      <circle
-        cx="15.5"
-        cy="11"
-        r="2.5"
-        fill="none"
-        stroke="#ffffff"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1"
-      />
-      <path
-        d="M7.5,5.5a2,2,0,0,0-2,2v33a2,2,0,0,0,2,2h33a2,2,0,0,0,2-2V7.5a2,2,0,0,0-2-2Z"
-        fill="none"
-        stroke="#ffffff"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1"
-      />
-    </svg>
+        stroke="white"
+        strokeWidth="3"
+        {...props}
+      >
+        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+        <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <rect x="9.59" y="9.59" width="44.82" height="44.82" rx="2.5"></rect>
+          <line x1="9.59" y1="20.59" x2="54.41" y2="20.59"></line>
+          <line x1="19.7" y1="9.59" x2="19.7" y2="4.59"></line>
+          <line x1="43.66" y1="9.59" x2="43.66" y2="4.59"></line>
+          <rect x="16.14" y="27.92" width="6.15" height="6.15"></rect>
+          <rect x="28.78" y="27.92" width="6.15" height="6.15"></rect>
+          <rect x="41.26" y="27.92" width="6.15" height="6.15"></rect>
+          <rect x="16.36" y="39.68" width="6.15" height="6.15"></rect>
+          <rect x="29.01" y="39.68" width="6.15" height="6.15"></rect>
+          <rect x="41.49" y="39.68" width="6.15" height="6.15"></rect>
+        </g>
+      </svg>
     </div>
-  )
-}
+  );
+};
 
-export default UpcomingGamesIcon
+export default UpcomingGamesIcon;
