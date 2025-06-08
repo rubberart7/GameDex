@@ -1,19 +1,36 @@
 @import "tailwindcss";
 
 body {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+    padding: 0;               /* Remove default body padding */
+    margin: 0;                /* Remove default body margin */
+    box-sizing: border-box;   /* Include padding and border in element's total width and height */
 }
 
 .full-link-itm {
-  transition: background-color 0.6s ease, color 0.6s ease;
-  cursor: pointer;
+  transition: 
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),      /* Smooth transform transition with easing */
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), /* Smooth background color transition */
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);           /* Smooth text color transition */
+  cursor: pointer;          /* Cursor changes to pointer on hover for better UX */
+  user-select: none;        /* Prevent text selection when clicking or dragging */
+  will-change: transform, background-color, color; /* Hint to browser to optimize these properties */
+  border-radius: 0.5rem;    /* Rounded corners for a smooth, pill-like shape */
 }
 
-.full-link-itm:hover {
-  background-color: blue; 
-  color: white;
+.full-link-itm:hover,
+.full-link-itm:focus {
+  background-color: #334155; /* Dark slate blue background on hover/focus */
+  color: white;              /* Change text color to white on hover/focus */
+  transform: scale(1.1);     /* Slightly scale up the entire item */
+  z-index: 10;               /* Bring hovered item above others */
 }
 
+.side-bar-icon {
+  transition: transform 0.3s ease;  /* Smooth scaling transition for icons */
+  will-change: transform;            /* Optimize transform property for performance */
+}
 
+.full-link-itm:hover .side-bar-icon,
+.full-link-itm:focus .side-bar-icon {
+  transform: scale(1.15);  /* Slightly scale up icons on hover/focus */
+}
