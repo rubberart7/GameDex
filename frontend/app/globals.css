@@ -34,3 +34,38 @@ body {
 .full-link-itm:focus .side-bar-icon {
   transform: scale(1.15);  /* Slightly scale up icons on hover/focus */
 }
+
+.relative-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.relative-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  transform: scale(0.8);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.relative-shine:hover::after {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+
+
+
+
+

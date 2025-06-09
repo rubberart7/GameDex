@@ -24,12 +24,15 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game }) => {
   return (
-    <div className="relative bg-slate-800 rounded-lg shadow-md overflow-hidden w-full min-h-[475px]">
-      <img
-        src={game.background_image}
-        alt={game.name}
-        className="w-full h-67 object-cover"
-      />
+    <div className="relative bg-slate-800 rounded-lg shadow-md overflow-hidden w-full min-h-[475px] transition-transform
+    duration-300 hover:scale-108 cursor-pointer">
+      <div className="relative-shine">
+        <img
+          src={game.background_image}
+          alt={game.name}
+          className="w-full h-67 object-cover transition-transform duration-500"
+        />
+      </div>
 
       <div className="p-4">
 
