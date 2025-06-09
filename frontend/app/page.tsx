@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "./components/ui/Button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -21,16 +22,21 @@ export default function Home() {
 
         <div className="flex justify-center gap-4 flex-wrap">
           <Button variant="default" size="lg">
-            Login
+              Login
           </Button>
+          
 
           <Button variant="outline" size="lg">
             Get Started
           </Button>
 
-          <Button variant="ghost" size="lg">
-            Continue as Guest
-          </Button>
+          <Link href='/main'>
+            <Button variant="ghost" size="lg">
+              Continue as Guest
+            </Button>
+          </Link>
+
+          
         </div>
       </div>
     </main>
