@@ -15,9 +15,9 @@ import NewReleasesIcon from './icons/NewReleasesIcon';
 const LeftSideBar = () => {
 
   return (
-    <div className='w-60 h-screen bg-gray-900 text-gray-100 flex flex-col px-6 py-7'>
-      <nav className='full-navbar flex flex-col pb-12 gap-70'>
-        <ul className='nav-top flex flex-col gap-5'>
+    <div className='w-100 h-screen bg-gray-900 text-gray-100 flex flex-col px-6 py-7'>
+      <nav className='full-navbar flex flex-col pt-5 pb-12 gap-40'>
+        <ul className='nav-top flex flex-col gap-8'>
           <li className="full-link-itm flex gap-2 items-center" key='Home'>
               <HomeIcon className="side-bar-icon h-6 w-6"></HomeIcon>
               <Link href='/home'>Home</Link>
@@ -56,7 +56,7 @@ const LeftSideBar = () => {
         </ul>
         
 
-        <ul className='nav-bottom flex flex-col gap-5'>
+        <ul className='nav-bottom flex flex-col gap-8'>
           <li className="full-link-itm flex gap-2 items-center" key='Profile'>
               <ProfileIcon className="side-bar-icon h-6 w-6"></ProfileIcon>
               <Link href='/profile'>Profile</Link>

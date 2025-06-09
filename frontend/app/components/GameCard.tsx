@@ -24,7 +24,7 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game }) => {
   return (
-    <div className="relative bg-slate-800 rounded-lg shadow-md overflow-hidden w-full min-h-[475px] transition-transform
+    <div className="relative bg-slate-950 rounded-lg shadow-md overflow-hidden w-full min-h-[475px] transition-transform
     duration-300 hover:scale-108 cursor-pointer">
       <div className="relative-shine">
         <img
@@ -39,7 +39,7 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
         <div className="fullCard flex flex-col gap-1">
 
           <div className="top-card">
-            <div className="flex justify-between items-center mb-2 gap-1.25">
+            <div className="flex justify-between items-start mb-2 gap-1.25">
               <h2 className="text-stone-300 text-lg font-semibold cursor-pointer line-clamp-2">
                 {game.name}
               </h2>
