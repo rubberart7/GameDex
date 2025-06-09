@@ -98,6 +98,32 @@ body {
   scrollbar-color: #3b82f6 #1e293b;
 }
 
+/* Main Navbar styles */
+
+.nav-lines {
+  position: relative;
+}
+
+.nav-lines::before,
+.nav-lines::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #0fcfff;
+  transform-origin: center;
+  transform: scaleY(0.25);  /* scales line to half pixel height */
+  z-index: 10;
+}
+
+.nav-lines::before {
+  top: 0;
+}
+
+.nav-lines::after {
+  bottom: 0;
+}
 
 
 

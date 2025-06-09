@@ -5,7 +5,7 @@ const ProjectLogo = () => {
     <div>
         <img src="/assets/game_logo.png" alt="game logo" 
         style={{ display: 'block',  // removes default inline spacing under images
-    width: '175px',    // or whatever size you want
+    width: '200px',    // or whatever size you want
     height: 'auto',
     margin: 0,
     padding: 0,
