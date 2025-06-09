@@ -43,7 +43,7 @@ const LeftSideBar = () => {
             className="full-link-itm flex gap-2 items-center"
             key="Browse Games"
           >
-            <BrowseGamesIcon className="side-bar-icon h-6 w-6" />
+            <BrowseGamesIcon className="side-bar-icon h-7 w-7" />
             <Link href="/browse-games"className="text-lg">Browse Games</Link>
           </li>
 
