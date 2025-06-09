@@ -9,6 +9,7 @@ body {
 /* Sidebar Links code */
 
 .full-link-itm {
+    padding: 10px;
   transition: 
     transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),      /* Smooth transform transition with easing */
     background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), /* Smooth background color transition */
@@ -22,7 +23,6 @@ body {
 .full-link-itm:hover,
 .full-link-itm:focus {
   background-color: #334155; /* Dark slate blue background on hover/focus */
-  padding: 15px;
   color: white;              /* Change text color to white on hover/focus */
   transform: scale(1.1);     /* Slightly scale up the entire item */
   z-index: 10;               /* Bring hovered item above others */

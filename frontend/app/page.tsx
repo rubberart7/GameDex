@@ -21,14 +21,19 @@ export default function Home() {
         </p>
 
         <div className="flex justify-center gap-4 flex-wrap">
-          <Button variant="default" size="lg">
-              Login
-          </Button>
           
+          <Link href='/login'>
+            <Button variant="default" size="lg">
+              Login
+            </Button>
+          </Link>
 
-          <Button variant="outline" size="lg">
-            Get Started
-          </Button>
+          <Link href='/signup'>
+            <Button variant="outline" size="lg">
+              Get Started
+            </Button>
+          </Link>
+          
 
           <Link href='/main'>
             <Button variant="ghost" size="lg">
