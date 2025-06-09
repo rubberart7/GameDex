@@ -12,6 +12,7 @@ import HomeIcon from './icons/HomeIcon';
 import BrowseGamesIcon from './icons/BrowseGamesIcon';
 import NewReleasesIcon from './icons/NewReleasesIcon';
 import ProjectLogo from './icons/ProjectLogo';
+import LoginIcon from './icons/LoginIcon';
 
 const LeftSideBar = () => {
   return (
@@ -23,6 +24,7 @@ const LeftSideBar = () => {
       }}
     >
       <div className='logo-div flex justify-center items-center'>
+        
         <ProjectLogo></ProjectLogo>
       </div>
       

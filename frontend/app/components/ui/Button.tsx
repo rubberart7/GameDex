@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
+          "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 flex gap-2",
         destructive:
           "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
         outline:
@@ -19,6 +19,10 @@ const buttonVariants = cva(
           "bg-transparent text-blue-400 hover:bg-blue-800/20 focus:ring-blue-500",
         link:
           "text-blue-400 underline-offset-4 hover:underline focus:ring-blue-500",
+        signup:
+          "bg-slate-800 text-white hover:bg-slate-900 focus:slate-700 flex gap-2"
+        
+
       },
       size: {
         sm: "px-3 py-1.5 text-sm",

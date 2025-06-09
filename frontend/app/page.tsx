@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
-      <HomeNavBar />  {/* Navbar at top */}
+      <HomeNavBar />  
 
       {/* Main content grows to fill the remaining space */}
       <section className="flex-grow bg-gray-950 text-gray-100 flex flex-col items-center justify-center px-4">
@@ -32,17 +32,19 @@ export default function Home() {
               </Button>
             </Link>
 
+            <Link href="/main">
+              <Button variant="ghost" size="lg">
+                Continue as Guest
+              </Button>
+            </Link>
+
             <Link href="/signup">
               <Button variant="outline" size="lg">
                 Get Started
               </Button>
             </Link>
 
-            <Link href="/main">
-              <Button variant="ghost" size="lg">
-                Continue as Guest
-              </Button>
-            </Link>
+            
           </div>
         </div>
       </section>
