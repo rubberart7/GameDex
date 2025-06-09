@@ -3,6 +3,7 @@ import ProjectLogo from '../icons/ProjectLogo';
 import Button from './Button';
 import LoginIcon from '../icons/LoginIcon';
 import SignUpIcon from '../icons/SignUpIcon';
+import Link from 'next/link';
 
 const HomeNavBar = () => {
   return (
@@ -15,15 +16,20 @@ const HomeNavBar = () => {
     >
         <ProjectLogo></ProjectLogo>
         <div className='nav-buttons flex items-center justify-center gap-8'>
-            <Button variant="default" size="md">
-                 <LoginIcon className="w-4 h-4" />
-                    Login
-            </Button>
-
-            <Button variant="signup" size="md">
-                 <SignUpIcon className="w-4 h-4" />
-                    Signup
-            </Button>
+            <Link href='/login'>
+              <Button variant="default" size="md">
+                  <LoginIcon className="w-4 h-4" />
+                      Login
+              </Button>
+            </Link>
+            
+            <Link href='/signup'>
+              <Button variant="signup" size="md">
+                  <SignUpIcon className="w-4 h-4" />
+                      Signup
+              </Button>
+            </Link>
+            
 
             
         </div>

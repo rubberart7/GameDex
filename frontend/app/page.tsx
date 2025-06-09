@@ -8,7 +8,6 @@ export default function Home() {
     <main className="min-h-screen flex flex-col">
       <HomeNavBar />  
 
-      {/* Main content grows to fill the remaining space */}
       <section className="flex-grow bg-gray-950 text-gray-100 flex flex-col items-center justify-center px-4">
         <div className="max-w-3xl text-center space-y-6">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
