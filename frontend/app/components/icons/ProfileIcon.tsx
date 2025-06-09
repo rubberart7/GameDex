@@ -3,7 +3,7 @@ import React from 'react';
 const ProfileIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
-      viewBox="0 0 20 20"
+      viewBox="0 0 24 24"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
@@ -49,6 +49,7 @@ const ProfileIcon = (props: React.SVGProps<SVGSVGElement>) => {
         </g>
       </g>
     </svg>
+    
   );
 };
 
