@@ -5,11 +5,14 @@ import { useState } from 'react';
 import Button from './Button';
 import Link from 'next/link';
 import LoginIcon from '../icons/LoginIcon';
+import EyeToggle from './EyeToggle';
 
 const LoginForm = () => {
-    
-  return (
-    <main className="flex justify-center items-center pt-20 px-4">
+
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+    return (
+        <main className="flex justify-center items-center pt-20 px-4">
             <div className="w-full max-w-md">
               <form 
                 action="post" 
@@ -46,13 +49,19 @@ const LoginForm = () => {
                     Password
                   </label>
                   <input 
-                    type="password" 
+                    type={isPasswordVisible ? "text" : "password"} 
                     id="password"
                     className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1
                              focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
                              placeholder-gray-500 transition-colors"
                     placeholder="••••••••"
                   />
+                  <div className="absolute right-196 top-103">
+                        <EyeToggle
+                        isVisible={isPasswordVisible}
+                        toggle={() => setIsPasswordVisible(!isPasswordVisible)}
+                        />
+                    </div>
                 </div>
     
                 {/* Login Button */}

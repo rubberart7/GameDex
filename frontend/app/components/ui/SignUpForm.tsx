@@ -58,7 +58,7 @@ const SignUpForm = () => {
                   </div>
       
                   {/* Password Field */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 relative">
                     <label htmlFor="password" className="text-sm font-medium text-gray-300">
                       Password
                     </label>
@@ -70,7 +70,7 @@ const SignUpForm = () => {
                                placeholder-gray-500 transition-colors"
                       placeholder="••••••••"
                     />
-                    <div className="absolute right-2 top-2">
+                    <div className="absolute right-4 top-8.75">
                         <EyeToggle
                         isVisible={isPasswordVisible}
                         toggle={() => setIsPasswordVisible(!isPasswordVisible)}
