@@ -9,17 +9,60 @@ import EyeToggle from './EyeToggle';
 
 const LoginForm = () => {
 
+    // const [fullName, setFullName] = useState("");
+    const [email, setEmail] =  useState("");
+    const [password, setPassword] = useState("");
+
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+    // function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
+    //   setFullName(event.target.value);
+    // }
+
+    function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
+      setEmail(event.target.value);
+    }
+
+    function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
+      setPassword(event.target.value);
+    }
+
+    async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
+		try {
+			const response = await fetch('/auth/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					email: email,
+					password: password
+				}),
+			});
+
+			if (!response.ok) {
+				console.log("Data could not be sent!");
+				return;
+			}
+			const data = await response.json();
+			console.log("Login sucessful", data);
+		} catch {
+			console.log("There was an error fetching the route!");
+		}
+    }
+    
 
     return (
         <main className="flex justify-center items-center pt-20 px-4">
             <div className="w-full max-w-md">
-              <form 
-                action="post" 
+              <form
                 className="border-gray-900 rounded-xl p-8 flex flex-col gap-6 shadow-2xl"
                 style={{ 
                   backgroundColor: "#0b1226",
                 }}
+                onSubmit={sendToBackend}
               >
                 <div className="text-center mb-4">
                   <h1 className="text-2xl font-bold text-gray-100 mb-2">Login to GameDex</h1>
@@ -40,6 +83,7 @@ const LoginForm = () => {
                              focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
                              placeholder-gray-500 transition-colors"
                     placeholder="name@example.com"
+                    onChange={handleEmailChange}
                   />
                 </div>
     
@@ -55,6 +99,7 @@ const LoginForm = () => {
                              focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
                              placeholder-gray-500 transition-colors"
                     placeholder="••••••••"
+                    onChange={handlePasswordChange}
                   />
                   <div className="absolute right-4 top-8.75">
                         <EyeToggle
@@ -70,6 +115,7 @@ const LoginForm = () => {
                   variant="default" 
                   size="lg" 
                   className="w-full mt-2 flex items-center justify-center gap-2 bg-gray-950 h-12"
+                  
                 >
                   <LoginIcon className="w-5 h-5" />
                   Login
