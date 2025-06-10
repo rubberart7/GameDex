@@ -7,8 +7,8 @@ const ProjectLogo = () => {
       <Link href='/'>
         <img src="/assets/game_logo.png" alt="game logo" 
           style={{ display: 'block',  // removes default inline spacing under images
-          width: '200px',   
-          height: '200px',
+          width: '225px',   
+          height: '225px',
           margin: 0,
           padding: 0,
           border: 'none',}}

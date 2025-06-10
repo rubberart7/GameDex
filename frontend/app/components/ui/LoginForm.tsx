@@ -44,7 +44,7 @@ const LoginForm = () => {
                 </div>
     
                 {/* Password Field */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 relative">
                   <label htmlFor="password" className="text-sm font-medium text-gray-300">
                     Password
                   </label>
@@ -56,11 +56,12 @@ const LoginForm = () => {
                              placeholder-gray-500 transition-colors"
                     placeholder="••••••••"
                   />
-                  <div className="absolute right-196 top-103">
+                  <div className="absolute right-4 top-8.75">
                         <EyeToggle
                         isVisible={isPasswordVisible}
                         toggle={() => setIsPasswordVisible(!isPasswordVisible)}
                         />
+                        {/*  isVisible is a prop that tells the EyeToggle component whether the password is currently visible or hidden. */}
                     </div>
                 </div>
     

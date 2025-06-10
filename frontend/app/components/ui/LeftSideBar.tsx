@@ -1,18 +1,18 @@
 import React from 'react';
 import Link from 'next/link';
-import StoreIcon from './icons/StoreIcon';
-import TopSellersIcon from './icons/TopSellersIcon';
-import UpcomingGamesIcon from './icons/UpcomingGamesIcon';
-import DealsIcon from './icons/DealsIcon';
-import ProfileIcon from './icons/ProfileIcon';
-import WishListIcon from './icons/WishListIcon';
-import LibraryIcon from './icons/LibraryIcon';
-import SettingsIcon from './icons/SettingsIcon';
-import HomeIcon from './icons/HomeIcon';
-import BrowseGamesIcon from './icons/BrowseGamesIcon';
-import NewReleasesIcon from './icons/NewReleasesIcon';
-import ProjectLogo from './icons/ProjectLogo';
-import LoginIcon from './icons/LoginIcon';
+import StoreIcon from '../icons/StoreIcon';
+import TopSellersIcon from '../icons/TopSellersIcon';
+import UpcomingGamesIcon from '../icons/UpcomingGamesIcon';
+import DealsIcon from '../icons/DealsIcon';
+import ProfileIcon from '../icons/ProfileIcon';
+import WishListIcon from '../icons/WishListIcon';
+import LibraryIcon from '../icons/LibraryIcon';
+import SettingsIcon from '../icons/SettingsIcon';
+import HomeIcon from '../icons/HomeIcon';
+import BrowseGamesIcon from '../icons/BrowseGamesIcon';
+import NewReleasesIcon from '../icons/NewReleasesIcon';
+import ProjectLogo from '../icons/ProjectLogo';
+import LoginIcon from '../icons/LoginIcon';
 
 const LeftSideBar = () => {
   return (
@@ -23,12 +23,12 @@ const LeftSideBar = () => {
         boxShadow: '4px 0 12px 0 rgba(0, 0, 0, 0.75)', // soft shadow on right edge
       }}
     >
-      <div className='logo-div flex justify-center items-center'>
-        
+      <div className='logo-div flex justify-center'>
         <ProjectLogo></ProjectLogo>
       </div>
       
-      <div className="w-full h-0.5 bg-sky-900 mb-8 rounded-full" />
+      <div className="w-full h-0.75 bg-sky-900 mb-8 rounded-full" />
+
       <nav className="full-navbar flex flex-col pb-12 gap-10">
         <ul className="nav-top flex flex-col gap-6">
           <li className="full-link-itm flex gap-2 items-center" key="Home">

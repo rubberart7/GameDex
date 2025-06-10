@@ -1,5 +1,5 @@
 import React from 'react';
-import GameCard, { Game } from './GameCard';
+import GameCard, { Game } from '../GameCard';
 
 const GamesList = async () => {
   const res = await fetch('http://localhost:4000/api/games'); 
