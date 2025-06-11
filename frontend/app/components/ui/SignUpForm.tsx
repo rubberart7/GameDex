@@ -8,8 +8,54 @@ import SignUpIcon from '../icons/SignUpIcon';
 import EyeToggle from './EyeToggle';
 
 const SignUpForm = () => {
+
+    interface RegistrationFormData {
+		fullName: string,
+		email: string,
+		password: string
+    }
     
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [fullName, setFullName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+
+    function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
+          setFullName(event.target.value);
+    }
+    
+    function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
+      setEmail(event.target.value);
+    }
+
+    function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
+      setPassword(event.target.value);
+    }
+
+    async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+		const dataToSend: RegistrationFormData = { fullName, email, password };
+    
+        try {
+          const response = await fetch('/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToSend)
+          });
+    
+          if (!response.ok) {
+            console.log("Data could not be sent!");
+            return;
+          }
+          const data = await response.json();
+          console.log("Login sucessful", data);
+        } catch {
+          console.log("There was an error fetching the route!");
+        }
+    }
     
     return (
       <main className="flex justify-center items-center pt-20 px-4">
@@ -20,6 +66,7 @@ const SignUpForm = () => {
                   style={{ 
                     backgroundColor: "#0b1226",
                   }}
+                  onSubmit={sendToBackend}
                 >
                   <div className="text-center mb-4">
                     <h1 className="text-2xl font-bold text-gray-100 mb-2">Welcome to GameDex</h1>
@@ -35,10 +82,12 @@ const SignUpForm = () => {
                     <input 
                       type="text" 
                       id="name"
+					  value={fullName}
                       className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1
                                focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
                                placeholder-gray-500 transition-colors"
                       placeholder="John Doe"
+                      onChange={handleNameChange}
                     />
                   </div>
       
@@ -50,10 +99,12 @@ const SignUpForm = () => {
                     <input 
                       type="email" 
                       id="email"
+					  value={email}
                       className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1
                                focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
                                placeholder-gray-500 transition-colors"
                       placeholder="name@example.com"
+                      onChange={handleEmailChange}
                     />
                   </div>
       
@@ -65,10 +116,12 @@ const SignUpForm = () => {
                     <input 
                       type={isPasswordVisible ? "text" : "password"} 
                       id="password"
+					  value={password}
                       className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1
                                focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
                                placeholder-gray-500 transition-colors"
                       placeholder="••••••••"
+                      onChange={handlePasswordChange}
                     />
                     <div className="absolute right-4 top-8.75">
                         <EyeToggle

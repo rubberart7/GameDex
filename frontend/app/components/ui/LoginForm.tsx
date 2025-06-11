@@ -9,15 +9,15 @@ import EyeToggle from './EyeToggle';
 
 const LoginForm = () => {
 
-    // const [fullName, setFullName] = useState("");
-    const [email, setEmail] =  useState("");
-    const [password, setPassword] = useState("");
+	interface LoginFormData {
+		email: string,
+		password: string
+    }
 
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
-    // function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
-    //   setFullName(event.target.value);
-    // }
 
     function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
       setEmail(event.target.value);
@@ -28,30 +28,29 @@ const LoginForm = () => {
     }
 
     async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
-		event.preventDefault();
-
-		try {
-			const response = await fetch('/auth/login', {
+			event.preventDefault();
+	
+			const dataToSend: LoginFormData = { email, password };
+		
+			try {
+			  const response = await fetch('/auth/login', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
+				  'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
-					email: email,
-					password: password
-				}),
-			});
-
-			if (!response.ok) {
+				body: JSON.stringify(dataToSend)
+			  });
+		
+			  if (!response.ok) {
 				console.log("Data could not be sent!");
 				return;
+			  }
+			  const data = await response.json();
+			  console.log("Login sucessful", data);
+			} catch {
+			  console.log("There was an error fetching the route!");
 			}
-			const data = await response.json();
-			console.log("Login sucessful", data);
-		} catch {
-			console.log("There was an error fetching the route!");
 		}
-    }
     
 
     return (
@@ -79,6 +78,7 @@ const LoginForm = () => {
                   <input 
                     type="email" 
                     id="email"
+					value={email}
                     className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1
                              focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
                              placeholder-gray-500 transition-colors"
@@ -95,6 +95,7 @@ const LoginForm = () => {
                   <input 
                     type={isPasswordVisible ? "text" : "password"} 
                     id="password"
+					value={password}
                     className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1
                              focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
                              placeholder-gray-500 transition-colors"
