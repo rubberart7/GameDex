@@ -23,8 +23,38 @@ const LoginForm = () => {
     }
 
     async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
-			event.preventDefault();		
-		}
+            event.preventDefault();
+    
+        const data = {  email, password }
+        try {
+            const response = await fetch('http://localhost:4000/api/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data)
+          });
+    
+          if (!response.ok) {
+          // Handle errors here - maybe show an error message
+            const errorData = await response.json();
+            console.error('Server error:', errorData);
+            alert('Error: ' + (errorData.message || 'Failed to login'));
+            return;
+          }
+    
+          const result = await response.json();
+          console.log('Success:', result);
+          alert('Login successful!');
+    
+          // Optionally, clear the form or redirect
+          setEmail('');
+          setPassword('');
+        } catch (error) {
+            console.error('Fetch error:', error);
+            alert('Network error: Could not reach server');
+        }
+        }
     
 
     return (

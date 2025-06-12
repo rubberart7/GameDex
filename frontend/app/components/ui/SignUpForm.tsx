@@ -32,20 +32,19 @@ const SignUpForm = () => {
 		const data = { fullName, email, password }
 		try {
     		const response = await fetch('http://localhost:4000/api/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-			// credentials: 'include' // uncomment if your backend requires cookies/session
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data)
 			});
 
 			if (!response.ok) {
 			// Handle errors here - maybe show an error message
-			const errorData = await response.json();
-			console.error('Server error:', errorData);
-			alert('Error: ' + (errorData.message || 'Failed to register'));
-			return;
+				const errorData = await response.json();
+				console.error('Server error:', errorData);
+				alert('Error: ' + (errorData.message || 'Failed to register'));
+				return;
 			}
 
 			const result = await response.json();
