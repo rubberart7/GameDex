@@ -6,12 +6,19 @@ import errorHandler from './middleware/error';
 
 const PORT = 4000;
 
+const CLIENT_URL = "http://localhost:3000";
+
 const app = express();
+
+const corsOptions = {
+    origin: CLIENT_URL,
+    methods: ['GET', 'POST'],
+    credentials: true
+}
 
 app.use(express.json());
 
-app.use(cors({ origin: 'http://localhost:3000', methods: ['GET', 'POST'],
-    credentials: true}));
+app.use(cors(corsOptions));
 
 // Your backend (running at http://localhost:4000) is allowing cross-origin requests from your frontend (at http://localhost:3000).
 
@@ -19,7 +26,8 @@ app.use(cors({ origin: 'http://localhost:3000', methods: ['GET', 'POST'],
 
 app.use('/api', gameRoutes);
 // this will end up being my localhost:4000/api/games
-app.use('/api', authRouter)
+app.use('/api/auth', authRouter)
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {

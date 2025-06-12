@@ -18,7 +18,7 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
         });
         res.status(200).json(response.data);
     } catch (error) {
-        return next(error)
+        next(error)
     }
 }
 

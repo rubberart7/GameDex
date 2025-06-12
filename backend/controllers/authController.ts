@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
-import { create } from "domain";
 
 dotenv.config();
 
@@ -54,19 +53,47 @@ export const register = async (
 		res.status(400).json({ message: "Password must be at least 6 characters!"});
     }
 
-    // Check if user already exists
     const emailExists = await findUserByEmail(email);
     if (emailExists) {
       res.status(409).json({ message: "Email already exists" });
     }
 
-    // Hash password and create user
     const hashedPassword = await hashPassword(password);
     const user = await createUser(fullName, email, hashedPassword);
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    console.error(error);
+	// the catch block automatically recieves an error object
     next(error);
   }
 };
+
+export const login = async (
+	req: Request<{}, {}, RegisterRequestBody>,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { email, password } = req.body;
+		if (!email || !password) {
+			res.status(400).json({ message: "Please enter all fields" });
+		}
+
+		const user = await findUserByEmail(email);
+
+		if (!user) {
+			res.status(400).json({ message: "Invalid credentials"});
+		}
+
+		const isCorrectPassword = bcrypt.compare(password, user.password);
+
+		if (!isCorrectPassword) {
+			res.status(400).json({ message: "Invalid credentials"});
+		}
+
+
+	} catch (error) {
+		next(error);
+	}
+}
+
