@@ -14,51 +14,53 @@ const SignUpForm = () => {
     const [password, setPassword] = useState<string>("");
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
+    const [feedback, setFeedback] = useState<{ message: string; type: 'Error' | 'Success' | '' }>({ message: '', type: '' });
+
     function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
-          setFullName(event.target.value);
+      setFullName(event.target.value);
+      setFeedback({ message: '', type: '' }); 
     }
-    
+
     function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
       setEmail(event.target.value);
+      setFeedback({ message: '', type: '' });
     }
 
     function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
       setPassword(event.target.value);
+      setFeedback({ message: '', type: '' });
     }
 
     async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
+      event.preventDefault();
 
-		const data = { fullName, email, password }
-		try {
-    		const response = await fetch('http://localhost:4000/api/auth/register', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data)
-			});
+      const data = { fullName, email, password };
 
-			if (!response.ok) {
-			// Handle errors here - maybe show an error message
-				const errorData = await response.json();
-				console.error('Server error:', errorData);
-				alert('Error: ' + (errorData.message || 'Failed to register'));
-				return;
-			}
+      try {
+        const response = await fetch('http://localhost:4000/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
 
-			const result = await response.json();
-			console.log('Success:', result);
-			alert('Registration successful!');
+        const result = await response.json();
 
-			// Optionally, clear the form or redirect
-			setFullName('');
-			setEmail('');
-			setPassword('');
-		} catch (error) {
-			console.error('Fetch error:', error);
-    		alert('Network error: Could not reach server');
-		}
+        if (!response.ok) {
+          // Show error message from backend
+          setFeedback({ message: result.message || 'Registration failed', type: 'Error' });
+          return;
+        }
+
+        // Show success message
+        setFeedback({ message: result.message || 'Registration successful!', type: 'Success' });
+
+        // Clear form on success
+        setFullName('');
+        setEmail('');
+        setPassword('');
+      } catch (error) {
+        setFeedback({ message: 'Network error: Could not reach server', type: 'Error' });
+      }
     }
     
     return (
@@ -135,7 +137,17 @@ const SignUpForm = () => {
                     </div>
 
                   </div>
-      
+                  {feedback.message && (
+                  <div
+                    className={`p-3 rounded text-center font-semibold ${
+                      feedback.type === 'Error'
+                        ? 'bg-red-100 text-red-700 border border-red-400'
+                        : 'bg-green-100 text-green-700 border border-green-400'
+                    }`}
+                  >
+                    {feedback.message}
+                  </div>
+                  )}
                   {/* Login Button */}
                   <Button 
                     variant="default" 

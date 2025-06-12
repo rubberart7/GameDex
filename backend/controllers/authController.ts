@@ -34,7 +34,6 @@ const hashPassword = async (password: string): Promise<string> => {
   return await bcrypt.hash(password, saltRounds);
 };
 
-// Controller with explicit Promise<Response> return type
 export const register = async (
   req: Request<{}, {}, RegisterRequestBody>,
   res: Response
@@ -42,25 +41,25 @@ export const register = async (
   const { fullName, email, password } = req.body;
 
   if (!fullName || !email || !password) {
-    res.status(400).json({ message: "Please fill all fields" });
+    res.status(400).json({ message: "Please fill all fields", type: "Error" });
     return
   }
 
   if (password.length < 6) {
-    res.status(400).json({ message: "Password must be at least 6 characters!" });
+    res.status(400).json({ message: "Password must be at least 6 characters!", type: "Error" });
     return
   }
 
   const emailExists = await findUserByEmail(email);
   if (emailExists) {
-    res.status(409).json({ message: "Email already exists" });
+    res.status(400).json({ message: "Email already exists!", type: "Error" });
     return
   }
 
   const hashedPassword = await hashPassword(password);
   await createUser(fullName, email, hashedPassword);
 
-  res.status(201).json({ message: "User registered successfully" });
+  res.status(201).json({ message: "User registered successfully.", type: "Success" });
   return
 };
 
@@ -71,24 +70,24 @@ export const login = async (
   const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).json({ message: "Please enter all fields" });
+    res.status(400).json({ message: "Please enter all fields", type: "Error" });
     return
   }
 
   const user = await findUserByEmail(email);
 
   if (!user) {
-    res.status(400).json({ message: "Invalid credentials" });
+    res.status(400).json({ message: "Username not correct!", type: "Error" });
     return
   }
 
   const isCorrectPassword = await bcrypt.compare(password, user.password);
 
   if (!isCorrectPassword) {
-    res.status(400).json({ message: "Invalid credentials" });
+    res.status(400).json({ message: "Password incorrect!", type: "Error" });
     return
   }
 
-  res.status(201).json({ message: "User logged in successfully." });
+  res.status(201).json({ message: "User logged in successfully." , type: "Success"});
   return
 };
