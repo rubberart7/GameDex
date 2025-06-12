@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
-import { NextFunction, Request, Response } from "express";
+import { PrismaClient } from "../generated/prisma";
+import { Request, Response } from "express";
 
 dotenv.config();
 
@@ -20,15 +20,13 @@ const findUserByEmail = async (email: string) => {
 };
 
 async function createUser(fullName: string, email: string, hashedPassword: string) {
-  const newUser = await prisma.user.create({
+  await prisma.user.create({
     data: {
-      fullName: fullName,      
-      email: email,           
-      password: hashedPassword 
+      fullName,
+      email,
+      password: hashedPassword,
     },
   });
-
-  return newUser;
 }
 
 const hashPassword = async (password: string): Promise<string> => {
@@ -36,64 +34,61 @@ const hashPassword = async (password: string): Promise<string> => {
   return await bcrypt.hash(password, saltRounds);
 };
 
-// Controller
+// Controller with explicit Promise<Response> return type
 export const register = async (
   req: Request<{}, {}, RegisterRequestBody>,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-  try {
-    const { fullName, email, password } = req.body;
+  const { fullName, email, password } = req.body;
 
-    if (!fullName || !email || !password) {
-      res.status(400).json({ message: "Please fill all fields" });
-    }
-
-	if (password.length < 6) {
-		res.status(400).json({ message: "Password must be at least 6 characters!"});
-    }
-
-    const emailExists = await findUserByEmail(email);
-    if (emailExists) {
-      res.status(409).json({ message: "Email already exists" });
-    }
-
-    const hashedPassword = await hashPassword(password);
-    const user = await createUser(fullName, email, hashedPassword);
-
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (error) {
-	// the catch block automatically recieves an error object
-    next(error);
+  if (!fullName || !email || !password) {
+    res.status(400).json({ message: "Please fill all fields" });
+    return
   }
+
+  if (password.length < 6) {
+    res.status(400).json({ message: "Password must be at least 6 characters!" });
+    return
+  }
+
+  const emailExists = await findUserByEmail(email);
+  if (emailExists) {
+    res.status(409).json({ message: "Email already exists" });
+    return
+  }
+
+  const hashedPassword = await hashPassword(password);
+  await createUser(fullName, email, hashedPassword);
+
+  res.status(201).json({ message: "User registered successfully" });
+  return
 };
 
 export const login = async (
-	req: Request<{}, {}, RegisterRequestBody>,
-	res: Response,
-	next: NextFunction
+  req: Request<{}, {}, RegisterRequestBody>,
+  res: Response
 ) => {
-	try {
-		const { email, password } = req.body;
-		if (!email || !password) {
-			res.status(400).json({ message: "Please enter all fields" });
-		}
+  const { email, password } = req.body;
 
-		const user = await findUserByEmail(email);
+  if (!email || !password) {
+    res.status(400).json({ message: "Please enter all fields" });
+    return
+  }
 
-		if (!user) {
-			res.status(400).json({ message: "Invalid credentials"});
-		}
+  const user = await findUserByEmail(email);
 
-		const isCorrectPassword = bcrypt.compare(password, user.password);
+  if (!user) {
+    res.status(400).json({ message: "Invalid credentials" });
+    return
+  }
 
-		if (!isCorrectPassword) {
-			res.status(400).json({ message: "Invalid credentials"});
-		}
+  const isCorrectPassword = await bcrypt.compare(password, user.password);
 
+  if (!isCorrectPassword) {
+    res.status(400).json({ message: "Invalid credentials" });
+    return
+  }
 
-	} catch (error) {
-		next(error);
-	}
-}
-
+  res.status(201).json({ message: "User logged in successfully." });
+  return
+};
