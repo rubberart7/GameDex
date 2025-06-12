@@ -1,19 +1,24 @@
-import { User } from "../generated/prisma";
-import { Request, Response } from "express";
-import bcrypt from "bcrypt"
-import dotenv from 'dotenv';
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import { hash } from "crypto";
+import { NextFunction, Request, Response } from "express";
+import { create } from "domain";
 
 dotenv.config();
 
 const prisma = new PrismaClient();
 
-interface RegisterReqBody {
-    fullName: string,
-    email: string,
-    password:string,
+interface RegisterRequestBody {
+  fullName: string;
+  email: string;
+  password: string;
 }
+
+const findUserByEmail = async (email: string) => {
+  return await prisma.user.findUnique({
+    where: { email },
+  });
+};
 
 async function createUser(fullName: string, email: string, hashedPassword: string) {
   const newUser = await prisma.user.create({
@@ -27,34 +32,41 @@ async function createUser(fullName: string, email: string, hashedPassword: strin
   return newUser;
 }
 
-const register = async (req: Request<{}, {}, RegisterReqBody>, res: Response) => {
-    const fullName = req.body.fullName;
-    const email = req.body.email;
-    const password = req.body.password;
+const hashPassword = async (password: string): Promise<string> => {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+};
+
+// Controller
+export const register = async (
+  req: Request<{}, {}, RegisterRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { fullName, email, password } = req.body;
 
     if (!fullName || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      res.status(400).json({ message: "Please fill all fields" });
     }
 
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 6 characters" });
+	if (password.length < 6) {
+		res.status(400).json({ message: "Password must be at least 6 characters!"});
     }
 
-    const existingEmail = await prisma.user.findUnique({
-        where: { email: email },
-    });
-
-    if (existingEmail) {
-        return res.status(400).json({ message: "Email already exists" });
+    // Check if user already exists
+    const emailExists = await findUserByEmail(email);
+    if (emailExists) {
+      res.status(409).json({ message: "Email already exists" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Hash password and create user
+    const hashedPassword = await hashPassword(password);
+    const user = await createUser(fullName, email, hashedPassword);
 
-    const newUser = await createUser(fullName, email, hashedPassword);
-    
-
-}
-
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};

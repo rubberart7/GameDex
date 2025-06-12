@@ -8,12 +8,6 @@ import SignUpIcon from '../icons/SignUpIcon';
 import EyeToggle from './EyeToggle';
 
 const SignUpForm = () => {
-
-    interface RegistrationFormData {
-		fullName: string,
-		email: string,
-		password: string
-    }
     
     const [fullName, setFullName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -35,26 +29,37 @@ const SignUpForm = () => {
     async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-		const dataToSend: RegistrationFormData = { fullName, email, password };
-    
-        try {
-          const response = await fetch('/auth/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dataToSend)
-          });
-    
-          if (!response.ok) {
-            console.log("Data could not be sent!");
-            return;
-          }
-          const data = await response.json();
-          console.log("Login sucessful", data);
-        } catch {
-          console.log("There was an error fetching the route!");
-        }
+		const data = { fullName, email, password }
+		try {
+    		const response = await fetch('http://localhost:4000/api/register', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+			// credentials: 'include' // uncomment if your backend requires cookies/session
+			});
+
+			if (!response.ok) {
+			// Handle errors here - maybe show an error message
+			const errorData = await response.json();
+			console.error('Server error:', errorData);
+			alert('Error: ' + (errorData.message || 'Failed to register'));
+			return;
+			}
+
+			const result = await response.json();
+			console.log('Success:', result);
+			alert('Registration successful!');
+
+			// Optionally, clear the form or redirect
+			setFullName('');
+			setEmail('');
+			setPassword('');
+		} catch (error) {
+			console.error('Fetch error:', error);
+    		alert('Network error: Could not reach server');
+		}
     }
     
     return (

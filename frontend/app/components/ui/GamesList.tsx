@@ -2,6 +2,14 @@ import React from 'react';
 import GameCard, { Game } from '../GameCard';
 
 const GamesList = async () => {
+//   1. How it's connected to the backend
+// This line:
+
+// ts
+// Copy
+// Edit
+// const res = await fetch('http://localhost:4000/api/games');
+// Makes a GET request to your Express backend.
   const res = await fetch('http://localhost:4000/api/games'); 
   if (!res.ok) {
     throw new Error('Failed to fetch games');

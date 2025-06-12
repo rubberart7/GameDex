@@ -8,13 +8,8 @@ import LoginIcon from '../icons/LoginIcon';
 import EyeToggle from './EyeToggle';
 
 const LoginForm = () => {
-
-	interface LoginFormData {
-		email: string,
-		password: string
-    }
-
-    const [email, setEmail] = useState<string>("");
+  
+  const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 	const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
@@ -28,28 +23,7 @@ const LoginForm = () => {
     }
 
     async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
-			event.preventDefault();
-	
-			const dataToSend: LoginFormData = { email, password };
-		
-			try {
-			  const response = await fetch('/auth/login', {
-				method: 'POST',
-				headers: {
-				  'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(dataToSend)
-			  });
-		
-			  if (!response.ok) {
-				console.log("Data could not be sent!");
-				return;
-			  }
-			  const data = await response.json();
-			  console.log("Login sucessful", data);
-			} catch {
-			  console.log("There was an error fetching the route!");
-			}
+			event.preventDefault();		
 		}
     
 
