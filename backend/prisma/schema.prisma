@@ -21,7 +21,36 @@ model User {
   fullName    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
+  // This is a one-to-many relation field that connects a User to many RefreshTokens.
+  // This means one user can have multiple refresh tokens.
 }
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  token      String   // You can store hashed token here for security
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime // token expiration timestamp
+  revoked    Boolean  @default(false)
+
+  @@index([token], name: "idx_token")
+}
+
+// Defines the relation to the User model.
+
+// @relation(fields: [userId], references: [id]) means:
+
+// This model stores the foreign key in the userId field.
+
+// It references the id field in the User model.
+
+// onDelete: Cascade: If the user is deleted, all associated refresh tokens are deleted automatically (cascade delete).
+
+// @@index([token], name: "idx_token"): Creates an index on the token field to speed up queries searching by token.
+
 
 
 

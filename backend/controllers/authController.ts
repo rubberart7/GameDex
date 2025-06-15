@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import { PrismaClient } from "../generated/prisma";
 import { Request, Response } from "express";
+import { generateAccessToken, generateRefreshToken } from "../libs/utils";
 
 dotenv.config();
 
@@ -25,6 +26,19 @@ async function createUser(fullName: string, email: string, hashedPassword: strin
       fullName,
       email,
       password: hashedPassword,
+    },
+  });
+}
+
+async function associateRefreshToken(userId: number, refreshToken: string, expiresInMs: number) {
+  const expiresAt = new Date(Date.now() + expiresInMs);
+
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: userId,
+      expiresAt: expiresAt,
+      revoked: false,
     },
   });
 }
@@ -88,6 +102,28 @@ export const login = async (
     return
   }
 
-  res.status(201).json({ message: "User logged in successfully." , type: "Success"});
-  return
+  const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+  const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
+
+  if (!accessTokenSecret || !refreshTokenSecret) {
+    res.status(500).json({ message: "Missing JWT secret", type: "Error" });
+    return;
+  } 
+
+  const accessToken = generateAccessToken(user.id, user.email, accessTokenSecret);
+  const refreshToken = generateRefreshToken(user.id, user.email, refreshTokenSecret);
+
+  const expiresInMs = 15 * 60 * 1000;
+
+  await associateRefreshToken(user.id, refreshToken, expiresInMs);
+
+  res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+  
+  res.status(200).json({ 
+    message: "User logged in successfully.", 
+    type: "Success",
+    accessToken: accessToken
+  });
+
+  return;
 };
