@@ -118,12 +118,15 @@ export const login = async (
   await associateRefreshToken(user.id, refreshToken, expiresInMs);
 
   res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+
+  // The backend sets the refresh token as a secure, HTTP-only cookie:
   
   res.status(200).json({ 
     message: "User logged in successfully.", 
     type: "Success",
     accessToken: accessToken
   });
+  // The backend returns the access token in the JSON response body:
 
   return;
 };
