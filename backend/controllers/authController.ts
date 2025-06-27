@@ -130,3 +130,13 @@ export const login = async (
 
   return;
 };
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "lax" });
+    res.status(200).json({ message: "Logged out" });
+    return;
+  } catch (error) {
+    res.status(500).json({message: "Could not logout successfully."});
+  }
+};

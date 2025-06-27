@@ -3,6 +3,7 @@ import cors from 'cors'
 import gameRoutes from './routes/gamesRoute';
 import authRouter from './routes/authRoute'
 import errorHandler from './middleware/error';
+import cookieParser from "cookie-parser";
 
 const PORT = 4000;
 
@@ -23,6 +24,7 @@ const corsOptions = {
 // But if you ever want to handle form submissions or POST requests with URL-encoded data, this middleware is necessary.
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(cors(corsOptions));
 
