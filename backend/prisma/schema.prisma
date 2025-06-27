@@ -29,7 +29,7 @@ model User {
 
 model RefreshToken {
   id         Int      @id @default(autoincrement())
-  token      String   // You can store hashed token here for security
+  token      String   @unique// You can store hashed token here for security
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     Int
   createdAt  DateTime @default(now())

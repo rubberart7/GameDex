@@ -16,6 +16,12 @@ const corsOptions = {
     credentials: true
 }
 
+// app.use(express.urlencoded({ extended: false }));
+
+// If your frontend only sends JSON (like in your login/register fetch requests), you don't necessarily need express.urlencoded().
+
+// But if you ever want to handle form submissions or POST requests with URL-encoded data, this middleware is necessary.
+
 app.use(express.json());
 
 app.use(cors(corsOptions));
