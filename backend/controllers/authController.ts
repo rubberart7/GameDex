@@ -49,7 +49,9 @@ const hashPassword = async (password: string): Promise<string> => {
 };
 
 export const register = async (
-  req: Request<{}, {}, RegisterRequestBody>,
+  req: Request<{}, {}, RegisterRequestBody>
+  // the request body thing is basically saying the type of information the request body should conform to
+  ,
   res: Response
 ) => {
   const { fullName, email, password } = req.body;
@@ -85,14 +87,14 @@ export const login = async (
 
   if (!email || !password) {
     res.status(400).json({ message: "Please enter all fields", type: "Error" });
-    return
+    return;
   }
 
   const user = await findUserByEmail(email);
 
   if (!user) {
     res.status(400).json({ message: "Username not correct!", type: "Error" });
-    return
+    return;
   }
 
   const isCorrectPassword = await bcrypt.compare(password, user.password);
@@ -113,11 +115,16 @@ export const login = async (
   const accessToken = generateAccessToken(user.id, user.email, accessTokenSecret);
   const refreshToken = generateRefreshToken(user.id, user.email, refreshTokenSecret);
 
-  const expiresInMs = 15 * 60 * 1000;
+  const oneDayMs = 24 * 60 * 60 * 1000;
 
-  await associateRefreshToken(user.id, refreshToken, expiresInMs);
+  await associateRefreshToken(user.id, refreshToken, oneDayMs);
 
-  res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+  res.cookie('jwt', refreshToken, { 
+    httpOnly: true, 
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'lax', 
+    maxAge: oneDayMs 
+  });
 
   // The backend sets the refresh token as a secure, HTTP-only cookie:
   
@@ -133,10 +140,24 @@ export const login = async (
 
 export const logout = async (req: Request, res: Response) => {
   try {
+    const refreshToken = req.cookies.jwt;
+
+    if (refreshToken) {
+      await prisma.refreshToken.delete({
+        where: { token: refreshToken },
+      });
+
+      // OR revoke it instead of deleting
+      // await prisma.refreshToken.update({
+      //   where: { token: refreshToken },
+      //   data: { revoked: true },
+      // });
+    }
+
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "lax" });
     res.status(200).json({ message: "Logged out" });
-    return;
   } catch (error) {
-    res.status(500).json({message: "Could not logout successfully."});
+    res.status(500).json({ message: "Could not logout successfully." });
   }
 };
+
