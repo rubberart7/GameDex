@@ -115,15 +115,16 @@ export const login = async (
   const accessToken = generateAccessToken(user.id, user.email, accessTokenSecret);
   const refreshToken = generateRefreshToken(user.id, user.email, refreshTokenSecret);
 
-  const oneDayMs = 24 * 60 * 60 * 1000;
+  // const oneDayMs = 24 * 60 * 60 * 1000;
+  const oneMin = 60000
 
-  await associateRefreshToken(user.id, refreshToken, oneDayMs);
+  await associateRefreshToken(user.id, refreshToken, oneMin);
 
   res.cookie('jwt', refreshToken, { 
     httpOnly: true, 
     secure: false, 
     sameSite: 'lax', 
-    maxAge: oneDayMs 
+    maxAge: oneMin 
   });
 
   console.log("Refresh token cookie sent.");
