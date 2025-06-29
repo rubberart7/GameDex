@@ -5,67 +5,47 @@ import Button from "./Button";
 import Link from "next/link";
 import LoginIcon from "../icons/LoginIcon";
 import EyeToggle from "./EyeToggle";
+import { useAuth } from "@/app/context/AuthContent"; // 👈 import auth context
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "" }>({
+    message: "",
+    type: "",
+  });
 
-  const [feedback, setFeedback] = useState<{
-    message: string;
-    type: "Error" | "Success" | "";
-  }>({ message: "", type: "" });
-
-  function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setEmail(event.target.value);
-    setFeedback({ message: "", type: "" });
-  }
-
-  function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setPassword(event.target.value);
-    setFeedback({ message: "", type: "" });
-  }
+  const { setAccessToken } = useAuth(); // 👈 set token after login
 
   async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    const data = { email, password };
 
     try {
       const response = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        credentials: "include", // 👈 include cookies
+        body: JSON.stringify({ email, password }),
       });
 
-      let result;
-      try {
-        result = await response.json();
-      } catch {
-        result = { message: "Invalid server response" };
-      }
+      const result = await response.json();
 
       if (!response.ok) {
-        setFeedback({
-          message: result.message || "Login failed",
-          type: "Error",
-        });
+        setFeedback({ message: result.message || "Login failed", type: "Error" });
         return;
       }
 
-      setFeedback({
-        message: result.message || "Login successful!",
-        type: "Success",
-      });
+      if (result.accessToken) {
+        console.log(result.accessToken);
+        setAccessToken(result.accessToken); // ✅ store token
+      }
 
-      // Clear form
+      setFeedback({ message: result.message || "Login successful!", type: "Success" });
       setEmail("");
       setPassword("");
     } catch (error) {
-      setFeedback({
-        message: "Network error: Could not reach server",
-        type: "Error",
-      });
+      setFeedback({ message: "Network error: Could not reach server", type: "Error" });
     }
   }
 
@@ -78,70 +58,46 @@ const LoginForm = () => {
           onSubmit={sendToBackend}
         >
           <div className="text-center mb-4">
-            <h1 className="text-2xl font-bold text-gray-100 mb-2">
-              Login to GameDex
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-100 mb-2">Login to GameDex</h1>
             <p className="text-sm text-gray-400">
               Enter your credentials to sign in to your account.
             </p>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-sm font-medium text-gray-300">
-              Email
-            </label>
+            <label htmlFor="email" className="text-sm font-medium text-gray-300">Email</label>
             <input
               type="email"
               id="email"
               value={email}
-              className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1
-                         focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
-                         placeholder-gray-500 transition-colors"
+              onChange={(e) => { setEmail(e.target.value); setFeedback({ message: "", type: "" }); }}
+              className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none placeholder-gray-500 transition-colors"
               placeholder="name@example.com"
-              onChange={handleEmailChange}
             />
           </div>
 
           <div className="flex flex-col gap-2 relative">
-            <label htmlFor="password" className="text-sm font-medium text-gray-300">
-              Password
-            </label>
+            <label htmlFor="password" className="text-sm font-medium text-gray-300">Password</label>
             <input
               type={isPasswordVisible ? "text" : "password"}
               id="password"
               value={password}
-              className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1
-                         focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none
-                         placeholder-gray-500 transition-colors"
+              onChange={(e) => { setPassword(e.target.value); setFeedback({ message: "", type: "" }); }}
+              className="rounded-lg border border-gray-700 bg-gray-800 text-gray-100 px-4 py-1 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none placeholder-gray-500 transition-colors"
               placeholder="••••••••"
-              onChange={handlePasswordChange}
             />
-            <div className="absolute right-4 top-8.75">
-              <EyeToggle
-                isVisible={isPasswordVisible}
-                toggle={() => setIsPasswordVisible(!isPasswordVisible)}
-              />
+            <div className="absolute right-4 top-8.5">
+              <EyeToggle isVisible={isPasswordVisible} toggle={() => setIsPasswordVisible(!isPasswordVisible)} />
             </div>
           </div>
 
           {feedback.message && (
-            <div
-              className={`p-3 rounded text-center font-semibold ${
-                feedback.type === "Error"
-                  ? "bg-red-100 text-red-700 border border-red-400"
-                  : "bg-green-100 text-green-700 border border-green-400"
-              }`}
-              aria-live="polite"
-            >
+            <div className={`p-3 rounded text-center font-semibold ${feedback.type === "Error" ? "bg-red-100 text-red-700 border border-red-400" : "bg-green-100 text-green-700 border border-green-400"}`}>
               {feedback.message}
             </div>
           )}
 
-          <Button
-            variant="default"
-            size="lg"
-            className="w-full mt-2 flex items-center justify-center gap-2 bg-gray-950 h-12"
-          >
+          <Button variant="default" size="lg" className="w-full mt-2 flex items-center justify-center gap-2 bg-gray-950 h-12">
             <LoginIcon className="w-5 h-5" />
             Login
           </Button>
@@ -149,10 +105,7 @@ const LoginForm = () => {
           <div className="border-t border-gray-700 my-2"></div>
 
           <p className="text-sm text-center text-gray-400">
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-gray-400 underline">
-              Sign Up
-            </Link>
+            Don&apos;t have an account? <Link href="/signup" className="text-gray-400 underline">Sign Up</Link>
           </p>
         </form>
       </div>

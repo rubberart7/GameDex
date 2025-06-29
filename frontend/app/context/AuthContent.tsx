@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           method: "GET",
           credentials: "include", // Sends the refresh token cookie
         });
+        // 
 
         const data = await res.json();
 

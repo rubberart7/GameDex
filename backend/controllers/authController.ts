@@ -121,10 +121,12 @@ export const login = async (
 
   res.cookie('jwt', refreshToken, { 
     httpOnly: true, 
-    secure: process.env.NODE_ENV === 'production', 
+    secure: false, 
     sameSite: 'lax', 
     maxAge: oneDayMs 
   });
+
+  console.log("Refresh token cookie sent.");
 
   // The backend sets the refresh token as a secure, HTTP-only cookie:
   
@@ -154,9 +156,10 @@ export const logout = async (req: Request, res: Response) => {
       // });
     }
 
-    res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "lax" });
+    res.clearCookie("jwt", { httpOnly: true, secure: false, sameSite: "lax" });
     res.status(200).json({ message: "Logged out" });
   } catch (error) {
+    console.error("Logout error:", error);
     res.status(500).json({ message: "Could not logout successfully." });
   }
 };

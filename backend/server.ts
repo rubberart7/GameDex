@@ -24,9 +24,11 @@ const corsOptions = {
 // But if you ever want to handle form submissions or POST requests with URL-encoded data, this middleware is necessary.
 
 app.use(express.json());
+app.use(cors(corsOptions));
+
 app.use(cookieParser());
 
-app.use(cors(corsOptions));
+
 
 // Your backend (running at http://localhost:4000) is allowing cross-origin requests from your frontend (at http://localhost:3000).
 
