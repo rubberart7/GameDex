@@ -2,6 +2,8 @@ import React from "react";
 import Button from "./components/ui/Button";
 import HomeNavBar from "./components/ui/HomeNavBar";
 import Link from "next/link";
+import LogoutButton from "./components/ui/LogoutButton";
+
 
 export default function Home() {
   return (
@@ -48,7 +50,10 @@ export default function Home() {
                 Check New Page
               </Button>
             </Link>
-
+            
+            <LogoutButton>
+              
+            </LogoutButton>
             
           </div>
         </div>
