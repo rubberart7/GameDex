@@ -11,7 +11,7 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
   const cookies = req.cookies;
 
   if (!cookies?.jwt) {
-    res.status(401).json({ message: "No refresh token cookie" });
+    res.status(401).json({ message: "No refresh token cookie." });
     return;
   }
 

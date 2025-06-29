@@ -1,10 +1,14 @@
 import React from 'react'
+import RequireAuth from '../components/RequireAuth'
 
 const TestingPage = () => {
   return (
-    <div>
-      <h1>This page is to test if user is logged in.</h1>
-    </div>
+    <RequireAuth>
+      <div>
+        <h1>You are logged in!</h1>
+      </div>
+    </RequireAuth>
+    
   )
 }
 

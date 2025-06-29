@@ -14,6 +14,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
+// by default this is what the authentication is like
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,6 +50,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider value={{ accessToken, setAccessToken, loading }}>
       {children}
     </AuthContext.Provider>
+    // This is how React Context API works. A Provider makes a value available to all child components in the component tree.
+
+// You're wrapping your app (or part of it) with this provider so that any component can use useAuth() to access the auth state.
   );
 };
 
