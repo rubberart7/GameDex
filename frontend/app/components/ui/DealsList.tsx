@@ -12,9 +12,9 @@ const DealsList = async () => {
 
     return (
         <div>
-        {deals.map((deal) => (
-            <DealRow key={deal.title} deal={deal}/>
-        ))}
+            {deals.map((deal) => (
+                <DealRow key={deal.dealID} deal={deal}/>
+            ))}
         </div>
     )
 }

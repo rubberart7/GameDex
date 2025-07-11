@@ -10,4 +10,4 @@ const DealsPage = () => {
   )
 }
 
-export default DealsPage
+export default DealsPage;

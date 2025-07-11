@@ -9,16 +9,39 @@ body {
 /* Sidebar Links code */
 
 .full-link-itm {
-    padding: 10px;
-  transition: 
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),      /* Smooth transform transition with easing */
-    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), /* Smooth background color transition */
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);           /* Smooth text color transition */
-  cursor: pointer;          /* Cursor changes to pointer on hover for better UX */
-  user-select: none;        /* Prevent text selection when clicking or dragging */
-  will-change: transform, background-color, color; /* Hint to browser to optimize these properties */
-  border-radius: 0.5rem;    /* Rounded corners for a smooth, pill-like shape */
+  padding: 10px;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+  will-change: transform, background-color, color, box-shadow;
+  border-radius: 0.5rem;
+  backdrop-filter: blur(2px); /* Subtle depth effect */
 }
+
+.full-link-itm:hover,
+.full-link-itm:focus {
+  background-color: #334155;
+  color: white;
+  transform: scale(1.05);
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Soft hover shadow */
+}
+
+.side-bar-icon {
+  transition: transform 0.3s ease, filter 0.3s ease;
+  will-change: transform, filter;
+}
+
+.full-link-itm:hover .side-bar-icon,
+.full-link-itm:focus .side-bar-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6)); /* blue glow */
+}
+
 
 .full-link-itm:hover,
 .full-link-itm:focus {

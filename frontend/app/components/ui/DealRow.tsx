@@ -1,6 +1,7 @@
 import React from 'react'
 
 export interface Deal {
+    dealID: string;
     thumb: string;
     title: string;
     salePrice: string;
@@ -13,11 +14,11 @@ export interface GameRowProp {
 
 const DealRow: React.FC<GameRowProp>= ( { deal } ) => {
   return (
-    <div className='flex'>
+    <div className='flex gap-1'>
       <img src={deal.thumb} alt={deal.title} />
       <h1>{deal.title}</h1>
-      <span>{deal.salePrice}</span>
-      <span>{deal.salePrice}</span>
+      <span>Sales Price: ${deal.salePrice}</span>
+      <span>Normal Price: ${deal.normalPrice}</span>
     </div>
   )
 }
