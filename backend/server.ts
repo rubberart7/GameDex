@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import gameRoutes from './routes/gamesRoute';
 import authRouter from './routes/authRoute'
+import dealsRoutes from './routes/dealsRoute'
 import errorHandler from './middleware/error';
 import cookieParser from "cookie-parser";
 
@@ -35,8 +36,10 @@ app.use(cookieParser());
 // This is what lets your React (or other frontend) app make fetch() or axios calls to your backend without getting blocked by the browser's CORS policy.
 
 app.use('/api', gameRoutes);
+app.use('/api', dealsRoutes);
 // this will end up being my localhost:4000/api/games
 app.use('/api/auth', authRouter)
+
 
 app.use(errorHandler);
 
