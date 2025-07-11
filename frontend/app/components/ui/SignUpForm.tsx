@@ -7,6 +7,7 @@ import Link from 'next/link';
 import SignUpIcon from '../icons/SignUpIcon';
 import EyeToggle from './EyeToggle';
 
+
 const SignUpForm = () => {
     
     const [fullName, setFullName] = useState<string>("");

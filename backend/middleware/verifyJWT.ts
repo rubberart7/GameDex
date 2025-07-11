@@ -57,6 +57,7 @@ export const verifyJWT = (
 
     //  Attach decoded user info to req.user:
     // Now the request contains the user info — useful in the next middleware or route handler.
+    // other routes/controller can access this to use it for later
 
 // So in your route handler, you can do something like:
 
