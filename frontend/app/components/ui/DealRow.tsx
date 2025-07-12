@@ -2,6 +2,7 @@
 import React from 'react';
 // Import Store from where it's defined (e.g., from interfaces/Store.ts or the same file if you consolidate)
 import { Store } from './DealsList'; // Assuming Store is defined in DealsList for now, or import from interfaces/Store.ts
+import GameNameClickable from './GameNameClickable';
 
 export interface Deal {
     dealID: string;
@@ -12,6 +13,7 @@ export interface Deal {
     normalPrice: string;
     dealRating: string;
     releaseDate: number;
+    metacriticLink?: string;
 }
 
 export interface GameRowProp {
@@ -59,8 +61,6 @@ const DealRow: React.FC<GameRowProp> = ({ deal, storeInfo }) => {
     // Base URL for CheapShark images. Adjust if you're hosting them differently.
     const CHEAPSHARK_IMG_BASE_URL = "https://www.cheapshark.com";
 
-    
-
     return (
         <tr className="border-b border-gray-700 hover:bg-gray-800 transition-colors duration-200">
             {/* Store Icon/Name */}
@@ -93,7 +93,10 @@ const DealRow: React.FC<GameRowProp> = ({ deal, storeInfo }) => {
             {/* Thumbnail and Title */}
             <td className="px-4 py-3 flex items-center space-x-3">
                 <img src={deal.thumb} alt={deal.title} className="w-16 h-8 object-cover rounded" />
-                <h2 className="text-gray-100 font-medium text-base cursor-pointer">{deal.title}</h2>
+                <GameNameClickable
+                    title={deal.title}
+                    metacriticLink={deal.metacriticLink}
+                />
             </td>
 
             {/* Deal Rating */}
