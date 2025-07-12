@@ -10,7 +10,7 @@ export const getGenDeals = async (req: Request, res: Response, next: NextFunctio
     try {
         const response = await axios.get(cheapSharkDeals, {
             params : {
-                pageSize: 10,
+                pageSize: 60,
                 sortBy: "Deal Rating"
             }
         });
