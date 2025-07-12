@@ -1,14 +1,47 @@
+// components/DealsList.tsx
 import React from 'react';
 import DealRow, { Deal } from './DealRow';
+// Assuming Store and StoreImage interfaces are defined in interfaces/Store.ts
+// If not, you can keep them directly in this file or create interfaces/Store.ts
+export interface StoreImage {
+  banner: string;
+  logo: string;
+  icon: string; // This is the path to the icon
+}
+
+export interface Store {
+  storeID: string;
+  storeName: string; // This is the store name
+  isActive: number;
+  images: StoreImage;
+}
+
 
 const DealsList = async () => {
 
-    const res = await fetch('http://localhost:4000/api/deals'); 
-    if (!res.ok) {
+    const [dealsRes, storesRes] = await Promise.all([
+        fetch('http://localhost:4000/api/deals'), // Your backend API for deals
+        fetch('http://localhost:4000/api/stores') // Your backend API for stores
+    ]);
+
+    // Handle potential errors for deals fetch
+    if (!dealsRes.ok) {
         throw new Error('Failed to fetch deals!');
     }
-    const deals: Deal[] = await res.json();
-    // treats as an array of deal objects
+    const deals: Deal[] = await dealsRes.json();
+
+    // Handle potential errors for stores fetch
+    if (!storesRes.ok) {
+        console.error('Failed to fetch store data from API.');
+        throw new Error('Failed to fetch store data!');
+    }
+    const stores: Store[] = await storesRes.json();
+
+    // Create a Map for quick lookup of store details by storeID
+    const storeMap = new Map<string, Store>();
+    stores.forEach(store => {
+        storeMap.set(store.storeID, store);
+    });
 
     return (
         <div className="w-full max-w-7xl mx-auto p-4 overflow-x-auto">
@@ -31,9 +64,13 @@ const DealsList = async () => {
                         </tr>
                     </thead>
                     <tbody className="bg-gray-900 divide-y divide-gray-800 text-gray-200">
-                        {deals.map((deal) => (
-                            <DealRow key={deal.dealID} deal={deal} />
-                        ))}
+                        {deals.map((deal) => {
+                            // Correctly look up the single store object for the current deal
+                            const associatedStore = storeMap.get(deal.storeID);
+                            return (
+                                <DealRow key={deal.dealID} deal={deal} storeInfo={associatedStore} />
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
@@ -41,4 +78,4 @@ const DealsList = async () => {
     );
 }
 
-export default DealsList
+export default DealsList;
