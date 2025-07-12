@@ -44,37 +44,58 @@ const DealsList = async () => {
     });
 
     return (
-        <div className="w-full max-w-7xl mx-auto p-4 overflow-x-auto">
-            <div className="bg-gray-900 rounded-lg shadow-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-700">
-                    <thead className="bg-gray-800">
-                        <tr>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                Store
-                            </th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                Price
-                            </th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                Title
-                            </th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                Deal Rating
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-gray-900 divide-y divide-gray-800 text-gray-200">
-                        {deals.map((deal) => {
-                            // Correctly look up the single store object for the current deal
-                            const associatedStore = storeMap.get(deal.storeID);
-                            return (
-                                <DealRow key={deal.dealID} deal={deal} storeInfo={associatedStore} />
-                            );
-                        })}
-                    </tbody>
-                </table>
+        // This is the main section wrapper for the entire deals list content
+        <section className="flex-grow flex flex-col items-center py-8 px-4 bg-gray-950 text-gray-100">
+            {/* Page Title and Description */}
+            <div className="max-w-3xl text-center space-y-6 mb-8"> {/* Added mb-8 for spacing below text */}
+                <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
+                    Discover the{" "}
+                    <span className="bg-gradient-to-r from-blue-500 to-cyan-400 text-transparent bg-clip-text">
+                        Best Game Deals
+                    </span>{" "}
+                    Today
+                </h1>
+                <p className="text-slate-400 text-lg">
+                    Browse our constantly updated catalog of video game deals from across the web. We scour top retailers like Steam, Epic Games, and Humble Bundle to bring you the lowest prices, so you can expand your library without breaking the bank. Find your next game for less!
+                </p>
             </div>
-        </div>
+
+            {/* Existing Table Container */}
+            <div className="w-full max-w-7xl mx-auto p-4 overflow-x-auto">
+                <div className="bg-gray-900 rounded-lg shadow-lg overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-700">
+                        <thead className="bg-gray-800">
+                            <tr>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    Store
+                                </th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    Price
+                                </th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    Title
+                                </th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    Deal Rating
+                                </th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    Release Date
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-gray-900 divide-y divide-gray-800 text-gray-200">
+                            {deals.map((deal) => {
+                                // Correctly look up the single store object for the current deal
+                                const associatedStore = storeMap.get(deal.storeID);
+                                return (
+                                    <DealRow key={deal.dealID} deal={deal} storeInfo={associatedStore} />
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     );
 }
 
