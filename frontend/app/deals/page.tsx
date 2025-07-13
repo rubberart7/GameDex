@@ -4,10 +4,6 @@ import HomeNavBar from '../components/ui/HomeNavBar';
 
 const DealsPage = () => {
   return (
-    // <div>
-    //   <h1>Welcome to the deals page.</h1>
-    //   <DealsList/>
-    // </div>
     <main>
       <HomeNavBar></HomeNavBar>
 
