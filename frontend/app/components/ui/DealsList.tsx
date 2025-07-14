@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import DealRow, { Deal } from './DealRow';
-
 // Assuming Store and StoreImage interfaces are defined here or in interfaces/Store.ts
 // It's generally good practice to put interfaces in a separate file like `types/index.ts` or `interfaces/index.ts`
 // but for this full code example, I'll keep them here for completeness.
