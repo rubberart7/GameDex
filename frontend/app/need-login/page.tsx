@@ -1,5 +1,5 @@
 import React from "react";
-import HomeNavBar from "../components/ui/HomeNavBar";
+import HomeNavBar from "../components/ui/navigation/HomeNavBar";
 
 export default function NeedLogin() {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
-import DealsList from '../components/ui/DealsList';
-import HomeNavBar from '../components/ui/HomeNavBar';
+import DealsList from '../components/ui/deals/DealsList';
+import HomeNavBar from '../components/ui/navigation/HomeNavBar';
 
 const DealsPage = () => {
   return (

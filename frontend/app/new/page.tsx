@@ -1,6 +1,6 @@
 import React from 'react'
-import RequireAuth from '../components/RequireAuth'
-import HomeNavBar from '../components/ui/HomeNavBar'
+import RequireAuth from '../components/ui/auth/RequireAuth'
+import HomeNavBar from '../components/ui/navigation/HomeNavBar'
 
 const TestingPage = () => {
   return (

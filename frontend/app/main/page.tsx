@@ -1,6 +1,6 @@
 import React from 'react'
-import LeftSideBar from '../components/ui/LeftSideBar';
-import GamesList from '../components/ui/GamesList';
+import LeftSideBar from '../components/ui/navigation/LeftSideBar';
+import GamesList from '../components/ui/games/GamesList';
 
 const MainPage = () => {
 

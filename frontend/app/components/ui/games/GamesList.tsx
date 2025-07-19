@@ -1,5 +1,5 @@
 import React from 'react';
-import GameCard, { Game } from '../GameCard';
+import GameCard, { Game } from './GameCard';
 
 const GamesList = async () => {
 //   1. How it's connected to the backend
@@ -14,6 +14,7 @@ const GamesList = async () => {
   const data = await res.json();
 
   const games: Game[] = data.results;
+  // make the games into an array of Game props so that GameCard can recieve it as a prop
 
   return (
     <div className="games-list bg-slate-950 grid grid-cols-[repeat(auto-fit,minmax(205px,1fr))] gap-8 p-10">

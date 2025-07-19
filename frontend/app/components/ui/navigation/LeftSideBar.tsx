@@ -1,18 +1,18 @@
 import React from 'react';
 import Link from 'next/link';
-import StoreIcon from '../icons/StoreIcon';
-import TopSellersIcon from '../icons/TopSellersIcon';
-import UpcomingGamesIcon from '../icons/UpcomingGamesIcon';
-import DealsIcon from '../icons/DealsIcon';
-import ProfileIcon from '../icons/ProfileIcon';
-import WishListIcon from '../icons/WishListIcon';
-import LibraryIcon from '../icons/LibraryIcon';
-import SettingsIcon from '../icons/SettingsIcon';
-import HomeIcon from '../icons/HomeIcon';
-import BrowseGamesIcon from '../icons/BrowseGamesIcon';
-import NewReleasesIcon from '../icons/NewReleasesIcon';
-import ProjectLogo from '../icons/ProjectLogo';
-import LoginIcon from '../icons/LoginIcon';
+// import StoreIcon from '../icons/StoreIcon';
+// import TopSellersIcon from '../icons/TopSellersIcon';
+// import UpcomingGamesIcon from '../icons/UpcomingGamesIcon';
+import DealsIcon from '../../icons/DealsIcon';
+import ProfileIcon from '../../icons/ProfileIcon';
+// import WishListIcon from '../icons/WishListIcon';
+import LibraryIcon from '../../icons/LibraryIcon';
+import SettingsIcon from '../../icons/SettingsIcon';
+import HomeIcon from '../../icons/HomeIcon';
+import BrowseGamesIcon from '../../icons/BrowseGamesIcon';
+// import NewReleasesIcon from '../icons/NewReleasesIcon';
+import ProjectLogo from '../../icons/ProjectLogo';
+// import LoginIcon from '../icons/LoginIcon';
 
 const LeftSideBar = () => {
   return (

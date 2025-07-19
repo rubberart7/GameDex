@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { useState } from 'react';
-import Button from './Button';
+import Button from '../common/Button';
 import Link from 'next/link';
-import SignUpIcon from '../icons/SignUpIcon';
-import EyeToggle from './EyeToggle';
+import SignUpIcon from '../../icons/SignUpIcon';
+import EyeToggle from '../common/EyeToggle';
 
 
 const SignUpForm = () => {

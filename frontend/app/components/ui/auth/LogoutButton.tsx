@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
-import Button from "./Button";
+import Button from "../common/Button";
 
 const LogoutButton = () => {
   const { setAccessToken } = useAuth();

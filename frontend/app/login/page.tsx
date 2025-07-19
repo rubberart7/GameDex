@@ -1,6 +1,6 @@
 import React from 'react';
-import HomeNavBar from '../components/ui/HomeNavBar';
-import LoginForm from '../components/ui/LoginForm';
+import HomeNavBar from '../components/ui/navigation/HomeNavBar';
+import LoginForm from '../components/ui/auth/LoginForm';
 
 const LoginPage = () => {
   return (

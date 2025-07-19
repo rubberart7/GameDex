@@ -1,8 +1,8 @@
 import React from 'react';
-import ProjectLogo from '../icons/ProjectLogo';
-import Button from './Button';
-import LoginIcon from '../icons/LoginIcon';
-import SignUpIcon from '../icons/SignUpIcon';
+import ProjectLogo from '../../icons/ProjectLogo';
+import Button from '../common/Button';
+import LoginIcon from '../../icons/LoginIcon';
+import SignUpIcon from '../../icons/SignUpIcon';
 import Link from 'next/link';
 
 const HomeNavBar = () => {

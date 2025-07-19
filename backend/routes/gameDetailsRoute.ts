@@ -3,6 +3,6 @@ import { getGameDetails } from '../controllers/gameDetailsController';
 
 const router = Router();
 
-router.get('/games', getGameDetails);
+router.get('/games/game/:id', getGameDetails);
 
 export default router;

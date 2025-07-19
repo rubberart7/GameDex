@@ -1,9 +1,8 @@
 import React from "react";
-import Button from "./components/ui/Button";
-import HomeNavBar from "./components/ui/HomeNavBar";
+import Button from "./components/ui/common/Button";
+import HomeNavBar from "./components/ui/navigation/HomeNavBar";
 import Link from "next/link";
-import LogoutButton from "./components/ui/LogoutButton";
-
+import LogoutButton from "./components/ui/auth/LogoutButton";
 
 export default function Home() {
   return (

@@ -2,8 +2,7 @@
 import React from 'react';
 // Import Store from where it's defined (e.g., from interfaces/Store.ts or the same file if you consolidate)
 import { Store } from './DealsList'; // Assuming Store is defined in DealsList for now, or import from interfaces/Store.ts
-import GameNameClickable from './GameNameClickable';
-
+import GameNameClickable from '../games/GameNameClickable';
 export interface Deal {
     dealID: string;
     storeID: string;
