@@ -78,7 +78,7 @@ const LeftSideBar = () => {
             WishList
           </Link> */}
 
-          <Link href="/library" key="Library" className="full-link-itm flex gap-2 items-center text-lg">
+          <Link href="/games-library" key="Library" className="full-link-itm flex gap-2 items-center text-lg">
             <LibraryIcon className="side-bar-icon h-6 w-6" />
             Library
           </Link>

@@ -5,7 +5,7 @@ import Button from "./Button";
 import Link from "next/link";
 import LoginIcon from "../icons/LoginIcon";
 import EyeToggle from "./EyeToggle";
-import { useAuth } from "@/app/context/AuthContent"; // 👈 import auth context
+import { useAuth } from "@/app/context/AuthContext"; // 👈 import auth context
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>("");
