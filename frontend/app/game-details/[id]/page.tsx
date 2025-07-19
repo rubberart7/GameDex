@@ -6,7 +6,6 @@ import { useParams } from 'next/navigation'; // For Next.js App Router
 // Adjust paths based on your current components folder structure:
 import GameDetailsCard from '../../components/ui/games/GameDetailsCard';
 import HomeNavBar from '../../components/ui/navigation/HomeNavBar';
-import LeftSideBar from '../../components/ui/navigation/LeftSideBar';
 
 const GameDetailsPage = () => {
   const params = useParams();

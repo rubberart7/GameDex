@@ -2,11 +2,13 @@ import express from 'express'
 import cors from 'cors'
 import gameRoutes from './routes/gamesRoute';
 import authRouter from './routes/authRoute';
-import dealsRoutes from './routes/dealsRoute';
+import dealsRouter from './routes/dealsRoute';
 import storesRouter from './routes/storesRouter';
+import userFeaturesRouter from './routes/userFeaturesRouter'
 import gameDetailsRoute from './routes/gameDetailsRoute'
 import errorHandler from './middleware/error';
 import cookieParser from "cookie-parser";
+
 
 const PORT = 4000;
 
@@ -39,10 +41,11 @@ app.use(cookieParser());
 
 app.use('/api', gameRoutes);
 app.use('/api', gameDetailsRoute)
-app.use('/api', dealsRoutes);
+app.use('/api', dealsRouter);
 app.use('/api', storesRouter);
 // this will end up being my localhost:4000/api/games
 app.use('/api/auth', authRouter)
+app.use('/api/user', userFeaturesRouter);
 
 
 app.use(errorHandler);

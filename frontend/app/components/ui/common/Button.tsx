@@ -20,7 +20,11 @@ const buttonVariants = cva(
         link:
           "text-blue-400 underline-offset-4 hover:underline focus:ring-blue-500",
         signup:
-          "bg-slate-800 text-white hover:bg-slate-900 focus:slate-700 flex gap-2"
+          "bg-slate-800 text-white hover:bg-slate-900 focus:slate-700 flex gap-2",
+        addToWishList:
+        "w-full py-3 mb-6 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md font-semibold transition duration-200 shadow-sm",
+        addToLibrary:
+        "w-full py-3 mb-3 bg-blue-600 hover:bg-blue-700 rounded-md font-semibold text-white transition duration-200 shadow-md"
         
 
       },

@@ -1,6 +1,8 @@
 // frontend/app/components/ui/games/GameDetailsCard.tsx
 
 import React, { useState } from 'react';
+import Button from '@/app/components/ui/common/Button';
+
 
 // Define a type for the game data (simplified for this example)
 interface GameDetails {
@@ -208,12 +210,18 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             </div>
           </div>
 
-          <button className="w-full py-3 mb-3 bg-blue-600 hover:bg-blue-700 rounded-md font-semibold text-white transition duration-200 shadow-md"> {/* Blue button, shadow */}
+          {/* <button className="w-full py-3 mb-3 bg-blue-600 hover:bg-blue-700 rounded-md font-semibold text-white transition duration-200 shadow-md">
             Add to Library
           </button>
-          <button className="w-full py-3 mb-6 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md font-semibold transition duration-200 shadow-sm"> {/* Darker border, hover effect */}
+          <button className="w-full py-3 mb-6 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md font-semibold transition duration-200 shadow-sm"> 
             Add to Wishlist
-          </button>
+          </button> */}
+          <Button variant="addToLibrary">
+            Add to Library
+          </Button>
+          <Button variant="addToWishList">
+            Add to Wishlist
+          </Button>
 
           <div className="text-xs text-slate-400 mb-6 border-b border-slate-800 pb-4"> {/* Added subtle border bottom */}
             <div className="flex justify-between mb-1">
