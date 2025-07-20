@@ -6,6 +6,7 @@ interface AuthContextType {
   accessToken: string | null;
   setAccessToken: (token: string | null) => void;
   loading: boolean;
+  fetchNewAccessToken: () => Promise<string | null>;
 }
 
 // This defines the shape of the context object. In other words, when you create the AuthContext, it must have these 3 things:
@@ -14,6 +15,7 @@ const AuthContext = createContext<AuthContextType>({
   accessToken: null,
   setAccessToken: () => {},
   loading: true,
+  fetchNewAccessToken: async () => null
 });
 
 // creates the actual context with default initial values, in my case i wrapped the entire App with Auth Provider meaning it can be 
@@ -33,36 +35,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchToken() {
-      try {
-        const res = await fetch("http://localhost:4000/api/auth/refresh", {
-          method: "GET",
-          credentials: "include", // Sends the refresh token cookie
-        });
-        // 
+  const fetchNewAccessToken = async (): Promise<string | null> => {
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/refresh", {
+        method: "GET",
+        credentials: "include", // Sends the refresh token cookie
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (res.ok && data.accessToken) {
-          setAccessToken(data.accessToken);
-        } else {
-          setAccessToken(null);
-        }
-      } catch (err) {
-        console.error("Token refresh failed", err);
-        setAccessToken(null);
-      } finally {
-        setLoading(false);
+      if (res.ok && data.accessToken) {
+        setAccessToken(data.accessToken);
+        return data.accessToken; // Return the new token
+      } else {
+        setAccessToken(null); // Clear token if refresh failed
+        return null;
       }
+    } catch (err) {
+      console.error("Token refresh failed", err);
+      setAccessToken(null);
+      return null;
     }
+  };
 
-    fetchToken();
+  useEffect(() => {
+    // Modify initial fetch to use the new fetchNewAccessToken
+    async function initAuth() {
+      await fetchNewAccessToken(); // Perform initial token fetch
+      setLoading(false); // Only set loading to false after initial fetch attempt
+    }
+    initAuth();
   }, []);
   // use effect on first mount, runs only once when the component is mounted and gets the access token by hitting my backend
 
   return (
-    <AuthContext.Provider value={{ accessToken, setAccessToken, loading }}>
+    <AuthContext.Provider value={{ accessToken, setAccessToken, loading, fetchNewAccessToken }}>
       {children}
     </AuthContext.Provider>
 //  This is the core purpose of the AuthProvider: to provide the AuthContext to all nested components.

@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Button from '@/app/components/ui/common/Button';
+import { useAuth } from '@/app/context/AuthContext';
+import { useRouter } from 'next/router';
 
 
 // Define a type for the game data (simplified for this example)
@@ -30,6 +32,9 @@ interface GameDetailsCardProps {
 
 const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
   const [showTrailer, setShowTrailer] = useState(true); // Control showing trailer or screenshots
+  const { accessToken, loading } = useAuth();
+  const router = useRouter();
+
 
   if (!game) {
     return (
@@ -53,6 +58,30 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       if (tag.slug === 'co-op') return 'Co-Op';
       return tag.name; // Fallback for other tags
   });
+  const handleAddToWishList = async () => {
+	if (!accessToken) {
+		router.push("/need-login");
+	}
+
+	try {
+		const response = await fetch(`http://localhost:4000/api/user/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`, // Send the access token
+        },
+        credentials: 'include', // Important: Ensures cookies (like refresh token) are sent
+        body: JSON.stringify({ gameId: game.id }), // Send the RAWG game ID
+      });
+	} catch (error) {
+
+	}
+	
+  }
+
+  const handleAddToLibrary = () => {
+	
+  }
 
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen p-8 flex justify-center"> {/* Deeper background */}
