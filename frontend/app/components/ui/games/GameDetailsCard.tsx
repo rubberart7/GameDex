@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import Button from '@/app/components/ui/common/Button';
 import { useAuth } from '@/app/context/AuthContext';
-import { useRouter } from 'next/router';
-
+import { useRouter } from 'next/navigation'; // <-- Change this line
 
 // Define a type for the game data (simplified for this example)
 interface GameDetails {
@@ -32,8 +31,10 @@ interface GameDetailsCardProps {
 
 const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
   const [showTrailer, setShowTrailer] = useState(true); // Control showing trailer or screenshots
-  const { accessToken, loading } = useAuth();
+  const { accessToken, loading: authLoading } = useAuth();
   const router = useRouter();
+
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
 
 
   if (!game) {
@@ -58,30 +59,43 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       if (tag.slug === 'co-op') return 'Co-Op';
       return tag.name; // Fallback for other tags
   });
+
   const handleAddToWishList = async () => {
 	if (!accessToken) {
 		router.push("/need-login");
 	}
 
-	try {
-		const response = await fetch(`http://localhost:4000/api/user/${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`, // Send the access token
-        },
-        credentials: 'include', // Important: Ensures cookies (like refresh token) are sent
-        body: JSON.stringify({ gameId: game.id }), // Send the RAWG game ID
-      });
-	} catch (error) {
+	setIsAddingToWishlist(true);
 
+	try {
+		const response = await fetch(`http://localhost:4000/api/user/wishlist`, {
+			method: 'POST',
+			headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${accessToken}`, // Send the access token
+			},
+			credentials: 'include', // Important: Ensures cookies (like refresh token) are sent
+			body: JSON.stringify({ gameId: game.id }), // Send the RAWG game ID
+      	});
+
+		if (response.ok) {
+			console.log(`Successfully sent ${game.name} (ID: ${game.id}`)
+		}
+	} catch (error) {
+		console.log("Error fetching api for adding to wishlist", error);
+	} finally {
+		setIsAddingToWishlist(false);
 	}
 	
   }
 
   const handleAddToLibrary = () => {
-	
+	return;
   }
+
+  const isWishlistButtonDisabled = authLoading || isAddingToWishlist;
+
+  const wishlistButtonText = authLoading ? 'Checking Login...' : 'Add to Wishlist';
 
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen p-8 flex justify-center"> {/* Deeper background */}
@@ -248,8 +262,16 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
           <Button variant="addToLibrary">
             Add to Library
           </Button>
-          <Button variant="addToWishList">
-            Add to Wishlist
+          <Button
+            variant="addToWishList"
+            onClick={handleAddToWishList}
+            // Use both authLoading and isAddingToWishlist for the button's loading state
+            loading={isWishlistButtonDisabled}
+            // Disable if authentication is loading or if the wishlist POST request is in progress
+            disabled={isWishlistButtonDisabled}
+            loadingText={authLoading ? 'Checking Login...' : 'Adding...'} // Dynamic loading text
+          >
+            {wishlistButtonText} {/* Dynamic button text */}
           </Button>
 
           <div className="text-xs text-slate-400 mb-6 border-b border-slate-800 pb-4"> {/* Added subtle border bottom */}

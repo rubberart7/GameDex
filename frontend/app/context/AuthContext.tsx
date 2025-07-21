@@ -6,7 +6,6 @@ interface AuthContextType {
   accessToken: string | null;
   setAccessToken: (token: string | null) => void;
   loading: boolean;
-  fetchNewAccessToken: () => Promise<string | null>;
 }
 
 // This defines the shape of the context object. In other words, when you create the AuthContext, it must have these 3 things:
@@ -15,7 +14,6 @@ const AuthContext = createContext<AuthContextType>({
   accessToken: null,
   setAccessToken: () => {},
   loading: true,
-  fetchNewAccessToken: async () => null
 });
 
 // creates the actual context with default initial values, in my case i wrapped the entire App with Auth Provider meaning it can be 
@@ -69,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // use effect on first mount, runs only once when the component is mounted and gets the access token by hitting my backend
 
   return (
-    <AuthContext.Provider value={{ accessToken, setAccessToken, loading, fetchNewAccessToken }}>
+    <AuthContext.Provider value={{ accessToken, setAccessToken, loading }}>
       {children}
     </AuthContext.Provider>
 //  This is the core purpose of the AuthProvider: to provide the AuthContext to all nested components.

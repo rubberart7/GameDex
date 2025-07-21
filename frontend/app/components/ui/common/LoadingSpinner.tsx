@@ -1,25 +1,39 @@
-// This component can be placed in a separate file, e.g., components/LoadingSpinner.tsx
-// and then imported into RequireAuth.tsx and DealsList.tsx
+// components/LoadingSpinner.tsx
+// This component can now be imported into Button.tsx, RequireAuth.tsx, DealsList.tsx, etc.
+// for a compact, inline loading indicator.
 
 import React from 'react';
 
-const LoadingSpinner: React.FC = () => {
+// You might consider adding a className prop to this simple spinner
+// so you can adjust its size or margin when it's used in different places.
+interface LoadingSpinnerProps {
+  className?: string;
+}
+
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ className }) => {
   return (
-    <div className="flex items-center justify-center py-8 px-4 bg-gray-950 text-gray-100 min-h-screen">
-      <div className="flex flex-col items-center space-y-4">
-        {/* Spinner */}
-        <div className="relative flex h-16 w-16">
-          <div className="absolute inset-0 rounded-full border-4 border-t-4 border-blue-500 border-opacity-75 animate-spin"></div>
-          <div className="absolute inset-0 rounded-full border-4 border-b-4 border-cyan-400 border-opacity-75 animate-spin-reverse" style={{animationDelay: '-0.5s'}}></div> {/* Spin in reverse, slightly delayed */}
-          <div className="absolute inset-0 rounded-full border-4 border-r-4 border-blue-300 border-opacity-75 animate-spin" style={{animationDelay: '-1s'}}></div>
-          <div className="absolute inset-0 rounded-full border-4 border-l-4 border-cyan-200 border-opacity-75 animate-spin-reverse" style={{animationDelay: '-1.5s'}}></div>
-        </div>
-        {/* Loading Text */}
-        <p className="text-xl font-semibold bg-gradient-to-r from-blue-500 to-cyan-400 text-transparent bg-clip-text animate-pulse">
-          Loading GameDex...
-        </p>
-      </div>
-    </div>
+    <svg
+      // The default classes make it a small, animating circle.
+      // 'text-current' ensures it inherits the color of its parent text.
+      className={`animate-spin h-5 w-5 text-current ${className || ''}`}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      ></circle>
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      ></path>
+    </svg>
   );
 };
 
