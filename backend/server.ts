@@ -4,8 +4,8 @@ import gameRoutes from './routes/gamesRoute';
 import authRouter from './routes/authRoute';
 import dealsRouter from './routes/dealsRoute';
 import storesRouter from './routes/storesRouter';
-import userFeaturesRouter from './routes/userFeaturesRouter'
-import gameDetailsRoute from './routes/gameDetailsRoute'
+import userFeaturesRouter from './routes/userFeaturesRouter';
+import gameDetailsRoute from './routes/gameDetailsRoute';
 import errorHandler from './middleware/error';
 import cookieParser from "cookie-parser";
 

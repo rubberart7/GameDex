@@ -98,7 +98,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
 
       if (!accessToken) {
         setFeedback({ message: 'You must be logged in to do that.', type: 'Error' });
-        router.push('/need-login');
         return;
       }
 
