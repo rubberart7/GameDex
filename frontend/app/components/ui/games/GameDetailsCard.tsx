@@ -63,6 +63,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
   const handleAddToWishList = async () => {
 	if (!accessToken) {
 		router.push("/need-login");
+		return;
 	}
 
 	setIsAddingToWishlist(true);
@@ -80,11 +81,14 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
 
 		if (response.ok) {
 			console.log(`Successfully sent ${game.name} (ID: ${game.id}`)
+			return;
 		}
 	} catch (error) {
 		console.log("Error fetching api for adding to wishlist", error);
+		return;
 	} finally {
 		setIsAddingToWishlist(false);
+		return;
 	}
 	
   }
@@ -94,6 +98,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
   }
 
   const isWishlistButtonDisabled = authLoading || isAddingToWishlist;
+//   wishlist button will be disabled if any one of these is true, so during loading
 
   const wishlistButtonText = authLoading ? 'Checking Login...' : 'Add to Wishlist';
 
@@ -269,7 +274,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             loading={isWishlistButtonDisabled}
             // Disable if authentication is loading or if the wishlist POST request is in progress
             disabled={isWishlistButtonDisabled}
-            loadingText={authLoading ? 'Checking Login...' : 'Adding...'} // Dynamic loading text
+            loadingText={wishlistButtonText} // Dynamic loading text
           >
             {wishlistButtonText} {/* Dynamic button text */}
           </Button>
