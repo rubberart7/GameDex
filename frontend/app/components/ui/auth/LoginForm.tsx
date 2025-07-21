@@ -37,8 +37,7 @@ const LoginForm = () => {
       }
 
       if (result.accessToken) {
-        console.log(result.accessToken);
-        setAccessToken(result.accessToken); // ✅ store token
+        setAccessToken(result.accessToken);
       }
 
       setFeedback({ message: result.message || "Login successful!", type: "Success" });
