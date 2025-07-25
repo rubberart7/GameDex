@@ -5,8 +5,8 @@ import { addToWishlist } from '../controllers/addToWishListController';
 
 const router = Router();
 
-router.post('/library', verifyJWT, addToLibrary);
-router.post('/wishlist', verifyJWT, addToWishlist);
+router.post('/add-to-library', verifyJWT, addToLibrary);
+router.post('/add-to-wishlist', verifyJWT, addToWishlist);
 // the next that executes is this addToLibrary function, the verifyJWT is the middleware
 
 export default router;

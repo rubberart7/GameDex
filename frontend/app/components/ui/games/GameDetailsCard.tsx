@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'; // Corrected import for App Router
 
 // Define a type for the game data (simplified for this example)
 interface GameDetails {
-  id: number;
+  id: number; // CRUCIAL: This ID is sent to the backend as rawgGameId
   name: string;
   description_raw: string; // Plain text description
   background_image: string; // This will be used for the main media and the small logo
@@ -101,7 +101,8 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
         return;
       }
 
-      const endpoint = type === 'wishlist' ? 'wishlist' : 'library';
+      // MODIFIED: Endpoint names changed here
+      const endpoint = type === 'wishlist' ? 'add-to-wishlist' : 'add-to-library';
       const successMessage = type === 'wishlist' ? 'Added to wishlist!' : 'Added to library!';
       const errorMessagePrefix = type === 'wishlist' ? 'wishlist' : 'library';
 
@@ -131,7 +132,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
               body: JSON.stringify({ gameId: game.id }),
             });
             const retryResult = await retryResponse.json();
-            if (retryResponse.ok) {
+            if (retryResult.ok) {
               setFeedback({ message: retryResult.message || successMessage, type: 'Success' });
             } else {
               setFeedback({ message: retryResult.message || `Failed to add game to ${errorMessagePrefix}. Please log in again.`, type: 'Error' });
@@ -169,8 +170,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
   };
 
   // --- Determine button disabled states and text ---
-  // FIXED: Each button's disabled state now only depends on its own 'isAdding' state,
-  // plus the global 'authLoading'. They no longer disable each other.
   const isWishlistButtonDisabled = authLoading || isAddingToWishlist;
   const isLibraryButtonDisabled = authLoading || isAddingToLibrary;
 
@@ -420,21 +419,20 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             <button className="flex items-center text-slate-400 hover:text-blue-400 transition duration-200">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186A.75.75 0 0 1 7.5 10.5h6l2.201 2.834c.304.42-.028.96-.516.96H7.5V15a.75.75 0 0 0 1.5 0v-1.5m-4.782-2.186c0-.923.474-1.744 1.256-2.227L15 2.828V2.25a.75.75 0 0 1 1.5 0v.578A2.25 2.25 0 0 0 18 4.5v.75m-8.782 9.093l-2.92 2.92c-.82.82-.095 2.296 1.006 2.296h8.04c1.101 0 1.826-1.476 1.005-2.296l-2.92-2.92m-6.402-1.138A2.25 2.25 0 1 1 15 10.907M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186A.75.75 0 0 1 7.5 10.5h6l2.201 2.834c.304.42-.028.96-.516.96H7.5V15a.75.75 0 0 0 1.5 0v-1.5m-4.782-2.186c0-.923.474-1.744 1.256-2.227L15 2.828V2.25a.75.75 0 0 1 1.5 0v.578A2.25 2.25 0 0 0 18 4.5v.75m-8.782 9.093l-2.92 2.92c-.82.82-.095 2.296 1.006 2.296h8.04c1.101 0 1.826-1.476 1.005-2.296l-2.92-2.92" />
-              </svg>
-              <span>Share</span>
-            </button>
-            <button className="flex items-center text-slate-400 hover:text-blue-400 transition duration-200">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-              </svg>
-              <span>Report</span>
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
+              </svg>
+              <span>Share</span>
+            </button>
+            <button className="flex items-center text-slate-400 hover:text-blue-400 transition duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+              </svg>
+              <span>Report</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default GameDetailsCard;
