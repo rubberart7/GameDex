@@ -1,7 +1,10 @@
+// frontend/app/components/ui/games/LibraryGameCard.tsx
+"use client";
+
 import React from 'react';
 
 interface GameData {
-  id: number; // This is your local Game ID
+  id: number;
   rawgId: number;
   name: string;
   background_image?: string;
@@ -10,62 +13,96 @@ interface GameData {
 }
 
 interface LibraryItem {
-  id: number; 
+  id: number;
   userId: number;
-  gameId: number; 
+  gameId: number;
   status: string;
-  addedAt: string; 
-  game: GameData; 
+  addedAt: string;
+  game: GameData;
 }
 
 interface LibraryGameCardProps {
   libraryItem: LibraryItem;
+  imageWidth?: string;
+  imageHeight?: string;
 }
 
-const LibraryGameCard: React.FC<LibraryGameCardProps> = ({ libraryItem }) => {
-    const game = libraryItem.game; // Access the nested game object for its details
+const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
+  libraryItem,
+  imageWidth = '215px',
+  imageHeight = '300px'
+}) => {
+  const { game } = libraryItem;
 
-  // Placeholder for future delete logic
   const handleDeleteClick = () => {
-    console.log(`Delete button clicked for game: ${game.name} (Local ID: ${game.id})`);
-    // Logic for actual deletion will go here later
+    console.log(`Attempting to delete game with ID: ${game.id}`);
+    alert('Delete functionality not yet implemented!');
   };
 
   return (
-    <div className="relative group flex flex-col bg-slate-900 rounded-lg overflow-hidden
-                    shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out
-                    min-h-[280px] w-full max-w-[200px] mx-auto cursor-pointer">
-      {/* Game Cover Art */}
-      <div className="relative w-full h-[200px] overflow-hidden">
-        <img
-          src={game.background_image || '/placeholder-game.png'} // Use a placeholder if image is missing
-          alt={game.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
-        />
+    <div className="
+      bg-zinc-900
+      rounded-md
+      overflow-hidden
+      shadow-md
+      transform transition-transform duration-300 hover:scale-108
+      cursor-pointer
+      flex flex-col
+      relative
+    ">
+      {/* Image Container */}
+      <div className="relative overflow-hidden relative-shine"
+           style={{ width: imageWidth, height: imageHeight }}>
+        {game.background_image ? (
+          <img
+            src={game.background_image}
+            alt={game.name}
+            className="w-full h-full object-cover rounded-t-md transition-transform duration-500"
+          />
+        ) : (
+          <div
+            className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400 text-center text-lg rounded-t-md"
+          >
+            No Image Available
+          </div>
+        )}
       </div>
 
-      {/* Game Title */}
-      <div className="flex-grow p-3 flex flex-col justify-between">
-        <h3 className="text-gray-100 text-base font-semibold truncate">
+      {/* Game Title - NOW HAS bg-slate-950 */}
+      <div className="p-3 flex-grow flex items-center bg-slate-950">
+        <h3 className="text-gray-300 text-sm font-semibold truncate">
           {game.name}
         </h3>
-        {/* Optional: Add a subtle text for addedAt or status if desired */}
-        {/* <p className="text-gray-400 text-xs mt-1">Added: {new Date(libraryItem.addedAt).toLocaleDateString()}</p> */}
       </div>
 
-      {/* Action Button (Delete) - positioned at the bottom like Epic's launch button */}
-      <div className="p-3 pt-0"> {/* Adjusted padding to keep button close to title */}
+      {/* Delete Button Area - NOW HAS correct hover effect */}
+      <div className="
+        w-full
+        bg-slate-950
+        hover:bg-slate-900
+        cursor-pointer
+        transition-colors duration-200
+        py-2.5 px-3
+        flex justify-center items-center
+        group
+        mt-auto
+      ">
         <button
           onClick={handleDeleteClick}
-          className="w-full bg-red-700 text-white py-2 rounded-md
-                     hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50
-                     transition-colors duration-200 ease-in-out font-medium text-sm"
+          className="
+            flex items-center
+            text-gray-300 group-hover:text-gray-100 // Changed from group-hover:text-white for subtlety
+            focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50
+            w-full h-full text-base font-semibold
+            cursor-pointer
+          "
+          aria-label={`Delete ${game.name} from library`}
         >
           Delete
         </button>
       </div>
     </div>
   );
-}
+};
 
 export default LibraryGameCard;

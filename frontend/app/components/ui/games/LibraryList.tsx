@@ -1,11 +1,11 @@
+// frontend/app/components/ui/games/LibraryList.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import LibraryGameCard from './LibraryGameCard';
 import { useAuth } from '@/app/context/AuthContext';
-import LoadingSpinner from '../common/LoadingSpinner';
+import LoadingSpinner from '../common/LoadingSpinner'; // Corrected path based on your provided code
 
-// Define your LibraryItem and GameData interfaces
 interface GameData {
   id: number;
   rawgId: number;
@@ -16,12 +16,12 @@ interface GameData {
 }
 
 interface LibraryItem {
-  id: number; // UserGameLibrary record ID
+  id: number;
   userId: number;
   gameId: number;
   status: string;
   addedAt: string;
-  game: GameData; // Nested GameData object
+  game: GameData;
 }
 
 const LibraryList: React.FC = () => {
@@ -97,11 +97,10 @@ const LibraryList: React.FC = () => {
     fetchUserLibrary();
   }, [accessToken, authLoading, fetchNewAccessToken]);
 
-  // --- Conditional Rendering based on loading/error/data states ---
   if (loading) {
     return (
       <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col justify-center items-center">
-        <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" /> {/* Use the LoadingSpinner */}
+        <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
         <p>Loading your game library...</p>
       </div>
     );
@@ -123,12 +122,23 @@ const LibraryList: React.FC = () => {
     );
   }
 
+  // Define your desired literal pixel width and height here
+  // Adjust these values to fine-tune the size of your cards
+  const desiredImageWidth = '215px'; // Matches typical Epic Games card width
+  const desiredImageHeight = '300px'; // Matches typical Epic Games card height
+
   return (
     <div className="bg-slate-950 min-h-screen p-10">
-      <h2 className="text-2xl font-bold text-stone-100 mb-6 ml-4">My Game Library</h2>
-      <div className="grid grid-cols-auto-fit-205 gap-8">
+      {/* Grid to handle wrapping based on desired card width */}
+      {/* The minmax value should generally match your desiredImageWidth */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(215px,1fr))] gap-6 justify-center">
         {libraryGames.map((item) => (
-          <LibraryGameCard key={item.id} libraryItem={item} />
+          <LibraryGameCard
+            key={item.id}
+            libraryItem={item}
+            imageWidth={desiredImageWidth}    // Pass the pixel width prop
+            imageHeight={desiredImageHeight}  // Pass the pixel height prop
+          />
         ))}
       </div>
     </div>
