@@ -1,0 +1,51 @@
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '../generated/prisma';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const prisma = new PrismaClient();
+interface AuthenticatedRequest extends Request {
+  user?: { userId: number; email: string };
+}
+
+const getGamesLibraryFromDB = async (userId: number) => {
+    const libraryItems = await prisma.userGameLibrary.findMany({
+        where: {
+            userId: userId,
+        },
+        include: {
+            game: true, 
+                        
+        },
+        orderBy: {
+            addedAt: 'desc', 
+        },
+    });
+    return libraryItems;
+};
+
+
+export const getUserLibrary = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        if (!req.user) {
+            res.status(401).json({ message: 'User not authenticated.', type: 'Error' });
+            return;
+        }
+        const userId = req.user.userId; 
+
+        const library = await getGamesLibraryFromDB(userId);
+
+        if (library.length === 0) {
+            res.status(200).json({ message: 'Your library is empty.', library: [] });
+            return;
+        }
+
+        res.status(200).json({ message: 'Games in library retrieved successfully.', library: library });
+        return;
+
+    } catch (error) {
+        console.error("Error fetching user library:", error);
+        next(error);
+    }
+};

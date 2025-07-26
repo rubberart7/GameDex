@@ -24,4 +24,4 @@ const TestingPage = () => {
   )
 }
 
-export default TestingPage
+export default TestingPage;

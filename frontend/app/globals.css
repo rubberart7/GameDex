@@ -1,9 +1,12 @@
 @import "tailwindcss";
 
-body {
-    padding: 0;               /* Remove default body padding */
-    margin: 0;                /* Remove default body margin */
-    box-sizing: border-box;   /* Include padding and border in element's total width and height */
+/* In your main CSS file, or directly in a <style> tag for testing */
+html, body {
+  margin: 0;
+  padding: 0;
+  /* You might also consider overflow-x: hidden if you only expect vertical scrolling */
+  /* overflow-x: hidden; */
+  box-sizing: border-box;
 }
 
 /* Sidebar Links code */
