@@ -42,7 +42,7 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
   return (
     <div className="
       bg-zinc-900
-      rounded-md
+      rounded-sm
       overflow-hidden
       shadow-md
       transform transition-transform duration-300 hover:scale-108

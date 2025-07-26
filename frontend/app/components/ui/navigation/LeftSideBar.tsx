@@ -31,7 +31,7 @@ const LeftSideBar = () => {
 
       <nav className="full-navbar flex flex-col pb-12 gap-10">
         <ul className="nav-top flex flex-col gap-6">
-          <Link href="/home" key="Home" className="full-link-itm flex gap-2 items-center text-lg">
+          <Link href="/" key="Home" className="full-link-itm flex gap-2 items-center text-lg">
             <HomeIcon className="side-bar-icon h-6 w-6" />
             Home
           </Link>
@@ -41,7 +41,7 @@ const LeftSideBar = () => {
             Store
           </Link> */}
 
-          <Link href="/browse-games" key="Browse Games" className="full-link-itm flex gap-2 items-center text-lg">
+          <Link href="/main" key="Browse Games" className="full-link-itm flex gap-2 items-center text-lg">
             <BrowseGamesIcon className="side-bar-icon h-7 w-7" />
             Browse Games
           </Link>

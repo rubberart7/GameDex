@@ -54,6 +54,8 @@ html, body {
   z-index: 10;               /* Bring hovered item above others */
 }
 
+
+
 .side-bar-icon {
   transition: transform 0.3s ease;  /* Smooth scaling transition for icons */
   will-change: transform;            /* Optimize transform property for performance */
@@ -152,6 +154,35 @@ html, body {
 }
 
 /* Deals Row */
+
+
+/* New Links */
+
+.new-link-itm {
+  padding: 1.25rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  color: #ffffff; /* Default text color, e.g., text-gray-300 */
+  font-weight:500;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+  will-change: transform, background-color, color, box-shadow;
+  border-radius: 0.5rem;
+  backdrop-filter: blur(2px); /* Subtle depth effect */
+}
+
+.new-link-itm:hover,
+.new-link-itm:focus {
+  background-color: #334155;
+  color: white;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Soft hover shadow */
+}
 
 
 

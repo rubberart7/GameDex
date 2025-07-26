@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation'; // For Next.js App Router
 // Adjust paths based on your current components folder structure:
 import GameDetailsCard from '../../components/ui/games/GameDetailsCard';
-import HomeNavBar from '../../components/ui/navigation/HomeNavBar';
+import MainNavBar from '../../components/ui/navigation/MainNavBar';
 
 const GameDetailsPage = () => {
   const params = useParams();
@@ -70,7 +70,7 @@ const GameDetailsPage = () => {
   return (
     <div className="flex min-h-screen">
       <main className="flex-1 overflow-auto">
-        <HomeNavBar />
+        <MainNavBar />
         <GameDetailsCard game={gameData} />
       </main>
     </div>

@@ -1,11 +1,11 @@
 import React from 'react';
 import DealsList from '../components/ui/deals/DealsList';
-import HomeNavBar from '../components/ui/navigation/HomeNavBar';
+import MainNavBar from '../components/ui/navigation/MainNavBar';
 
 const DealsPage = () => {
   return (
     <main>
-      <HomeNavBar></HomeNavBar>
+      <MainNavBar></MainNavBar>
 
       <section className="flex h-screen bg-slate-950">
         <DealsList></DealsList>

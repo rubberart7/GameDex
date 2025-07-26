@@ -5,6 +5,8 @@ import DealRow, { Deal } from './DealRow';
 // Assuming Store and StoreImage interfaces are defined here or in interfaces/Store.ts
 // It's generally good practice to put interfaces in a separate file like `types/index.ts` or `interfaces/index.ts`
 // but for this full code example, I'll keep them here for completeness.
+
+import LoadingSpinner from '../common/LoadingSpinner';
 export interface StoreImage {
   banner: string;
   logo: string;
@@ -92,9 +94,7 @@ const DealsList = () => {
   // --- Conditional Rendering for Loading/Error states ---
   if (loading) {
     return (
-      <section className="flex-grow flex flex-col items-center justify-center py-8 px-4 bg-gray-950 text-gray-100 min-h-screen">
-        <p className="text-xl text-blue-400">Loading deals...</p>
-      </section>
+      <LoadingSpinner></LoadingSpinner>
     );
   }
 
