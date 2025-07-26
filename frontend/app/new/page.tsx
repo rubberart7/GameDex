@@ -1,12 +1,12 @@
 import React from 'react'
 import RequireAuth from '../components/ui/auth/RequireAuth'
-import HomeNavBar from '../components/ui/navigation/HomeNavBar'
+import MainNavBar from '../components/ui/navigation/MainNavBar'
 
 const TestingPage = () => {
   return (
     <RequireAuth>
       	<main className="min-h-screen flex flex-col">
-			<HomeNavBar />
+			<MainNavBar />
 
 			<section className="flex-grow bg-gray-950 text-gray-100 flex flex-col items-center justify-center px-4">
 				<div className="max-w-3xl text-center space-y-6">

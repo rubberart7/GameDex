@@ -41,7 +41,7 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
 
   return (
     <div className="
-      bg-zinc-900
+      bg-slate-950
       rounded-sm
       overflow-hidden
       shadow-md
@@ -68,14 +68,12 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         )}
       </div>
 
-      {/* Game Title - NOW HAS bg-slate-950 */}
       <div className="p-3 flex-grow flex items-center bg-slate-950">
         <h3 className="text-gray-300 text-sm font-semibold truncate">
           {game.name}
         </h3>
       </div>
 
-      {/* Delete Button Area - NOW HAS correct hover effect */}
       <div className="
         w-full
         bg-slate-950
