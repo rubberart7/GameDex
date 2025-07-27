@@ -16,7 +16,7 @@ const LoginForm = () => {
     type: "",
   });
 
-  const { setAccessToken } = useAuth(); // 👈 set token after login
+  const { setAccessToken } = useAuth(); 
 
   async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -25,7 +25,7 @@ const LoginForm = () => {
       const response = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // 👈 include cookies
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 

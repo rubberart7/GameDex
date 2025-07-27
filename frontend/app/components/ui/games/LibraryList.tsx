@@ -1,10 +1,9 @@
-// frontend/app/components/ui/games/LibraryList.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import LibraryGameCard from './LibraryGameCard';
 import { useAuth } from '@/app/context/AuthContext';
-import LoadingSpinner from '../common/LoadingSpinner'; // Corrected path based on your provided code
+import LoadingSpinner from '../common/LoadingSpinner'; 
 
 interface GameData {
   id: number;
@@ -29,6 +28,10 @@ const LibraryList: React.FC = () => {
   const [libraryGames, setLibraryGames] = useState<LibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleGameDeleted = (deletedItemId: number) => {
+    setLibraryGames(prevGames => prevGames.filter(item => item.id !== deletedItemId));
+  };
 
   useEffect(() => {
     const fetchUserLibrary = async () => {
@@ -122,22 +125,20 @@ const LibraryList: React.FC = () => {
     );
   }
 
-  // Define your desired literal pixel width and height here
-  // Adjust these values to fine-tune the size of your cards
-  const desiredImageWidth = '215px'; // Matches typical Epic Games card width
-  const desiredImageHeight = '300px'; // Matches typical Epic Games card height
+  
+  const desiredImageWidth = '300px'; 
+  const desiredImageHeight = '400px';
 
   return (
     <div className="bg-slate-950 min-h-screen p-10">
-      {/* Grid to handle wrapping based on desired card width */}
-      {/* The minmax value should generally match your desiredImageWidth */}
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(215px,1fr))] gap-6 justify-center">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-12 justify-center">
         {libraryGames.map((item) => (
           <LibraryGameCard
             key={item.id}
             libraryItem={item}
-            imageWidth={desiredImageWidth}    // Pass the pixel width prop
-            imageHeight={desiredImageHeight}  // Pass the pixel height prop
+            imageWidth={desiredImageWidth}    
+            imageHeight={desiredImageHeight}
+            onDeleteSuccess={handleGameDeleted}
           />
         ))}
       </div>

@@ -1,17 +1,17 @@
-// frontend/app/game-details/[id]/page.tsx
-"use client"; // This component will likely need to be a Client Component to use `useParams`
+
+"use client"; 
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation'; // For Next.js App Router
-// Adjust paths based on your current components folder structure:
+import { useParams } from 'next/navigation';
 import GameDetailsCard from '../../components/ui/games/GameDetailsCard';
 import MainNavBar from '../../components/ui/navigation/MainNavBar';
+import LoadingSpinner from '@/app/components/ui/common/LoadingSpinner';
 
 const GameDetailsPage = () => {
   const params = useParams();
-  const gameId = params.id as string; // Get the game ID from the URL parameter
+  const gameId = params.id as string; 
 
-  const [gameData, setGameData] = useState<any | null>(null); // Use 'any' or define a more complete interface for GameDetails
+  const [gameData, setGameData] = useState<any | null>(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +26,6 @@ const GameDetailsPage = () => {
       try {
         setLoading(true);
         setError(null);
-        // Make sure your backend has an endpoint like /api/games/:id
         const res = await fetch(`http://localhost:4000/api/games/game/${gameId}`);
         if (!res.ok) {
           throw new Error(`Failed to fetch game details: ${res.statusText}`);
@@ -41,11 +40,11 @@ const GameDetailsPage = () => {
     };
 
     fetchGameDetails();
-  }, [gameId]); // Re-run effect if gameId changes
-
+  }, [gameId]); 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-950 text-gray-100">
+      <div className="flex gap-2 h-screen items-center justify-center bg-gray-950 text-gray-100">
+        <LoadingSpinner></LoadingSpinner>
         Loading game details...
       </div>
     );
