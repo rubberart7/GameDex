@@ -12,7 +12,7 @@ const HomeNavBar = () => {
         backgroundColor: "#0b1226",
         
         }}
-        className="w-full h-24 nav-lines flex items-center justify-center gap-200"
+        className="w-full h-24 nav-lines flex items-center justify-center gap-80"
     >
         <ProjectLogo></ProjectLogo>
         <div className='nav-buttons flex items-center justify-center gap-8'>

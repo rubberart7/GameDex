@@ -23,7 +23,7 @@ const LeftSideBar = () => {
         boxShadow: '4px 0 12px 0 rgba(0, 0, 0, 0.75)',
       }}
     >
-      <div className="logo-div flex justify-center">
+      <div className="logo-div flex justify-center pb-10 pt-5">
         <ProjectLogo />
       </div>
 

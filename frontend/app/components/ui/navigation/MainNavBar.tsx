@@ -14,10 +14,11 @@ const MainNavBar = () => {
         backgroundColor: "#0b1226",
         
         }}
-        className="w-full h-24 nav-lines flex items-center justify-center gap-125"
+        className="h-24 nav-lines flex items-center justify-center gap-80"
     >
         <ProjectLogo></ProjectLogo>
-        <section className="flex gap-4">
+
+        <section className="flex gap-0.5">
             
             <Link href="/" key="Home" className="new-link-itm flex items-center text-lg gap-2">
                 <HomeIcon className="side-bar-icon h-6 w-6" />

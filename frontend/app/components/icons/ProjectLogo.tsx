@@ -3,16 +3,12 @@ import Link from 'next/link';
 
 const ProjectLogo = () => {
   return (
-    <div>
-      <Link href='/'>
-        <img src="/assets/game_logo.png" alt="game logo" 
-          style={{ display: 'block',  // removes default inline spacing under images
-          width: '225px',   
-          height: '225px',
-          margin: 0,
-          padding: 0,
-          border: 'none',}}
-        />
+    <div className='flex items-center'>
+
+      <Link href='/' className='flex items-center'>
+        <span className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+                GameDex  
+        </span>
       </Link>
         
     </div>
