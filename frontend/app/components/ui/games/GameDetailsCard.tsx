@@ -1,20 +1,17 @@
-// frontend/app/components/ui/games/GameDetailsCard.tsx
-
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
 import Button from '@/app/components/ui/common/Button';
 import { useAuth } from '@/app/context/AuthContext';
-import { useRouter } from 'next/navigation'; // Corrected import for App Router
+import { useRouter } from 'next/navigation'; 
 
 
-// Define a type for the game data (simplified for this example)
 interface GameDetails {
-  id: number; // CRUCIAL: This ID is sent to the backend as rawgGameId
+  id: number; 
   name: string;
-  description_raw: string; // Plain text description
-  background_image: string; // This will be used for the main media and the small logo
-  background_image_additional: string; // Often used for screenshots
+  description_raw: string; 
+  background_image: string; 
+  background_image_additional: string; 
   released: string;
   metacritic: number | null;
   platforms: Array<{ platform: { id: number; name: string; slug: string } }>;
@@ -22,9 +19,9 @@ interface GameDetails {
   developers: Array<{ id: number; name: string; slug: string }>,
   publishers: Array<{ id: number; name: string; slug: string }>,
   esrb_rating: { id: number; name: string; slug: string } | null;
-  clip: { clip: string; preview: string } | null; // For trailers
-  short_screenshots: Array<{ id: number; image: string }>; // For screenshots
-  tags: Array<{ id: number; name: string; slug: string }>; // For features like 'Multiplayer'
+  clip: { clip: string; preview: string } | null; 
+  short_screenshots: Array<{ id: number; image: string }>; 
+  tags: Array<{ id: number; name: string; slug: string }>; 
 }
 
 interface GameDetailsCardProps {
@@ -37,7 +34,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
   const router = useRouter();
 
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
-  const [isAddingToLibrary, setIsAddingToLibrary] = useState(false); // State for library button loading
+  const [isAddingToLibrary, setIsAddingToLibrary] = useState(false);
   const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "Info" | "" }>({
     message: "",
     type: "",
@@ -83,7 +80,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       return tag.name;
   });
 
-  // --- Unified function to handle adding to Wishlist or Library ---
   const handleAddToCollectionLogic = async (type: 'wishlist' | 'library') => {
     setFeedback({ message: "", type: "" });
 
@@ -101,7 +97,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
         return;
       }
 
-      // MODIFIED: Endpoint names changed here
       const endpoint = type === 'wishlist' ? 'add-to-wishlist' : 'add-to-library';
       const successMessage = type === 'wishlist' ? 'Added to wishlist!' : 'Added to library!';
       const errorMessagePrefix = type === 'wishlist' ? 'wishlist' : 'library';
@@ -160,7 +155,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
     }
   };
 
-  // --- Specific handler functions calling the unified logic ---
   const handleAddToWishList = async () => {
     await handleAddToCollectionLogic('wishlist');
   };
@@ -169,7 +163,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
     await handleAddToCollectionLogic('library');
   };
 
-  // --- Determine button disabled states and text ---
   const isWishlistButtonDisabled = authLoading || isAddingToWishlist;
   const isLibraryButtonDisabled = authLoading || isAddingToLibrary;
 
