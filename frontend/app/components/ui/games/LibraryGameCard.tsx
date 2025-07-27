@@ -165,9 +165,9 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
 
 	  {feedback.message && (
         <div className={`absolute inset-x-0 bottom-0 p-2 text-xs rounded-b-lg text-center font-semibold
-          ${feedback.type === "Error" ? "bg-red-800 text-red-100 border border-red-500" // Error styling
-           : feedback.type === "Success" ? "bg-green-800 text-green-100 border border-green-500" // Success styling
-           : "bg-blue-800 text-blue-100 border border-blue-500" // Info styling
+          ${feedback.type === "Error" ? "bg-red-800 text-red-100 border border-red-500" 
+           : feedback.type === "Success" ? "bg-green-800 text-green-100 border border-green-500"
+           : "bg-blue-800 text-blue-100 border border-blue-500"
           }`}>
           {feedback.message}
           <button

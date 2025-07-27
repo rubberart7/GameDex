@@ -1,20 +1,16 @@
 import React from 'react';
-import HomeNavBar from '../components/ui/navigation/HomeNavBar';
 import LibraryList from '../components/ui/games/LibraryList'; // Import your LibraryList component
 import MainNavBar from '../components/ui/navigation/MainNavBar';
 
 const LibraryPage: React.FC = () => {
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen"> {/* Apply background and text color to the entire page */}
-      {/* <HomeNavBar /> */}
+    <div className="bg-slate-950 text-slate-100 min-h-screen">
       <MainNavBar></MainNavBar>
-      <main className="container mx-auto px-4 py-8"> {/* Use a container for content, add padding */}
-        {/*
-          The LibraryList component handles its own internal loading,
-          error messages, and "empty library" states.
-          It will also apply its own background within its component,
-          but the overall page background is set above for consistency.
-        */}
+      <main className="container mx-auto px-4 py-8 flex flex-col">
+        <section className="mb-8 pb-4 border-b border-slate-800 flex flex-col items-center"> 
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-100 mb-2">My Library</h1> 
+          <p className="text-lg text-gray-400">All your owned games, ready to view and manage. </p>
+        </section>
         <LibraryList />
       </main>
     </div>
