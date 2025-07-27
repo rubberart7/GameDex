@@ -100,16 +100,15 @@ const DealsList = () => {
 
   if (error) {
     return (
-      <section className="flex-grow flex flex-col items-center justify-center py-8 px-4 bg-gray-950 text-gray-100 min-h-screen">
+      <section className="flex flex-col items-center justify-center py-8 px-4 bg-gray-950 text-gray-100 min-h-screen">
         <p className="text-xl text-red-500">Error: {error}</p>
         <p className="text-md text-gray-400 mt-2">Please check your network connection or the API endpoint.</p>
       </section>
     );
   }
 
-  // --- Main Component Render (after data is loaded and no errors) ---
   return (
-    <section className="flex-grow flex flex-col items-center py-8 px-4 bg-gray-950 text-gray-100">
+    <section className="flex flex-col items-center py-8 px-4 bg-gray-950 text-gray-100">
       {/* Page Title and Description */}
       <div className="max-w-3xl text-center space-y-6 mb-8">
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">

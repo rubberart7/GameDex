@@ -28,8 +28,8 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game }) => {
   return (
-    // Only this line changes:
-    <Link href={`/game-details/${game.id}`} passHref> {/* Changed from /games/${game.id} */}
+    // Only this line changes (as per previous instructions for routing):
+    <Link href={`/game-details/${game.id}`} passHref>
       <div className="relative bg-slate-950 rounded-lg shadow-md overflow-hidden w-full min-h-[475px] transition-transform
       duration-300 hover:scale-108 cursor-pointer">
         <div className="relative-shine">

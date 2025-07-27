@@ -186,11 +186,13 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       : 'Add to Library';
 
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen p-8 flex justify-center">
-      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="bg-slate-950 text-slate-100 min-h-screen p-4 sm:p-8 flex justify-center"> {/* Adjusted padding for smaller screens */}
+      {/* Outer Flex Container for the main layout */}
+      <div className="max-w-6xl w-full flex flex-col lg:flex-row gap-8">
 
         {/* Left Column - Main Content (Trailer/Screenshots & Description) */}
-        <div className="lg:col-span-2">
+        {/* Added min-w-0 to allow this flex item to shrink as needed */}
+        <div className="flex-1 lg:flex-[2] order-2 lg:order-1 min-w-0">
           <h1 className="text-3xl md:text-4xl font-bold mb-6 text-blue-400">{game.name} Standard Edition</h1>
 
           {/* Media Selector (Trailer/Screenshots) */}
@@ -297,7 +299,9 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
           </div>
         </div>
 
-        <div className="lg:col-span-1 bg-slate-900 p-6 rounded-lg shadow-lg self-start sticky top-8" ref={feedbackAreaRef}>
+        {/* Right Column - Sidebar (Purchase Info, Details, Share/Report) */}
+        {/* Added min-w-0 to allow this flex item to shrink as needed */}
+        <div className="flex-1 lg:flex-initial lg:w-96 bg-slate-900 p-6 rounded-lg shadow-lg self-start sticky top-8 order-1 lg:order-2 min-w-0" ref={feedbackAreaRef}>
           <div className="flex justify-center mb-6">
             {game.background_image && (
               <img
@@ -369,8 +373,8 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
           {feedback.message && (
             <div className={`relative p-3 rounded text-center font-semibold mb-4 border
               ${feedback.type === "Error" ? "bg-red-800 text-red-100 border-red-500"
-               : feedback.type === "Success" ? "bg-green-800 text-green-100 border-green-500"
-               : "bg-blue-800 text-blue-100 border-blue-500"
+                : feedback.type === "Success" ? "bg-green-800 text-green-100 border-green-500"
+                : "bg-blue-800 text-blue-100 border-blue-500"
               }`}>
               {feedback.message}
               <button
@@ -419,20 +423,20 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             <button className="flex items-center text-slate-400 hover:text-blue-400 transition duration-200">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186A.75.75 0 0 1 7.5 10.5h6l2.201 2.834c.304.42-.028.96-.516.96H7.5V15a.75.75 0 0 0 1.5 0v-1.5m-4.782-2.186c0-.923.474-1.744 1.256-2.227L15 2.828V2.25a.75.75 0 0 1 1.5 0v.578A2.25 2.25 0 0 0 18 4.5v.75m-8.782 9.093l-2.92 2.92c-.82.82-.095 2.296 1.006 2.296h8.04c1.101 0 1.826-1.476 1.005-2.296l-2.92-2.92m-6.402-1.138A2.25 2.25 0 1 1 15 10.907M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186A.75.75 0 0 1 7.5 10.5h6l2.201 2.834c.304.42-.028.96-.516.96H7.5V15a.75.75 0 0 0 1.5 0v-1.5m-4.782-2.186c0-.923.474-1.744 1.256-2.227L15 2.828V2.25a.75.75 0 0 1 1.5 0v.578A2.25 2.25 0 0 0 18 4.5v.75m-8.782 9.093l-2.92 2.92c-.82.82-.095 2.296 1.006 2.296h8.04c1.101 0 1.826-1.476 1.005-2.296l-2.92-2.92" />
-              </svg>
-              <span>Share</span>
-            </button>
-            <button className="flex items-center text-slate-400 hover:text-blue-400 transition duration-200">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-              </svg>
-              <span>Report</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+              </svg>
+              <span>Share</span>
+            </button>
+            <button className="flex items-center text-slate-400 hover:text-blue-400 transition duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+              </svg>
+              <span>Report</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default GameDetailsCard;

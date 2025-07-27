@@ -7,7 +7,7 @@ const DealsPage = () => {
     <main>
       <MainNavBar></MainNavBar>
 
-      <section className="flex h-screen bg-slate-950">
+      <section className="flex justify-center h-screen bg-slate-950">
         <DealsList></DealsList>
       </section>
     </main>
