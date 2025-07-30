@@ -5,21 +5,30 @@ import Button from "../common/Button";
 import Link from "next/link";
 import LoginIcon from "../../icons/LoginIcon";
 import EyeToggle from "../common/EyeToggle";
-import { useAuth } from "@/app/context/AuthContext"; // 👈 import auth context
+import { useAuth } from "@/app/context/AuthContext"; 
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-  const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "" }>({
+  const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "Info" | "" }>({
     message: "",
     type: "",
   });
 
-  const { setAccessToken } = useAuth(); 
+  const { accessToken, loading: authLoading, setAccessToken } = useAuth();
 
   async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (authLoading) {
+        setFeedback({ message: "Checking login status, please wait...", type: "Info" });
+        return;
+    }
+    if (accessToken) {
+        setFeedback({ message: "You are already logged in.", type: "Info" });
+        return; 
+    }
 
     try {
       const response = await fetch("http://localhost:4000/api/auth/login", {
