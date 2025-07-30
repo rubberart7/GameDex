@@ -1,5 +1,3 @@
-// frontend/app/components/ui/navigation/LeftSideBar.tsx
-
 import React from 'react';
 import Link from 'next/link';
 import DealsIcon from '../../icons/DealsIcon';
@@ -9,6 +7,7 @@ import SettingsIcon from '../../icons/SettingsIcon';
 import HomeIcon from '../../icons/HomeIcon';
 import BrowseGamesIcon from '../../icons/BrowseGamesIcon';
 import ProjectLogo from '../../icons/ProjectLogo';
+import WishListIcon from '../../icons/WishListIcon';
 
 interface LeftSideBarProps {
   className?: string;
@@ -30,7 +29,7 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ className }) => {
 
       <div className="w-full h-0.75 bg-sky-900 mb-8 rounded-full" />
 
-      <nav className="full-navbar flex flex-col pb-12 gap-10">
+      <nav className="full-navbar flex flex-col pb-12 gap-15">
         <ul className="nav-top flex flex-col gap-6">
           <Link href="/" key="Home" className="full-link-itm flex gap-2 items-center text-lg">
             <HomeIcon className="side-bar-icon h-6 w-6" />
@@ -46,6 +45,12 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ className }) => {
             <DealsIcon className="side-bar-icon h-6 w-6" />
             <span className="whitespace-nowrap">Deals</span>
           </Link>
+
+          <Link href="/wishlist" key="WishList" className="full-link-itm flex gap-2 items-center text-lg">
+            <WishListIcon className="side-bar-icon h-6 w-6" />
+            <span className="whitespace-nowrap">WishList</span>
+          </Link>
+
         </ul>
 
         <ul className="nav-bottom flex flex-col gap-6">

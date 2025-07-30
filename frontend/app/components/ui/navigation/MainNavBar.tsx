@@ -6,6 +6,7 @@ import LibraryIcon from '../../icons/LibraryIcon';
 import SettingsIcon from '../../icons/SettingsIcon';
 import HomeIcon from '../../icons/HomeIcon';
 import BrowseGamesIcon from '../../icons/BrowseGamesIcon';
+import WishListIcon from '../../icons/WishListIcon';
 
 const MainNavBar = () => {
   return (
@@ -35,10 +36,17 @@ const MainNavBar = () => {
                 Deals
             </Link>
 
+            <Link href="/wishlist" key="WishList" className="new-link-itm flex items-center text-lg gap-2">
+                <WishListIcon className="side-bar-icon h-6 w-6" />
+                WishList
+            </Link>
+
             <Link href="/games-library" key="Library" className="new-link-itm flex items-center text-lg gap-2">
                 <LibraryIcon className="side-bar-icon h-6 w-6" />
                 Library
             </Link>
+
+            
 
             <Link href="/settings" key="Settings" className="new-link-itm flex items-center text-lg gap-2">
                 <SettingsIcon className="side-bar-icon h-6 w-6" />

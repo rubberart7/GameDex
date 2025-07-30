@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import LibraryGameCard from './LibraryGameCard';
+import WishListCard from './WishListCard'; 
 import { useAuth } from '@/app/context/AuthContext';
-import LoadingSpinner from '../common/LoadingSpinner'; 
+import LoadingSpinner from '../common/LoadingSpinner';
 
 interface GameData {
   id: number;
@@ -14,34 +14,35 @@ interface GameData {
   released?: string;
 }
 
-interface LibraryItem {
+interface WishListItem { 
   id: number;
   userId: number;
   gameId: number;
-  status: string;
+  status: string; 
   addedAt: string;
   game: GameData;
 }
 
-const LibraryList: React.FC = () => {
+
+const WishList: React.FC = () => { 
   const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
-  const [libraryGames, setLibraryGames] = useState<LibraryItem[]>([]);
+  const [wishlistGames, setWishlistGames] = useState<WishListItem[]>([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const handleGameDeleted = (deletedItemId: number) => {
-    setLibraryGames(prevGames => prevGames.filter(item => item.id !== deletedItemId));
+  const handleWishlistItemDeleted = (deletedItemId: number) => { 
+    setWishlistGames(prevGames => prevGames.filter(item => item.id !== deletedItemId)); 
   };
 
   useEffect(() => {
-    const fetchUserLibrary = async () => {
+    const fetchUserWishlist = async () => { 
       if (authLoading) {
         return;
       }
 
       if (!accessToken) {
         setLoading(false);
-        setError('Authentication required to view your library.');
+        setError('Authentication required to view your wishlist.'); 
         return;
       }
 
@@ -49,7 +50,7 @@ const LibraryList: React.FC = () => {
       setError(null);
 
       try {
-        const response = await fetch('http://localhost:4000/api/user/library', {
+        const response = await fetch('http://localhost:4000/api/user/wishlist', { 
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ const LibraryList: React.FC = () => {
           if (response.status === 401 && data.expired) {
             const newAccessToken = await fetchNewAccessToken();
             if (newAccessToken) {
-              const retryResponse = await fetch('http://localhost:4000/api/user/library', {
+              const retryResponse = await fetch('http://localhost:4000/api/user/wishlist', { 
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -74,37 +75,39 @@ const LibraryList: React.FC = () => {
               });
               const retryData = await retryResponse.json();
               if (retryResponse.ok) {
-                setLibraryGames(retryData.library || []);
+                setWishlistGames(retryData.wishlist || []); 
               } else {
-                setError(retryData.message || 'Failed to re-fetch library after token refresh.');
+                setError(retryData.message || 'Failed to re-fetch wishlist after token refresh.'); 
               }
             } else {
               setError('Session expired. Please log in again.');
-              setLibraryGames([]);
+              setWishlistGames([]); 
             }
           } else {
-            setError(data.message || 'Failed to fetch library.');
+            setError(data.message || 'Failed to fetch wishlist.'); 
           }
           return;
         }
 
-        setLibraryGames(data.library || []);
-      } catch (err) {
-        console.error('Network error fetching library:', err);
+        setWishlistGames(data.wishlist || []); 
+
+      } catch (err: any) {
+        console.error('Network error fetching wishlist:', err); 
         setError('Network error: Could not connect to server.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserLibrary();
+    fetchUserWishlist(); 
   }, [accessToken, authLoading, fetchNewAccessToken]);
+
 
   if (loading) {
     return (
       <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col justify-center items-center">
         <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
-        <p>Loading your game library...</p>
+        <p>Loading your game wishlist...</p> 
       </div>
     );
   }
@@ -117,28 +120,28 @@ const LibraryList: React.FC = () => {
     );
   }
 
-  if (libraryGames.length === 0) {
+  if (wishlistGames.length === 0) { 
     return (
       <div className="bg-slate-950 text-gray-400 min-h-screen p-10 flex justify-center">
-        <p>Your library is empty. Add some games!</p>
+        <p>Your wishlist is empty. Add some games!</p> 
       </div>
     );
   }
 
-  
-  const desiredImageWidth = '300px'; 
+
+  const desiredImageWidth = '300px';
   const desiredImageHeight = '400px';
 
   return (
     <div className="bg-slate-950 min-h-screen p-10">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-12 justify-center">
-        {libraryGames.map((item) => (
-          <LibraryGameCard
+        {wishlistGames.map((item) => ( 
+          <WishListCard 
             key={item.id}
-            libraryItem={item}
-            imageWidth={desiredImageWidth}    
+            wishlistItem={item} 
+            imageWidth={desiredImageWidth}
             imageHeight={desiredImageHeight}
-            onDeleteSuccess={handleGameDeleted}
+            onDeleteSuccess={handleWishlistItemDeleted} 
           />
         ))}
       </div>
@@ -146,4 +149,4 @@ const LibraryList: React.FC = () => {
   );
 };
 
-export default LibraryList;
+export default WishList; 

@@ -132,5 +132,6 @@ export const addToWishlist = async (req: AuthenticatedRequest, res: Response, ne
 
   } catch (error) {
     res.status(500).json({ message: 'Error: could not add game to your wishlist.' });
+    return;
   }
 };

@@ -1,7 +1,6 @@
 "use client";
 
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 
 interface GameData {
@@ -13,7 +12,7 @@ interface GameData {
   released?: string;
 }
 
-interface LibraryItem {
+interface WishListItem {
   id: number;
   userId: number;
   gameId: number;
@@ -22,37 +21,38 @@ interface LibraryItem {
   game: GameData;
 }
 
-interface LibraryGameCardProps {
-  libraryItem: LibraryItem;
+interface WishListCardProps {
+  wishlistItem: WishListItem;
   imageWidth?: string;
   imageHeight?: string;
   onDeleteSuccess: (deletedItemId: number) => void;
 }
 
-const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
-  libraryItem,
+const WishListCard: React.FC<WishListCardProps> = ({
+  wishlistItem,
   imageWidth = '215px',
   imageHeight = '300px',
   onDeleteSuccess
 }) => {
-	const [isDeletingFromLibrary, setIsDeletingFromLibrary] = useState(false);
-	const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "Info" | "" }>({
-		message: "",
-		type: "",
-	});
-	const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
+  const [isDeletingFromWishList, setIsDeletingFromWishList] = useState(false);
+  const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "Info" | "" }>({
+    message: "",
+    type: "",
+  });
+
+  const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
 
 
-  const { game } = libraryItem;
+  const { game } = wishlistItem;
 
-  const handleDeleteClick = async () => {
+  const handleDeleteFromWishListClick = async () => {
     setFeedback({ message: "", type: "" });
-    setIsDeletingFromLibrary(true); 
+    setIsDeletingFromWishList(true);
 
     try {
       if (authLoading) {
         setFeedback({ message: 'Checking login status...', type: 'Info' });
-        return; 
+        return;
       }
 
       if (!accessToken) {
@@ -60,24 +60,25 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         return;
       }
 
-	  const response = await fetch(`http://localhost:4000/api/user/delete-from-library`, {
+
+      const response = await fetch(`http://localhost:4000/api/user/delete-from-wishlist`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
-        body: JSON.stringify({ gameId: game.rawgId }), 
+        body: JSON.stringify({ gameId: game.rawgId }),
       });
 
-      const result = await response.json(); 
+      const result = await response.json();
 
-      
+
       if (!response.ok) {
         if (response.status === 401 && result.expired) {
           const newAccessToken = await fetchNewAccessToken();
           if (newAccessToken) {
-            const retryResponse = await fetch(`http://localhost:4000/api/user/delete-from-library`, {
+            const retryResponse = await fetch(`http://localhost:4000/api/user/delete-from-wishlist`, {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
@@ -90,40 +91,39 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
             if (retryResponse.ok) {
               setFeedback({ message: retryResult.message || 'Game deleted successfully!', type: 'Success' });
               if (retryResult.count > 0) {
-                onDeleteSuccess(libraryItem.id);
+                onDeleteSuccess(wishlistItem.id);
               }
             } else {
               setFeedback({ message: retryResult.message || 'Failed to delete after token refresh. Please log in again.', type: 'Error' });
             }
           } else {
-            setFeedback({ message: 'Session expired. Please log in again.', type: 'Error' });
+            setFeedback({ message: 'Session expired. Please log in again.', type: 'Error' })
           }
         } else if (response.status === 409 || (response.status === 200 && result.count === 0)) {
-            setFeedback({ message: result.message || 'Game not found in your library. Nothing to delete.', type: 'Info' });
+          setFeedback({ message: result.message || 'Game not found in your WishList. Nothing to delete.', type: 'Info' });
         } else {
-          setFeedback({ message: result.message || 'Failed to delete game from library.', type: 'Error' });
+          setFeedback({ message: result.message || 'Failed to delete game from WishList.', type: 'Error' });
         }
         return;
       }
 
       setFeedback({ message: result.message || 'Game deleted successfully!', type: 'Success' });
-
       if (result.count > 0) {
-        onDeleteSuccess(libraryItem.id); 
+        onDeleteSuccess(wishlistItem.id);
       }
 
-    } catch (err: any) { 
-      console.error('Network error deleting game from library:', err);
+    } catch (err: any) {
+      console.error('Network error deleting game from WishList:', err);
       setFeedback({ message: `Network error or server unavailable: ${err.message || 'Please try again.'}`, type: 'Error' });
     } finally {
-      setIsDeletingFromLibrary(false);
+      setIsDeletingFromWishList(false);
     }
   };
 
-  const isDeleteButtonDisabled = authLoading || isDeletingFromLibrary;
+  const isDeleteButtonDisabled = authLoading || isDeletingFromWishList;
   const deleteButtonText = authLoading
     ? 'Checking Login...'
-    : isDeletingFromLibrary
+    : isDeletingFromWishList
       ? 'Deleting...'
       : 'Delete';
 
@@ -161,9 +161,9 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         </h3>
       </div>
 
-	  {feedback.message && (
+      {feedback.message && (
         <div className={`absolute inset-x-0 bottom-0 p-2 text-xs rounded-b-lg text-center font-semibold
-          ${feedback.type === "Error" ? "bg-red-800 text-red-100 border border-red-500" 
+          ${feedback.type === "Error" ? "bg-red-800 text-red-100 border border-red-500"
            : feedback.type === "Success" ? "bg-green-800 text-green-100 border border-green-500"
            : "bg-blue-800 text-blue-100 border border-blue-500"
           }`}>
@@ -177,6 +177,7 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         </div>
       )}
 
+
       <div className="
         w-full
         bg-slate-950
@@ -189,16 +190,16 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         mt-auto
       ">
         <button
-          onClick={handleDeleteClick}
+          onClick={handleDeleteFromWishListClick}
           className="
             flex items-center
-            text-gray-300 group-hover:text-gray-100 // Changed from group-hover:text-white for subtlety
+            text-gray-300 group-hover:text-gray-100
             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50
             w-full h-full text-base font-semibold
             cursor-pointer
           "
-          aria-label={`Delete ${game.name} from library`}
-		  disabled={isDeleteButtonDisabled}
+          aria-label={`Delete ${game.name} from WishList`}
+          disabled={isDeleteButtonDisabled}
         >
           {deleteButtonText}
         </button>
@@ -207,4 +208,4 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
   );
 };
 
-export default LibraryGameCard;
+export default WishListCard;

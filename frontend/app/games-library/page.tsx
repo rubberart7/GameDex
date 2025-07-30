@@ -1,5 +1,5 @@
 import React from 'react';
-import LibraryList from '../components/ui/games/LibraryList'; // Import your LibraryList component
+import LibraryList from '../components/ui/games/LibraryList';
 import MainNavBar from '../components/ui/navigation/MainNavBar';
 
 const LibraryPage: React.FC = () => {

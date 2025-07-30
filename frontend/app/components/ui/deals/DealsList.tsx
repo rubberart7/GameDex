@@ -94,7 +94,10 @@ const DealsList = () => {
   // --- Conditional Rendering for Loading/Error states ---
   if (loading) {
     return (
-      <LoadingSpinner></LoadingSpinner>
+      <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col justify-center items-center">
+        <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
+        <p>Loading deals...</p> 
+      </div>
     );
   }
 

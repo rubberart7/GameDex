@@ -14,6 +14,7 @@ router.post('/add-to-wishlist', verifyJWT, addToWishlist);
 
 router.get('/library', verifyJWT, getUserLibrary);
 router.get('/wishlist', verifyJWT, getUserWishlist);
-router.delete('/delete-from-library', verifyJWT, deleteFromLibrary)
+router.delete('/delete-from-library', verifyJWT, deleteFromLibrary);
+router.delete('/delete-from-wishlist', verifyJWT, deleteFromLibrary);
 
 export default router;
