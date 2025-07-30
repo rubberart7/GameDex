@@ -11,7 +11,7 @@ import BrowseGamesIcon from '../../icons/BrowseGamesIcon';
 import ProjectLogo from '../../icons/ProjectLogo';
 
 interface LeftSideBarProps {
-  className?: string; // Still useful if you want to pass extra classes from parent
+  className?: string;
 }
 
 const LeftSideBar: React.FC<LeftSideBarProps> = ({ className }) => {

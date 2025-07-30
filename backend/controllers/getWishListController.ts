@@ -10,24 +10,24 @@ interface AuthenticatedRequest extends Request {
   user?: { userId: number; email: string };
 }
 
-const getGamesLibraryFromDB = async (userId: number) => {
-    const libraryItems = await prisma.userGameLibrary.findMany({
+
+const getWishlistFromDB = async (userId: number) => {
+    const wishlistItems = await prisma.wishlist.findMany({ 
         where: {
             userId: userId,
         },
         include: {
             game: true, 
-                        
         },
         orderBy: {
             addedAt: 'desc', 
         },
     });
-    return libraryItems;
+    return wishlistItems;
 };
 
 
-export const getUserLibrary = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const getUserWishlist = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
         if (!req.user) {
             res.status(401).json({ message: 'User not authenticated.', type: 'Error' });
@@ -35,19 +35,20 @@ export const getUserLibrary = async (req: AuthenticatedRequest, res: Response, n
         }
         const userId = req.user.userId; 
 
-        const library = await getGamesLibraryFromDB(userId);
+        const wishlist = await getWishlistFromDB(userId); 
 
-        if (library.length === 0) {
-            res.status(200).json({ message: 'Your library is empty.', library: [] });
+        if (wishlist.length === 0) {
+            res.status(200).json({ message: 'Your wishlist is empty.', wishlist: [] });
             return;
         }
 
-        res.status(200).json({ message: 'Games in library retrieved successfully.', library: library });
+        
+        res.status(200).json({ message: 'Games in wishlist retrieved successfully.', wishlist: wishlist });
         return;
 
     } catch (error) {
-        console.error("Error fetching user library:", error);
-        res.status(500).json({ message: "Games from the library could not be retrieved."});
+        console.error("Error fetching user wishlist:", error);
+        res.status(500).json({ message: "Games from the wishlist could not be retrieved."})
         return;
     }
 };
