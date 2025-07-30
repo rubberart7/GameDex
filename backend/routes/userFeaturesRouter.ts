@@ -5,6 +5,7 @@ import { addToWishlist } from '../controllers/addToWishListController';
 import { getUserLibrary } from '../controllers/getGameLibraryController';
 import { deleteFromLibrary } from '../controllers/deleteFromLibrary';
 import { getUserWishlist } from '../controllers/getWishListController';
+import { deleteFromWishlist } from '../controllers/deleteFromWishList';
 
 
 const router = Router();
@@ -15,6 +16,6 @@ router.post('/add-to-wishlist', verifyJWT, addToWishlist);
 router.get('/library', verifyJWT, getUserLibrary);
 router.get('/wishlist', verifyJWT, getUserWishlist);
 router.delete('/delete-from-library', verifyJWT, deleteFromLibrary);
-router.delete('/delete-from-wishlist', verifyJWT, deleteFromLibrary);
+router.delete('/delete-from-wishlist', verifyJWT, deleteFromWishlist);
 
 export default router;
