@@ -45,7 +45,7 @@ const RecommendationsList: React.FC = () => {
 
       try {
         // Fetch recommendations from your backend endpoint
-        const response = await fetch('http://localhost:4000/api/user/recommendations', {
+        const response = await fetch('http://localhost:4000/api/user/game-recommendations', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ const RecommendationsList: React.FC = () => {
             const newAccessToken = await fetchNewAccessToken(); // Attempt to refresh token
             if (newAccessToken) {
               // Retry the recommendations fetch with the new token
-              const retryResponse = await fetch('http://localhost:4000/api/user/recommendations', {
+              const retryResponse = await fetch('http://localhost:4000/api/user/game-recommendations', {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
