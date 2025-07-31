@@ -10,7 +10,7 @@ interface AuthenticatedRequest extends Request {
   user?: { userId: number; email: string };
 }
 
-const getGamesLibraryFromDB = async (userId: number) => {
+export const getGamesLibraryFromDB = async (userId: number) => {
     const libraryItems = await prisma.userGameLibrary.findMany({
         where: {
             userId: userId,

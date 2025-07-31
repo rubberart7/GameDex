@@ -11,7 +11,7 @@ interface AuthenticatedRequest extends Request {
 }
 
 
-const getWishlistFromDB = async (userId: number) => {
+export const getWishlistFromDB = async (userId: number) => {
     const wishlistItems = await prisma.wishlist.findMany({ 
         where: {
             userId: userId,
