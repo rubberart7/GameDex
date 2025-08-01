@@ -1,13 +1,10 @@
-// frontend/app/components/ui/games/RecommendationsList.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import RecommendationsCard from './RecommendationCard';
+import RecommendationsCard from './RecommendationsCard';
 import { useAuth } from '@/app/context/AuthContext';
-import LoadingSpinner from '../common/LoadingSpinner'; // Ensure path is correct
+import LoadingSpinner from '../common/LoadingSpinner';
 
-
-// Re-defining interfaces for clarity, typically you'd import these from a shared types file
 interface RecommendedGameData {
   id: number;
   rawgId: number;
@@ -15,25 +12,18 @@ interface RecommendedGameData {
   background_image?: string | null;
   rating?: number | null;
   released?: string | null;
-  recommendationReason: string; // The AI's reason
+  recommendationReason: string;
 }
-
 
 const RecommendationsList: React.FC = () => {
   const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
-  const [recommendedGames, setRecommendedGames] = useState<RecommendedGameData[]>([]); // State for recommended games
-  const [loading, setLoading] = useState(true); // Local loading state
+  const [recommendedGames, setRecommendedGames] = useState<RecommendedGameData[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
-      // Don't fetch if auth status is still loading
-      if (authLoading) {
-        return;
-      }
-
-      // If no access token after auth check, user is not logged in.
-      // Display error (assuming a parent RequireAuth handles redirection).
+      if (authLoading) return;
       if (!accessToken) {
         setLoading(false);
         setError('Authentication required to view recommendations.');
@@ -41,27 +31,24 @@ const RecommendationsList: React.FC = () => {
       }
 
       setLoading(true);
-      setError(null); // Clear previous errors
+      setError(null);
 
       try {
-        // Fetch recommendations from your backend endpoint
         const response = await fetch('http://localhost:4000/api/user/game-recommendations', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`, // Send the access token
+            'Authorization': `Bearer ${accessToken}`,
           },
-          credentials: 'include', // Important for refresh token cookie
+          credentials: 'include',
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-          // Handle 401 specifically for expired token retry
           if (response.status === 401 && data.expired) {
-            const newAccessToken = await fetchNewAccessToken(); // Attempt to refresh token
+            const newAccessToken = await fetchNewAccessToken();
             if (newAccessToken) {
-              // Retry the recommendations fetch with the new token
               const retryResponse = await fetch('http://localhost:4000/api/user/game-recommendations', {
                 method: 'GET',
                 headers: {
@@ -86,23 +73,21 @@ const RecommendationsList: React.FC = () => {
           return;
         }
 
-        setRecommendedGames(data.recommendations || []); // Set the fetched recommendations
-
+        setRecommendedGames(data.recommendations || []);
       } catch (err: any) {
         console.error('Network error fetching recommendations:', err);
         setError('Network error: Could not connect to server.');
       } finally {
-        setLoading(false); // Always set loading to false when fetch attempt finishes
+        setLoading(false);
       }
     };
 
     fetchRecommendations();
-  }, [accessToken, authLoading, fetchNewAccessToken]); // Dependencies
+  }, [accessToken, authLoading, fetchNewAccessToken]);
 
-  // --- Conditional Rendering for Loading/Error/Empty states ---
   if (loading) {
     return (
-      <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col justify-center items-center">
+      <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col items-center">
         <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
         <p>Generating personalized recommendations...</p>
       </div>
@@ -111,7 +96,7 @@ const RecommendationsList: React.FC = () => {
 
   if (error) {
     return (
-      <div className="bg-slate-950 text-red-400 min-h-screen p-10 flex justify-center items-center">
+      <div className="bg-slate-950 text-red-400 min-h-screen p-10 flex justify-center">
         <p>Error: {error}</p>
       </div>
     );
@@ -119,25 +104,17 @@ const RecommendationsList: React.FC = () => {
 
   if (recommendedGames.length === 0) {
     return (
-      <div className="bg-slate-950 text-gray-400 min-h-screen p-10 flex justify-center items-center">
+      <div className="bg-slate-950 text-gray-400 min-h-screen p-10 flex justify-center">
         <p>No recommendations available at this time. Try adding more games to your library or wishlist!</p>
       </div>
     );
   }
 
-  const desiredCardWidth = '300px'; // Matching your Library/GameCard width
-  const desiredCardHeight = '400px'; // Matching your Library/GameCard height
-
   return (
     <div className="bg-slate-950 min-h-screen p-10">
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6 justify-center">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(215px,1fr))] gap-6">
         {recommendedGames.map((game) => (
-          <RecommendationsCard
-            key={game.id} // Use the local game ID as key
-            recommendedGame={game}
-            imageWidth={desiredCardWidth}
-            imageHeight={desiredCardHeight}
-          />
+          <RecommendationsCard key={game.id} recommendedGame={game} />
         ))}
       </div>
     </div>

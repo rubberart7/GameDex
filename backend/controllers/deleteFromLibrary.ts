@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '../generated/prisma';
+import prisma from '../server';
 import dotenv from 'dotenv'; 
 dotenv.config();
 
-const prisma = new PrismaClient();
 
 interface AuthenticatedRequest extends Request {
   user?: { userId: number; email: string };

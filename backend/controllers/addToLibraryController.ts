@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '../generated/prisma';
+import prisma from '../server';
 import axios from 'axios';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const prisma = new PrismaClient();
+
 const RAWG_API_KEY = process.env.RAWG_API_KEY;
 
 interface AuthenticatedRequest extends Request {

@@ -1,12 +1,12 @@
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import { PrismaClient } from "../generated/prisma";
+import prisma from "../server";
 import { Request, Response } from "express";
 import { generateAccessToken, generateRefreshToken } from "../libs/utils";
 
 dotenv.config();
 
-const prisma = new PrismaClient();
+
 
 interface RegisterRequestBody {
   fullName: string;
