@@ -1,6 +1,4 @@
-// backend/controllers/recommendationsController.ts
 import { Request, Response, NextFunction } from 'express';
-
 import prisma from '../server';
 import { getGamesLibraryFromDB } from './getGameLibraryController';
 import { getWishlistFromDB } from './getWishListController';
@@ -67,7 +65,7 @@ export const getRecommendations = async (
     } else {
       userTasteSummaryParts.push(`The user has games like: ${allUserGamesOfInterest.map(item => item.game.name).slice(0, 5).join(', ')}.`);
     }
-    userTasteSummaryParts.push('Suggest 3-5 new games the user might enjoy based on these preferences.');
+    userTasteSummaryParts.push('Suggest 12 new games the user might enjoy based on these preferences.');
 
     const compiledUserTaste = userTasteSummaryParts.join(' ');
 
@@ -85,7 +83,7 @@ export const getRecommendations = async (
       Do NOT recommend any of these games, as the user already knows them: ${gameNamesToExclude.join(', ')}.
       For each recommendation, explain briefly why it matches their preferences (e.g., similar genre, gameplay loop, theme, or developer).
       Ensure all recommended games are real, existing titles.
-      Format your response strictly as a JSON array of objects. Each object must have "game_name" (string) and "reason" (string) properties.
+      Format your response strictly as a JSON array of 12 objects. Each object must have "game_name" (string) and "reason" (string) properties.
       Example: [{"game_name": "Game Title", "reason": "Reason for recommendation"}, ...]
       Strictly only output the JSON array. Do not include any other text or formatting.
     `;
@@ -141,7 +139,6 @@ export const getRecommendations = async (
             rawgIdFromSearch = bestMatchFromRawgSearch.id;
 
             if (rawgIdFromSearch == null) {
-              console.warn(`RAWG Best Match ID was null/undefined for "${aiRec.game_name}". Skipping this recommendation.`);
               continue;
             }
 
@@ -218,6 +215,6 @@ export const getRecommendations = async (
   } catch (error) {
     console.error('Unhandled error in getRecommendations controller:', error);
     res.status(500).json({ message: 'An unexpected server error occurred during recommendation generation.', type: 'Error' });
-    next(error);
+    return;
   }
 };
