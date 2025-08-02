@@ -1,10 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import prisma from '../server';
+import prisma from '../server'; // Assuming this is your Prisma client instance
 import { getGamesLibraryFromDB } from './getGameLibraryController';
 import { getWishlistFromDB } from './getWishListController';
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import axios from 'axios';
+import { createHash } from 'crypto';
+
+// REMOVE or COMMENT OUT this line as Prisma.JsonArray is not directly exported
+// import { Prisma } from '@prisma/client'; // <-- REMOVED/COMMENTED
 
 dotenv.config();
 
@@ -22,6 +26,7 @@ interface LocalGameData {
   background_image: string | null;
   rating: number | null;
   released: string | null;
+  recommendationReason?: string; // Add this for AI response integration
 }
 
 interface UserCollectionItem {
@@ -36,6 +41,12 @@ interface AiRecommendation {
   reason: string;
 }
 
+const generateCollectionHash = (games: UserCollectionItem[]): string => {
+  const sortedRawgIds = games.map(item => item.game.rawgId).sort((a, b) => a - b).join(',');
+  const hash = createHash('sha256').update(sortedRawgIds).digest('hex');
+  return hash;
+};
+
 export const getRecommendations = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -48,12 +59,48 @@ export const getRecommendations = async (
     }
     const userId = req.user.userId;
 
+    console.log("Game recommendations hit!");
+
     const [ownedGames, wishedGames] = await Promise.all([
       getGamesLibraryFromDB(userId) as Promise<UserCollectionItem[]>,
       getWishlistFromDB(userId) as Promise<UserCollectionItem[]>,
     ]);
 
     const allUserGamesOfInterest = [...ownedGames, ...wishedGames];
+
+    const currentCollectionHash = generateCollectionHash(allUserGamesOfInterest);
+
+    const cachedEntry = await prisma.userRecommendationCache.findUnique({
+      where: { userId: userId },
+      select: { recommendations: true, collectionHash: true },
+    });
+
+    if (cachedEntry && cachedEntry.collectionHash === currentCollectionHash) {
+      console.log("Serving recommendations from database cache for user:", userId);
+
+      // --- FIX for read-side (image_7e4205.png) ---
+      // Instead of casting to Prisma.JsonArray, cast to 'any' first
+      // then to LocalGameData[]. This works around the import issue.
+      const recommendationsFromCache: any = cachedEntry.recommendations;
+
+      // Crucial runtime check: ensure the data is actually an array
+      if (Array.isArray(recommendationsFromCache)) {
+          res.status(200).json({
+              message: 'AI-powered recommendations retrieved from cache.',
+              // Final cast to your interface, now safer due to the Array.isArray check
+              recommendations: recommendationsFromCache as LocalGameData[],
+              type: 'Success',
+          });
+          return;
+      } else {
+          console.warn("Cached recommendations found but are not in expected array format, regenerating.");
+          // Fall through to regeneration logic if cached data is malformed
+      }
+      // --- END FIX for read-side ---
+    }
+
+    console.log("Generating new recommendations for user:", userId);
+
     const gameNamesToExclude: string[] = allUserGamesOfInterest.map(item => item.game.name);
 
     const userTasteSummaryParts: string[] = [];
@@ -75,7 +122,7 @@ export const getRecommendations = async (
     }
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const prompt = `
       You are a highly knowledgeable video game recommender AI.
@@ -198,8 +245,26 @@ export const getRecommendations = async (
     }
 
     if (validatedRecommendations.length > 0) {
+      // --- FIX for write-side (related to InputJsonValue not found if Prisma import removed) ---
+      // Use 'any' here as well, because `Prisma.InputJsonValue` also depends on `import { Prisma } from '@prisma/client';`
+      await prisma.userRecommendationCache.upsert({
+        where: { userId: userId },
+        update: {
+          recommendations: validatedRecommendations as any, // Cast to any
+          collectionHash: currentCollectionHash,
+          cachedAt: new Date(),
+        },
+        create: {
+          userId: userId,
+          recommendations: validatedRecommendations as any, // Cast to any
+          collectionHash: currentCollectionHash,
+          cachedAt: new Date(),
+        },
+      });
+      // --- END FIX for write-side ---
+
       res.status(200).json({
-        message: 'AI-powered recommendations generated successfully.',
+        message: 'AI-powered recommendations generated and cached successfully.',
         recommendations: validatedRecommendations,
         type: 'Success',
       });

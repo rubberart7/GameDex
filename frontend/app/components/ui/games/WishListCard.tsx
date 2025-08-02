@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface GameData {
   id: number;
@@ -40,12 +41,12 @@ const WishListCard: React.FC<WishListCardProps> = ({
     type: "",
   });
 
-  const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
-
-
+  const { accessToken, loading: authLoading, fetchNewAccessToken, incrementUserCollectionsVersion } = useAuth();
+  // Removed useRouter import and declaration as it's no longer used for redirection
+  // const router = useRouter();
   const { game } = wishlistItem;
 
-  const handleDeleteFromWishListClick = async () => {
+  const handleDeleteClick = async () => {
     setFeedback({ message: "", type: "" });
     setIsDeletingFromWishList(true);
 
@@ -60,7 +61,6 @@ const WishListCard: React.FC<WishListCardProps> = ({
         return;
       }
 
-
       const response = await fetch(`http://localhost:4000/api/user/delete-from-wishlist`, {
         method: 'DELETE',
         headers: {
@@ -72,7 +72,6 @@ const WishListCard: React.FC<WishListCardProps> = ({
       });
 
       const result = await response.json();
-
 
       if (!response.ok) {
         if (response.status === 401 && result.expired) {
@@ -91,13 +90,14 @@ const WishListCard: React.FC<WishListCardProps> = ({
             if (retryResponse.ok) {
               setFeedback({ message: retryResult.message || 'Game deleted successfully!', type: 'Success' });
               if (retryResult.count > 0) {
+                incrementUserCollectionsVersion();
                 onDeleteSuccess(wishlistItem.id);
               }
             } else {
               setFeedback({ message: retryResult.message || 'Failed to delete after token refresh. Please log in again.', type: 'Error' });
             }
           } else {
-            setFeedback({ message: 'Session expired. Please log in again.', type: 'Error' })
+            setFeedback({ message: 'Session expired. Please log in again.', type: 'Error' });
           }
         } else if (response.status === 409 || (response.status === 200 && result.count === 0)) {
           setFeedback({ message: result.message || 'Game not found in your WishList. Nothing to delete.', type: 'Info' });
@@ -109,6 +109,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
 
       setFeedback({ message: result.message || 'Game deleted successfully!', type: 'Success' });
       if (result.count > 0) {
+        incrementUserCollectionsVersion();
         onDeleteSuccess(wishlistItem.id);
       }
 
@@ -139,7 +140,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
       relative
     ">
       <div className="relative overflow-hidden relative-shine"
-           style={{ width: imageWidth, height: imageHeight }}>
+            style={{ width: imageWidth, height: imageHeight }}>
         {game.background_image ? (
           <img
             src={game.background_image}
@@ -147,25 +148,35 @@ const WishListCard: React.FC<WishListCardProps> = ({
             className="w-full h-full object-cover rounded-t-md transition-transform duration-500"
           />
         ) : (
-          <div
-            className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400 text-center text-lg rounded-t-md"
-          >
+          <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400 text-center text-lg rounded-t-md">
             No Image Available
           </div>
         )}
       </div>
 
-      <div className="p-3 flex-grow flex items-center bg-slate-950">
-        <h3 className="text-gray-300 text-sm font-semibold truncate">
+      <div className="p-3 flex-grow flex flex-col justify-between bg-slate-950">
+        <h3 className="text-gray-300 text-lg font-semibold truncate">
           {game.name}
         </h3>
+        <div className="flex items-center text-sm text-gray-400 mt-1">
+          {game.rating != null && (
+            <span className="text-gray-400 mr-1">
+              {game.rating.toFixed(1)}
+            </span>
+          )}
+          {game.released && (
+            <span className="text-gray-500">
+              ({game.released.substring(0, 4)})
+            </span>
+          )}
+        </div>
       </div>
 
       {feedback.message && (
         <div className={`absolute inset-x-0 bottom-0 p-2 text-xs rounded-b-lg text-center font-semibold
           ${feedback.type === "Error" ? "bg-red-800 text-red-100 border border-red-500"
-           : feedback.type === "Success" ? "bg-green-800 text-green-100 border border-green-500"
-           : "bg-blue-800 text-blue-100 border border-blue-500"
+            : feedback.type === "Success" ? "bg-green-800 text-green-100 border border-green-500"
+              : "bg-blue-800 text-blue-100 border border-blue-500"
           }`}>
           {feedback.message}
           <button
@@ -176,7 +187,6 @@ const WishListCard: React.FC<WishListCardProps> = ({
           </button>
         </div>
       )}
-
 
       <div className="
         w-full
@@ -190,7 +200,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
         mt-auto
       ">
         <button
-          onClick={handleDeleteFromWishListClick}
+          onClick={handleDeleteClick}
           className="
             flex items-center
             text-gray-300 group-hover:text-gray-100

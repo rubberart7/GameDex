@@ -16,7 +16,7 @@ interface RecommendedGameData {
 }
 
 const RecommendationsList: React.FC = () => {
-  const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
+  const { accessToken, loading: authLoading, fetchNewAccessToken, userCollectionsVersion } = useAuth();
   const [recommendedGames, setRecommendedGames] = useState<RecommendedGameData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -83,7 +83,7 @@ const RecommendationsList: React.FC = () => {
     };
 
     fetchRecommendations();
-  }, [accessToken, authLoading, fetchNewAccessToken]);
+  }, [accessToken, authLoading, fetchNewAccessToken, userCollectionsVersion]); // userCollectionsVersion remains in dependencies
 
   if (loading) {
     return (

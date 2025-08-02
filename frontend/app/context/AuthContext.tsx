@@ -1,17 +1,17 @@
-// frontend/app/context/AuthContext.tsx
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { jwtDecode, JwtPayload } from "jwt-decode"; // NEW: Import jwt-decode library
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 interface AuthContextType {
   accessToken: string | null;
   setAccessToken: (token: string | null) => void;
   loading: boolean;
-  fetchNewAccessToken: (forceRefresh?: boolean) => Promise<string | null>; // UPDATED: Added optional forceRefresh parameter
-  accessTokenExpiration: number | null; // NEW: Expose expiration timestamp
-  // You could also expose an isAccessTokenValid helper here if needed:
-  // isAccessTokenValid: () => boolean;
+  fetchNewAccessToken: (forceRefresh?: boolean) => Promise<string | null>;
+  accessTokenExpiration: number | null;
+  // userCollectionsVersion signals changes in library/wishlist to trigger recommendations re-fetch
+  userCollectionsVersion: number;
+  incrementUserCollectionsVersion: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -19,16 +19,23 @@ const AuthContext = createContext<AuthContextType>({
   setAccessToken: () => {},
   loading: true,
   fetchNewAccessToken: async () => null,
-  accessTokenExpiration: null, // Default value
+  accessTokenExpiration: null,
+  userCollectionsVersion: 0, // Default value
+  incrementUserCollectionsVersion: () => {}, // Default empty implementation
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  // NEW: State to store the expiration timestamp (Unix timestamp in seconds)
   const [accessTokenExpiration, setAccessTokenExpiration] = useState<number | null>(null);
+  // State to track changes in user's collections
+  const [userCollectionsVersion, setUserCollectionsVersion] = useState(0);
 
-  // NEW: Helper function to decode token and set state
+  // Function to increment the version number, signaling a change
+  const incrementUserCollectionsVersion = () => {
+    setUserCollectionsVersion(prev => prev + 1);
+  };
+
   const decodeAndSetToken = (token: string | null) => {
     if (!token) {
       setAccessToken(null);
@@ -37,13 +44,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     try {
       const decoded: JwtPayload = jwtDecode(token);
-      // 'exp' is a Unix timestamp in seconds
       if (decoded.exp) {
         setAccessTokenExpiration(decoded.exp);
       } else {
-        setAccessTokenExpiration(null); // No expiration found
+        setAccessTokenExpiration(null);
       }
-      setAccessToken(token); // Set the token itself
+      setAccessToken(token);
     } catch (err) {
       console.error("Failed to decode token, it might be invalid:", err);
       setAccessToken(null);
@@ -51,22 +57,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // NEW: Helper function to check if the current access token is expired or close to expiring
   const isAccessTokenExpired = (): boolean => {
     if (!accessToken || !accessTokenExpiration) {
-      // If there's no token or no expiration stored, it's considered expired/invalid
       return true;
     }
-    const currentTime = Date.now() / 1000; // Current time in seconds
-    // Return true if current time is past expiration. Adding a small buffer (e.g., 30 seconds)
-    // to proactively refresh before it *actually* expires, avoiding 401s on subsequent requests.
+    const currentTime = Date.now() / 1000;
+    // Check if token expires within the next 30 seconds (buffer)
     return accessTokenExpiration < currentTime + 30;
   };
 
-  // UPDATED: fetchNewAccessToken function now has intelligent check
   const fetchNewAccessToken = async (forceRefresh: boolean = false): Promise<string | null> => {
-    // If not forcing refresh, AND a token exists, AND that token is NOT expired,
-    // then just return the current valid token from memory without hitting the backend.
     if (!forceRefresh && accessToken && !isAccessTokenExpired()) {
       return accessToken;
     }
@@ -74,41 +74,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const res = await fetch("http://localhost:4000/api/auth/refresh", {
         method: "GET",
-        credentials: "include", // Sends the refresh token cookie
+        credentials: "include",
       });
 
       const data = await res.json();
 
       if (res.ok && data.accessToken) {
-        decodeAndSetToken(data.accessToken); // Use the new helper to set token and its expiration
+        decodeAndSetToken(data.accessToken);
         return data.accessToken;
       } else {
-        decodeAndSetToken(null); // Clear token if refresh failed
+        decodeAndSetToken(null);
         return null;
       }
     } catch (err) {
       console.error("Token refresh failed:", err);
-      decodeAndSetToken(null); // Clear token on network error
+      decodeAndSetToken(null);
       return null;
     }
   };
 
-  // UPDATED: Call the new fetchNewAccessToken function during initial mount
   useEffect(() => {
     async function initAuth() {
-      // On initial app load, always attempt to get a token (even if accessToken is null in memory,
-      // a valid refresh token might be in the cookie).
-      // We pass `true` to force a refresh check on initial load.
       await fetchNewAccessToken(true);
-      setLoading(false); // Set loading to false only after the initial fetch attempt is complete
+      setLoading(false);
     }
 
     initAuth();
-  }, []); // Empty dependency array means it runs once on mount
+  }, []);
 
   return (
-    // UPDATED: Provide the new accessTokenExpiration via the context value
-    <AuthContext.Provider value={{ accessToken, setAccessToken, loading, fetchNewAccessToken, accessTokenExpiration }}>
+    // Provide the userCollectionsVersion and increment function
+    <AuthContext.Provider value={{ accessToken, setAccessToken, loading, fetchNewAccessToken, accessTokenExpiration, userCollectionsVersion, incrementUserCollectionsVersion }}>
       {children}
     </AuthContext.Provider>
   );

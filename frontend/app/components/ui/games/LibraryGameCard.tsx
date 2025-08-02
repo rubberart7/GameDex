@@ -1,8 +1,9 @@
 "use client";
 
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
+import { useRouter } from 'next/navigation';
+
 
 interface GameData {
   id: number;
@@ -35,24 +36,26 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
   imageHeight = '300px',
   onDeleteSuccess
 }) => {
-	const [isDeletingFromLibrary, setIsDeletingFromLibrary] = useState(false);
-	const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "Info" | "" }>({
-		message: "",
-		type: "",
-	});
-	const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
+  const [isDeletingFromLibrary, setIsDeletingFromLibrary] = useState(false);
+  const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "Info" | "" }>({
+    message: "",
+    type: "",
+  });
+  const { accessToken, loading: authLoading, fetchNewAccessToken, incrementUserCollectionsVersion } = useAuth();
+  // Removed useRouter import and declaration as it's no longer used for redirection
+  // const router = useRouter();
 
 
   const { game } = libraryItem;
 
   const handleDeleteClick = async () => {
     setFeedback({ message: "", type: "" });
-    setIsDeletingFromLibrary(true); 
+    setIsDeletingFromLibrary(true);
 
     try {
       if (authLoading) {
         setFeedback({ message: 'Checking login status...', type: 'Info' });
-        return; 
+        return;
       }
 
       if (!accessToken) {
@@ -60,19 +63,19 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         return;
       }
 
-	  const response = await fetch(`http://localhost:4000/api/user/delete-from-library`, {
+    const response = await fetch(`http://localhost:4000/api/user/delete-from-library`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
-        body: JSON.stringify({ gameId: game.rawgId }), 
+        body: JSON.stringify({ gameId: game.rawgId }),
       });
 
-      const result = await response.json(); 
+      const result = await response.json();
 
-      
+
       if (!response.ok) {
         if (response.status === 401 && result.expired) {
           const newAccessToken = await fetchNewAccessToken();
@@ -87,9 +90,10 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
               body: JSON.stringify({ gameId: game.rawgId }),
             });
             const retryResult = await retryResponse.json();
-            if (retryResponse.ok) {
+            if (retryResult.ok) {
               setFeedback({ message: retryResult.message || 'Game deleted successfully!', type: 'Success' });
               if (retryResult.count > 0) {
+                incrementUserCollectionsVersion();
                 onDeleteSuccess(libraryItem.id);
               }
             } else {
@@ -109,10 +113,11 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
       setFeedback({ message: result.message || 'Game deleted successfully!', type: 'Success' });
 
       if (result.count > 0) {
-        onDeleteSuccess(libraryItem.id); 
+        incrementUserCollectionsVersion();
+        onDeleteSuccess(libraryItem.id);
       }
 
-    } catch (err: any) { 
+    } catch (err: any) {
       console.error('Network error deleting game from library:', err);
       setFeedback({ message: `Network error or server unavailable: ${err.message || 'Please try again.'}`, type: 'Error' });
     } finally {
@@ -139,7 +144,7 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
       relative
     ">
       <div className="relative overflow-hidden relative-shine"
-           style={{ width: imageWidth, height: imageHeight }}>
+            style={{ width: imageWidth, height: imageHeight }}>
         {game.background_image ? (
           <img
             src={game.background_image}
@@ -155,17 +160,29 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         )}
       </div>
 
-      <div className="p-3 flex-grow flex items-center bg-slate-950">
-        <h3 className="text-gray-300 text-sm font-semibold truncate">
+      <div className="p-3 flex-grow flex flex-col justify-between bg-slate-950">
+        <h3 className="text-gray-300 text-lg font-semibold truncate">
           {game.name}
         </h3>
+        <div className="flex items-center text-sm text-gray-400 mt-1">
+          {game.rating != null && (
+            <span className="text-gray-400 mr-1">
+              {game.rating.toFixed(1)}
+            </span>
+          )}
+          {game.released && (
+            <span className="text-gray-500">
+              ({game.released.substring(0, 4)})
+            </span>
+          )}
+        </div>
       </div>
 
-	  {feedback.message && (
+      {feedback.message && (
         <div className={`absolute inset-x-0 bottom-0 p-2 text-xs rounded-b-lg text-center font-semibold
-          ${feedback.type === "Error" ? "bg-red-800 text-red-100 border border-red-500" 
-           : feedback.type === "Success" ? "bg-green-800 text-green-100 border border-green-500"
-           : "bg-blue-800 text-blue-100 border border-blue-500"
+          ${feedback.type === "Error" ? "bg-red-800 text-red-100 border border-red-500"
+            : feedback.type === "Success" ? "bg-green-800 text-green-100 border border-green-500"
+              : "bg-blue-800 text-blue-100 border border-blue-500"
           }`}>
           {feedback.message}
           <button
@@ -192,13 +209,13 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
           onClick={handleDeleteClick}
           className="
             flex items-center
-            text-gray-300 group-hover:text-gray-100 // Changed from group-hover:text-white for subtlety
+            text-gray-300 group-hover:text-gray-100
             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50
             w-full h-full text-base font-semibold
             cursor-pointer
           "
           aria-label={`Delete ${game.name} from library`}
-		  disabled={isDeleteButtonDisabled}
+          disabled={isDeleteButtonDisabled}
         >
           {deleteButtonText}
         </button>

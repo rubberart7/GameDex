@@ -3,15 +3,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Button from '@/app/components/ui/common/Button';
 import { useAuth } from '@/app/context/AuthContext';
-import { useRouter } from 'next/navigation'; 
-
+// Removed useRouter import since it's no longer used
 
 interface GameDetails {
-  id: number; 
+  id: number;
   name: string;
-  description_raw: string; 
-  background_image: string; 
-  background_image_additional: string; 
+  description_raw: string;
+  background_image: string;
+  background_image_additional: string;
   released: string;
   metacritic: number | null;
   platforms: Array<{ platform: { id: number; name: string; slug: string } }>;
@@ -19,9 +18,9 @@ interface GameDetails {
   developers: Array<{ id: number; name: string; slug: string }>,
   publishers: Array<{ id: number; name: string; slug: string }>,
   esrb_rating: { id: number; name: string; slug: string } | null;
-  clip: { clip: string; preview: string } | null; 
-  short_screenshots: Array<{ id: number; image: string }>; 
-  tags: Array<{ id: number; name: string; slug: string }>; 
+  clip: { clip: string; preview: string } | null;
+  short_screenshots: Array<{ id: number; image: string }>;
+  tags: Array<{ id: number; name: string; slug: string }>;
 }
 
 interface GameDetailsCardProps {
@@ -30,8 +29,7 @@ interface GameDetailsCardProps {
 
 const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
   const [showTrailer, setShowTrailer] = useState(true);
-  const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
-  const router = useRouter();
+  const { accessToken, loading: authLoading, fetchNewAccessToken, incrementUserCollectionsVersion } = useAuth();
 
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const [isAddingToLibrary, setIsAddingToLibrary] = useState(false);
@@ -41,7 +39,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
   });
 
   const feedbackAreaRef = useRef<HTMLDivElement>(null);
-
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -58,7 +55,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [feedback.message]);
-
 
   if (!game) {
     return (
@@ -127,15 +123,14 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
               body: JSON.stringify({ gameId: game.id }),
             });
             const retryResult = await retryResponse.json();
-            if (retryResult.ok) {
+            if (retryResponse.ok) {
               setFeedback({ message: retryResult.message || successMessage, type: 'Success' });
+              incrementUserCollectionsVersion();
             } else {
               setFeedback({ message: retryResult.message || `Failed to add game to ${errorMessagePrefix}. Please log in again.`, type: 'Error' });
-              router.push('/need-login');
             }
           } else {
             setFeedback({ message: 'Session expired. Please log in again.', type: 'Error' });
-            router.push('/need-login');
           }
         } else if (response.status === 409) {
           setFeedback({ message: result.message || `Game is already in your ${errorMessagePrefix}.`, type: 'Info' });
@@ -146,6 +141,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       }
 
       setFeedback({ message: result.message || successMessage, type: 'Success' });
+      incrementUserCollectionsVersion();
 
     } catch (error: any) {
       console.error(`Error adding game to ${type} collection:`, error);
@@ -163,8 +159,8 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
     await handleAddToCollectionLogic('library');
   };
 
-  const isWishlistButtonDisabled = authLoading || isAddingToWishlist;
-  const isLibraryButtonDisabled = authLoading || isAddingToLibrary;
+  const isWishlistButtonDisabled = authLoading || isAddingToWishlist || isAddingToLibrary;
+  const isLibraryButtonDisabled = authLoading || isAddingToLibrary || isAddingToWishlist;
 
   const wishlistButtonText = authLoading
     ? 'Checking Login...'
@@ -179,16 +175,12 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       : 'Add to Library';
 
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen p-4 sm:p-8 flex justify-center"> {/* Adjusted padding for smaller screens */}
-      {/* Outer Flex Container for the main layout */}
-      <div className="max-w-6xl w-full flex flex-col lg:flex-row gap-8">
+    <div className="bg-slate-950 text-slate-100 min-h-screen p-8 flex justify-center">
+      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        {/* Left Column - Main Content (Trailer/Screenshots & Description) */}
-        {/* Added min-w-0 to allow this flex item to shrink as needed */}
-        <div className="flex-1 lg:flex-[2] order-2 lg:order-1 min-w-0">
+        <div className="lg:col-span-2">
           <h1 className="text-3xl md:text-4xl font-bold mb-6 text-blue-400">{game.name} Standard Edition</h1>
 
-          {/* Media Selector (Trailer/Screenshots) */}
           <div className="w-full bg-slate-900 rounded-lg overflow-hidden mb-6 aspect-video shadow-lg">
             {hasTrailer && showTrailer ? (
               <video
@@ -209,7 +201,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             )}
           </div>
 
-          {/* Screenshot/Trailer Selector (Below the main media) */}
           {game.short_screenshots && game.short_screenshots.length > 0 && (
             <div className="flex space-x-2 overflow-x-auto pb-2 -mx-8 px-8 mb-6">
               {hasTrailer && (
@@ -237,7 +228,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             </div>
           )}
 
-          {/* Description Section */}
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-3 text-blue-300">About This Game</h2>
             <p className="text-slate-300 leading-relaxed text-sm whitespace-pre-wrap">
@@ -245,7 +235,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             </p>
           </div>
 
-          {/* Genres and Features */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
             <div>
               <strong className="text-slate-400 block mb-1">Genres</strong>
@@ -277,7 +266,6 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             </div>
           </div>
 
-          {/* EA Play/Other subscription info if applicable (Placeholder) */}
           <div className="bg-fuchsia-900 rounded-lg p-4 flex items-center gap-4 text-sm shadow-md">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-fuchsia-300">
               <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.532a.75.75 0 0 1 .411-.53ZM9.743 7.82a.75.75 0 0 0-1.06 1.06l2.106 2.106-.316.316a.75.75 0 0 0 1.06 1.06l.316-.316 2.106 2.106a.75.75 0 0 0 1.06-1.06L12.31 11.23l.316-.316a.75.75 0 0 0-1.06-1.06l-.316.316L9.743 7.82Z" clipRule="evenodd" />
@@ -292,9 +280,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
           </div>
         </div>
 
-        {/* Right Column - Sidebar (Purchase Info, Details, Share/Report) */}
-        {/* Added min-w-0 to allow this flex item to shrink as needed */}
-        <div className="flex-1 lg:flex-initial lg:w-96 bg-slate-900 p-6 rounded-lg shadow-lg self-start sticky top-8 order-1 lg:order-2 min-w-0" ref={feedbackAreaRef}>
+        <div className="lg:col-span-1 bg-slate-900 p-6 rounded-lg shadow-lg self-start sticky top-8" ref={feedbackAreaRef}>
           <div className="flex justify-center mb-6">
             {game.background_image && (
               <img
@@ -343,11 +329,12 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             </div>
           </div>
 
+          {/* Button props are correctly set to only affect their own loading state */}
           <Button
             variant="addToLibrary"
             onClick={handleAddToLibrary}
-            loading={isLibraryButtonDisabled}
-            disabled={isLibraryButtonDisabled}
+            loading={isAddingToLibrary}
+            disabled={isLibraryButtonDisabled || isAddingToWishlist}
             loadingText={libraryButtonText}
           >
             {libraryButtonText}
@@ -355,14 +342,13 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
           <Button
             variant="addToWishList"
             onClick={handleAddToWishList}
-            loading={isWishlistButtonDisabled}
-            disabled={isWishlistButtonDisabled}
+            loading={isAddingToWishlist}
+            disabled={isWishlistButtonDisabled || isAddingToLibrary}
             loadingText={wishlistButtonText}
           >
             {wishlistButtonText}
           </Button>
 
-          {/* Feedback Message */}
           {feedback.message && (
             <div className={`relative p-3 rounded text-center font-semibold mb-4 border
               ${feedback.type === "Error" ? "bg-red-800 text-red-100 border-red-500"
@@ -426,6 +412,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
               <span>Report</span>
             </button>
           </div>
+
         </div>
       </div>
     </div>

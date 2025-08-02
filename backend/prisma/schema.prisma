@@ -10,20 +10,22 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
 model User {
-  id            Int       @id @default(autoincrement())
-  fullName      String
-  email         String    @unique
-  password      String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  refreshTokens RefreshToken[] // Relation to RefreshToken model
-  wishlist      Wishlist[]   // Relation to Wishlist model
-  library       UserGameLibrary[]   // Relation to UserGame (Library) model
+  id                    Int                     @id @default(autoincrement())
+  fullName              String
+  email                 String                  @unique
+  password              String
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  refreshTokens         RefreshToken[]          // Relation to RefreshToken model
+  wishlist              Wishlist[]              // Relation to Wishlist model
+  library               UserGameLibrary[]       // Relation to UserGame (Library) model
+  recommendationCache   UserRecommendationCache? // Relation to UserRecommendationCache model
 }
 
 // Your existing RefreshToken model (assuming this is already defined)
@@ -38,24 +40,22 @@ model RefreshToken {
   updatedAt DateTime @updatedAt
 }
 
-
 // The lean Game Model, holding only essential data from RAWG for display lists
 model Game {
-  id               Int       @id @default(autoincrement()) // Internal primary key for your database
-  rawgId           Int       @unique                     // The actual ID from the RAWG API
+  id               Int                 @id @default(autoincrement()) // Internal primary key for your database
+  rawgId           Int                 @unique                       // The actual ID from the RAWG API
   name             String
-  background_image String?                               // Optional, as not all games might have this
-  rating           Float?                                // Optional
-  released         String?                               // Optional
+  background_image String?                                           // Optional, as not all games might have this
+  rating           Float?                                            // Optional
+  released         String?                                           // Optional
 
   // Relations to your collection models
   wishlist         Wishlist[]
   library          UserGameLibrary[]
 
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
 }
-
 
 // Model for a user's Wishlist entries
 model Wishlist {
@@ -70,7 +70,6 @@ model Wishlist {
   @@unique([userId, gameId]) // Ensures a user can't add the same game multiple times to their wishlist
 }
 
-
 // Model for a user's Game Library entries (games they "own")
 model UserGameLibrary {
   id        Int      @id @default(autoincrement())
@@ -84,18 +83,13 @@ model UserGameLibrary {
   @@unique([userId, gameId]) // Ensures a user can't add the same game multiple times to their library
 }
 
-// Defines the relation to the User model.
+// NEW MODEL FOR CACHED RECOMMENDATIONS
+model UserRecommendationCache {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique
+  cachedAt       DateTime @default(now())
+  recommendations Json     // Store the array of recommendations as JSON
+  collectionHash String   // A hash representing the state of the user's library and wishlist
 
-// @relation(fields: [userId], references: [id]) means:
-
-// This model stores the foreign key in the userId field.
-
-// It references the id field in the User model.
-
-// onDelete: Cascade: If the user is deleted, all associated refresh tokens are deleted automatically (cascade delete).
-
-// @@index([token], name: "idx_token"): Creates an index on the token field to speed up queries searching by token.
-
-
-
-
+  user           User     @relation(fields: [userId], references: [id])
+}
