@@ -1,4 +1,4 @@
-'use client';
+'use client'; // This directive makes the component a Client Component
 
 import React from 'react';
 import Link from 'next/link';
@@ -19,12 +19,11 @@ interface LeftSideBarProps {
   className?: string;
 }
 
-// Fix: Explicitly type the props parameter as LeftSideBarProps
 const LeftSideBar: React.FC<LeftSideBarProps> = ({ className }: LeftSideBarProps) => {
   const pathname = usePathname();
 
-  // This function ensures only an exact path match is active
-  const isActive = (path: string) => pathname === path;
+  // The isActive function is no longer used for visual highlighting
+  // private const isActive = (path: string) => pathname === path;
 
   return (
     <div
@@ -55,12 +54,9 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ className }: LeftSideBarProps
               key={item.label}
               className={`
                 flex items-center gap-6 py-2 px-3 rounded-lg transition-all duration-200
-                text-gray-300
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:text-white
-                ${isActive(item.href)
-                    ? 'ring-2 ring-blue-500 text-white'
-                    : 'hover:ring-2 hover:ring-blue-500 hover:text-white'
-                }
+                text-gray-300 // Default text color
+                focus:outline-none focus:bg-gray-700 focus:text-white // Gray glow on focus (keyboard navigation)
+                hover:bg-gray-700 hover:text-white // Gray glow ONLY on hover
               `}
             >
               <item.Icon className="h-6 w-6" />
@@ -84,12 +80,9 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ className }: LeftSideBarProps
               key={item.label}
               className={`
                 flex items-center py-2 px-3 rounded-lg transition-all duration-200
-                text-gray-300
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:text-white
-                ${isActive(item.href)
-                    ? 'ring-2 ring-blue-500 text-white'
-                    : 'hover:ring-2 hover:ring-blue-500 hover:text-white'
-                }
+                text-gray-300 // Default text color
+                focus:outline-none focus:bg-gray-700 focus:text-white // Gray glow on focus (keyboard navigation)
+                hover:bg-gray-700 hover:text-white // Gray glow ONLY on hover
                 ${item.label === 'Recommendations' ? 'gap-4' : 'gap-6'}
               `}
             >
