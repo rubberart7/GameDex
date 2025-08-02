@@ -7,6 +7,7 @@ import SettingsIcon from '../../icons/SettingsIcon';
 import HomeIcon from '../../icons/HomeIcon';
 import BrowseGamesIcon from '../../icons/BrowseGamesIcon';
 import WishListIcon from '../../icons/WishListIcon';
+import RecommendationsIcon from '../../icons/RecommendationsIcon';
 
 const MainNavBar = () => {
   return (
@@ -36,6 +37,11 @@ const MainNavBar = () => {
                 Deals
             </Link>
 
+            <Link href="/game-recommendations" key="Recs" className="new-link-itm flex items-center text-lg gap-2">
+                <RecommendationsIcon className="side-bar-icon h-7 w-7" />
+                Recommendations
+            </Link>
+
             <Link href="/wishlist" key="WishList" className="new-link-itm flex items-center text-lg gap-2">
                 <WishListIcon className="side-bar-icon h-6 w-6" />
                 WishList
@@ -47,11 +53,6 @@ const MainNavBar = () => {
             </Link>
 
             
-
-            <Link href="/settings" key="Settings" className="new-link-itm flex items-center text-lg gap-2">
-                <SettingsIcon className="side-bar-icon h-6 w-6" />
-                Settings
-            </Link>
 
       </section>
         
