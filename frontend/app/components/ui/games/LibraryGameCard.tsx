@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
-import { useRouter } from 'next/navigation';
+// No useRouter import needed here
 
 
 interface GameData {
@@ -28,38 +28,42 @@ interface LibraryGameCardProps {
   imageWidth?: string;
   imageHeight?: string;
   onDeleteSuccess: (deletedItemId: number) => void;
+  // NEW: Callback to inform parent about delete operation status
+  onDeleteStatusChange: (isDeleting: boolean) => void;
 }
 
 const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
   libraryItem,
   imageWidth = '215px',
   imageHeight = '300px',
-  onDeleteSuccess
+  onDeleteSuccess,
+  onDeleteStatusChange // Destructure the new prop
 }) => {
+  // Re-introduced isDeletingFromLibrary state to control "Deleting..." text
   const [isDeletingFromLibrary, setIsDeletingFromLibrary] = useState(false);
   const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "Info" | "" }>({
     message: "",
     type: "",
   });
   const { accessToken, loading: authLoading, fetchNewAccessToken, incrementUserCollectionsVersion } = useAuth();
-  // Removed useRouter import and declaration as it's no longer used for redirection
-  // const router = useRouter();
-
 
   const { game } = libraryItem;
 
   const handleDeleteClick = async () => {
     setFeedback({ message: "", type: "" });
-    setIsDeletingFromLibrary(true);
+    setIsDeletingFromLibrary(true); // Set loading state for "Deleting..." text
+    onDeleteStatusChange(true); // Inform parent that a delete is starting
 
     try {
       if (authLoading) {
         setFeedback({ message: 'Checking login status...', type: 'Info' });
+        // Don't reset isDeletingFromLibrary here, let finally handle it
         return;
       }
 
       if (!accessToken) {
         setFeedback({ message: 'You must be logged in to delete games.', type: 'Error' });
+        // Don't reset isDeletingFromLibrary here, let finally handle it
         return;
       }
 
@@ -121,16 +125,15 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
       console.error('Network error deleting game from library:', err);
       setFeedback({ message: `Network error or server unavailable: ${err.message || 'Please try again.'}`, type: 'Error' });
     } finally {
-      setIsDeletingFromLibrary(false);
+      setIsDeletingFromLibrary(false); // Reset individual button loading state
+      onDeleteStatusChange(false); // Inform parent that delete is finished
     }
   };
 
+  // Button disabled if auth is loading OR if this specific delete operation is in progress
   const isDeleteButtonDisabled = authLoading || isDeletingFromLibrary;
-  const deleteButtonText = authLoading
-    ? 'Checking Login...'
-    : isDeletingFromLibrary
-      ? 'Deleting...'
-      : 'Delete';
+  // Show "Deleting..." text only if the delete operation is in progress
+  const deleteButtonText = isDeletingFromLibrary ? 'Deleting...' : 'Delete';
 
   return (
     <div className="

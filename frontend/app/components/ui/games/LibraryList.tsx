@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import LibraryGameCard from './LibraryGameCard';
 import { useAuth } from '@/app/context/AuthContext';
-import LoadingSpinner from '../common/LoadingSpinner'; 
+import LoadingSpinner from '../common/LoadingSpinner';
 
 interface GameData {
   id: number;
@@ -26,11 +26,20 @@ interface LibraryItem {
 const LibraryList: React.FC = () => {
   const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
   const [libraryGames, setLibraryGames] = useState<LibraryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Renamed 'loading' to 'isInitialLoading' for clarity on its purpose
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // NEW: State to track if any game is currently being deleted from the list
+  const [isDeletingAnyGame, setIsDeletingAnyGame] = useState(false);
+
 
   const handleGameDeleted = (deletedItemId: number) => {
     setLibraryGames(prevGames => prevGames.filter(item => item.id !== deletedItemId));
+  };
+
+  // NEW: Callback function passed to child cards to update parent's delete status
+  const handleChildDeleteStatusChange = (isDeleting: boolean) => {
+    setIsDeletingAnyGame(isDeleting);
   };
 
   useEffect(() => {
@@ -40,12 +49,16 @@ const LibraryList: React.FC = () => {
       }
 
       if (!accessToken) {
-        setLoading(false);
+        setIsInitialLoading(false); // Use the new state
         setError('Authentication required to view your library.');
         return;
       }
 
-      setLoading(true);
+      // Only set to true if it's an initial load or a refetch not caused by a delete
+      // This ensures the spinner doesn't show immediately if a delete is in progress
+      // and triggers a refresh.
+      // Or, simpler: Always set true, and let the render logic control the spinner visibility.
+      setIsInitialLoading(true);
       setError(null);
 
       try {
@@ -93,14 +106,17 @@ const LibraryList: React.FC = () => {
         console.error('Network error fetching library:', err);
         setError('Network error: Could not connect to server.');
       } finally {
-        setLoading(false);
+        setIsInitialLoading(false); // Use the new state
       }
     };
 
     fetchUserLibrary();
   }, [accessToken, authLoading, fetchNewAccessToken]);
 
-  if (loading) {
+  // IMPORTANT: The spinner should only show if the list is loading
+  // AND no individual game is currently being deleted.
+  // This is the core change to prevent spinner during delete.
+  if (isInitialLoading && !isDeletingAnyGame) {
     return (
       <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col justify-center items-center">
         <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
@@ -118,15 +134,19 @@ const LibraryList: React.FC = () => {
   }
 
   if (libraryGames.length === 0) {
-    return (
-      <div className="bg-slate-950 text-gray-400 min-h-screen p-10 flex justify-center">
-        <p>Your library is empty. Add some games!</p>
-      </div>
-    );
+    // Only show "empty" message if not currently deleting (to avoid flicker)
+    if (!isInitialLoading && !isDeletingAnyGame) {
+      return (
+        <div className="bg-slate-950 text-gray-400 min-h-screen p-10 flex justify-center">
+          <p>Your library is empty. Add some games!</p>
+        </div>
+      );
+    }
+    // If it's loading or deleting, don't show empty message yet
+    return null; // Or show a minimal placeholder if preferred
   }
 
-  
-  const desiredImageWidth = '300px'; 
+  const desiredImageWidth = '300px';
   const desiredImageHeight = '400px';
 
   return (
@@ -136,9 +156,10 @@ const LibraryList: React.FC = () => {
           <LibraryGameCard
             key={item.id}
             libraryItem={item}
-            imageWidth={desiredImageWidth}    
+            imageWidth={desiredImageWidth}
             imageHeight={desiredImageHeight}
             onDeleteSuccess={handleGameDeleted}
+            onDeleteStatusChange={handleChildDeleteStatusChange} // Pass the new callback
           />
         ))}
       </div>
