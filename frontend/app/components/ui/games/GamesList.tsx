@@ -9,6 +9,10 @@ import LoadingSpinner from '@/app/components/ui/common/LoadingSpinner';
 const CACHE_KEY_PREFIX = 'cachedGamesList_page_';
 const CACHE_EXPIRATION_MS = 60 * 60 * 1000;
 
+// FIX: Define MAX_GAME_PAGES directly in the frontend component
+// This value MUST match the MAX_GAME_PAGES constant in your backend's games.ts file.
+const MAX_GAME_PAGES = 3; 
+
 const GamesList = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +68,8 @@ const GamesList = () => {
           const { data, timestamp, previousUrl, nextUrl } = JSON.parse(cachedData);
           if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
             setGames(data);
-            setHasPreviousPage(!!previousUrl);
+            // FIX: Set hasPreviousPage based on pageNumber directly
+            setHasPreviousPage(pageNumber > 1);
             setHasNextPage(!!nextUrl);
             setLoading(false);
             isFetchingRef.current = false;
@@ -93,14 +98,16 @@ const GamesList = () => {
       }));
 
       setGames(newGames);
-      setHasPreviousPage(!!apiResponse.previous);
+      // FIX: Set hasPreviousPage based on pageNumber directly
+      setHasPreviousPage(pageNumber > 1);
       setHasNextPage(!!apiResponse.next);
 
       try {
         const dataToCache = {
           data: newGames,
           timestamp: Date.now(),
-          previousUrl: apiResponse.previous,
+          // FIX: Update previousUrl in cache based on pageNumber directly
+          previousUrl: pageNumber > 1 ? `http://localhost:4000/api/games?page=${pageNumber - 1}` : null,
           nextUrl: apiResponse.next,
         };
         localStorage.setItem(cacheKey, JSON.stringify(dataToCache));
@@ -112,7 +119,8 @@ const GamesList = () => {
     } catch (err: any) {
       console.error("Error fetching games:", err);
       setError(err.message || "An unknown error occurred while fetching games.");
-      setHasPreviousPage(false);
+      // On actual error (e.g. network down), it's okay to disable previous as we can't fetch anything
+      setHasPreviousPage(false); 
       setHasNextPage(false);
       setGames([]); // Clear games on fetch error to prevent rendering undefined game
     } finally {
@@ -220,7 +228,7 @@ const GamesList = () => {
 
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <select
-            className="w-full sm:w-auto px-4 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" // Added cursor-pointer
+            className="w-full sm:w-auto px-4 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
@@ -231,7 +239,7 @@ const GamesList = () => {
           </select>
 
           <select
-            className="w-full sm:w-auto px-4 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" // Added cursor-pointer
+            className="w-full sm:w-auto px-4 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             value={selectedSort}
             onChange={(e) => setSelectedSort(e.target.value)}
           >
@@ -260,6 +268,10 @@ const GamesList = () => {
         !loading && (
           <div className="flex items-center justify-center h-full text-gray-400 py-10">
             <p className="text-lg">No games found matching your criteria.</p>
+            {/* Optional: Add a specific message if it's due to the backend page limit */}
+            {currentPage > MAX_GAME_PAGES && ( // Use currentPage > MAX_GAME_PAGES for the message
+                <p className="text-sm mt-2 text-gray-500">You've reached the end of available pages due to API limits.</p>
+            )}
           </div>
         )
       )}
@@ -270,7 +282,7 @@ const GamesList = () => {
         <button
           onClick={handlePreviousPage}
           disabled={loading || !hasPreviousPage}
-          className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer" // Added cursor-pointer
+          className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 mr-2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -283,7 +295,7 @@ const GamesList = () => {
         <button
           onClick={handleNextPage}
           disabled={loading || !hasNextPage}
-          className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer" // Added cursor-pointer
+          className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer"
         >
           Next
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 ml-2">

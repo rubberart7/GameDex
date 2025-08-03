@@ -1,3 +1,5 @@
+// backend/src/controllers/games.ts
+
 import { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
@@ -5,7 +7,7 @@ dotenv.config();
 
 const gamesApiKey = process.env.RAWG_API_KEY;
 const startDate = '2022-01-01';
-const endDate = `2025-01-08`; // Consider using dynamic dates if this is for current games
+const endDate = `2025-01-08`;
 
 const MAX_GAME_PAGES = 3; // Set this to your desired limit
 
@@ -15,17 +17,17 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
 
         if (page > MAX_GAME_PAGES) {
             console.log(`Frontend requested page ${page} for games, but maximum allowed pages is ${MAX_GAME_PAGES}. Returning empty data.`);
-            
-            // Construct the 'previous' URL to point to the MAX_GAME_PAGES
-            const previousPageUrl = `http://localhost:4000/api/games?page=${MAX_GAME_PAGES}`; // Assuming your frontend URL structure
-            // You might need to make this more dynamic if your API base URL or query params vary.
-            // For example:
-            // const previousPageUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}?page=${MAX_GAME_PAGES}`;
+
+            // Construct the 'previous' URL dynamically for the page *before* the requested one
+            // This is cleaner and aligns with how RAWG handles 'previous' links normally
+            const previousPageUrl = page > 1
+                ? `${req.protocol}://${req.get('host')}${req.baseUrl}?page=${page - 1}`
+                : null; // If page is 1 or less (shouldn't happen with page > MAX_GAME_PAGES logic, but defensive)
 
             res.status(200).json({
                 count: 0, // Indicate no results
                 next: null,
-                previous: previousPageUrl, // <-- Changed this!
+                previous: previousPageUrl, // This will now point to page MAX_GAME_PAGES (e.g., page 3)
                 results: []
             });
 
