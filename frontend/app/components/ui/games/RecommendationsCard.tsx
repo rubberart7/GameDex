@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 
 interface RecommendedGameData {
   id: number;
@@ -23,16 +23,18 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
   imageWidth = '215px',
   imageHeight = '300px'
 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const game = recommendedGame;
 
   return (
     <div
-      className="
+      onClick={() => setIsExpanded((prev) => !prev)}
+      className={`
         bg-slate-950
         rounded-sm
         overflow-hidden
         shadow-md
-        transform transition-transform duration-300 hover:scale-105
+        transition-all duration-300
         cursor-pointer
         flex flex-col
         relative
@@ -40,8 +42,8 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
         w-full
         min-w-[200px]
         max-w-full
-        min-h-[380px]
-      "
+        ${isExpanded ? 'scale-105 min-h-[500px]' : 'hover:scale-105 min-h-[380px]'}
+      `}
       style={{ width: imageWidth }}
     >
       <div
@@ -80,7 +82,11 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
       </div>
 
       <div className="p-3 pt-0 mt-auto bg-slate-950">
-        <p className="text-sm text-gray-300 italic line-clamp-3">
+        <p
+          className={`text-sm text-gray-300 italic transition-all duration-300 ${
+            isExpanded ? '' : 'line-clamp-3'
+          }`}
+        >
           "{game.recommendationReason}"
         </p>
       </div>
