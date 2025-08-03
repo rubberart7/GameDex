@@ -1,6 +1,5 @@
-// frontend/app/components/ui/games/GameCard.tsx
 import React from 'react';
-import Link from 'next/link'; // Import Link
+import Link from 'next/link';
 
 export interface Platform {
   id: number;
@@ -11,9 +10,8 @@ export interface PlatformObj {
   platform: Platform;
 }
 
-// ... (Your existing interfaces for Platform, PlatformObj, Game)
 export interface Game {
-  id: number; // Make sure this is still here!
+  id: number;
   background_image: string;
   name: string;
   rating: number;
@@ -28,7 +26,6 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game }) => {
   return (
-    // Only this line changes (as per previous instructions for routing):
     <Link href={`/game-details/${game.id}`} passHref>
       <div className="relative bg-slate-950 rounded-lg shadow-md overflow-hidden w-full min-h-[475px] transition-transform
       duration-300 hover:scale-108 cursor-pointer">
@@ -40,32 +37,30 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
           />
         </div>
 
-        <div className="p-4">
-          <div className="fullCard flex flex-col gap-1">
-            <div className="top-card">
-              <div className="flex justify-between items-start mb-2 gap-1.25">
-                <h2 className="text-stone-300 text-lg font-semibold cursor-pointer line-clamp-2">
-                  {game.name}
-                </h2>
-                <span className="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded">
-                  {game.rating.toFixed(1)}
-                </span>
-              </div>
-
-              <div className="flex flex-wrap gap-1 mb-2 mt-1">
-                {game.parent_platforms.map((platformObj) => (
-                  <span
-                    key={`parent-${platformObj.platform.id}`}
-                    className="bg-blue-200 rounded px-2 py-0.5 text-xs"
-                  >
-                    {platformObj.platform.name}
-                  </span>
-                ))}
-              </div>
+        <div className="p-4 flex flex-col justify-between h-[calc(100%-268px)]">
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-start">
+              <h2 className="text-stone-100 text-xl font-bold leading-snug line-clamp-2">
+                {game.name}
+              </h2>
+              <span className="bg-green-500 text-white text-sm font-semibold px-2 py-1 rounded-full shadow-sm">
+                {game.rating.toFixed(1)}
+              </span>
             </div>
 
-            <div className="absolute bottom-2 right-2 text-slate-200 text-sm bg-slate-700 bg-opacity-75 px-2 py-1 rounded">
-              <span>Released: {game.released}</span>
+            <div className="text-sm text-slate-400">
+              Released: <span className="text-slate-200">{game.released}</span>
+            </div>
+
+            <div className="flex flex-wrap gap-1">
+              {game.parent_platforms.map((platformObj) => (
+                <span
+                  key={`parent-${platformObj.platform.id}`}
+                  className="bg-slate-800 text-slate-200 px-2 py-0.5 text-xs rounded-full border border-slate-700"
+                >
+                  {platformObj.platform.name}
+                </span>
+              ))}
             </div>
           </div>
         </div>
