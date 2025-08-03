@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import LibraryGameCard from './LibraryGameCard';
 import { useAuth } from '@/app/context/AuthContext';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -12,6 +12,7 @@ interface GameData {
   background_image?: string;
   rating?: number;
   released?: string;
+  genres?: { id: number; name: string; slug: string; }[]; // Add genres to GameData
 }
 
 interface LibraryItem {
@@ -26,18 +27,48 @@ interface LibraryItem {
 const LibraryList: React.FC = () => {
   const { accessToken, loading: authLoading, fetchNewAccessToken } = useAuth();
   const [libraryGames, setLibraryGames] = useState<LibraryItem[]>([]);
-  // Renamed 'loading' to 'isInitialLoading' for clarity on its purpose
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // NEW: State to track if any game is currently being deleted from the list
   const [isDeletingAnyGame, setIsDeletingAnyGame] = useState(false);
 
+  // NEW: Filtering and Sorting States
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedSort, setSelectedSort] = useState<string>('addedAt-desc'); // Default sort
+
+  // Categories and Sort Options (can be moved to a separate file if reused)
+  const categories = [
+    { name: 'Action', slug: 'action' },
+    { name: 'Adventure', slug: 'adventure' },
+    { name: 'RPG', slug: 'role-playing-games-rpg' },
+    { name: 'Strategy', slug: 'strategy' },
+    { name: 'Shooter', slug: 'shooter' },
+    { name: 'Puzzle', slug: 'puzzle' },
+    { name: 'Racing', slug: 'racing' },
+    { name: 'Sports', slug: 'sports' },
+    { name: 'Simulation', slug: 'simulation' },
+    { name: 'Indie', slug: 'indie' },
+    { name: 'Platformer', slug: 'platformer' },
+    { name: 'Fighting', slug: 'fighting' },
+    { name: 'Family', slug: 'family' },
+    { name: 'Arcade', slug: 'arcade' },
+    { name: 'Casual', slug: 'casual' },
+  ];
+
+  const sortOptions = [
+    { name: 'Added Date (Newest)', value: 'addedAt-desc' },
+    { name: 'Added Date (Oldest)', value: 'addedAt-asc' },
+    { name: 'Name (A-Z)', value: 'name-asc' },
+    { name: 'Name (Z-A)', value: 'name-desc' },
+    { name: 'Release Date (Newest)', value: 'released-desc' },
+    { name: 'Release Date (Oldest)', value: 'released-asc' },
+    { name: 'Metacritic Score (Highest)', value: 'metacritic-desc' },
+  ];
 
   const handleGameDeleted = (deletedItemId: number) => {
     setLibraryGames(prevGames => prevGames.filter(item => item.id !== deletedItemId));
   };
 
-  // NEW: Callback function passed to child cards to update parent's delete status
   const handleChildDeleteStatusChange = (isDeleting: boolean) => {
     setIsDeletingAnyGame(isDeleting);
   };
@@ -49,15 +80,11 @@ const LibraryList: React.FC = () => {
       }
 
       if (!accessToken) {
-        setIsInitialLoading(false); // Use the new state
+        setIsInitialLoading(false);
         setError('Authentication required to view your library.');
         return;
       }
 
-      // Only set to true if it's an initial load or a refetch not caused by a delete
-      // This ensures the spinner doesn't show immediately if a delete is in progress
-      // and triggers a refresh.
-      // Or, simpler: Always set true, and let the render logic control the spinner visibility.
       setIsInitialLoading(true);
       setError(null);
 
@@ -106,16 +133,62 @@ const LibraryList: React.FC = () => {
         console.error('Network error fetching library:', err);
         setError('Network error: Could not connect to server.');
       } finally {
-        setIsInitialLoading(false); // Use the new state
+        setIsInitialLoading(false);
       }
     };
 
     fetchUserLibrary();
   }, [accessToken, authLoading, fetchNewAccessToken]);
 
-  // IMPORTANT: The spinner should only show if the list is loading
-  // AND no individual game is currently being deleted.
-  // This is the core change to prevent spinner during delete.
+  // NEW: Filtering and Sorting Logic using useMemo for performance
+  const filteredAndSortedGames = useMemo(() => {
+    let currentGames = [...libraryGames];
+
+    // Apply search term filter
+    if (searchTerm) {
+      currentGames = currentGames.filter(item =>
+        item.game.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply category filter
+    if (selectedCategory) {
+      currentGames = currentGames.filter(item =>
+        item.game.genres && item.game.genres.some(genre => genre.slug === selectedCategory)
+      );
+    }
+
+    // Apply sorting
+    currentGames.sort((a, b) => {
+      switch (selectedSort) {
+        case 'addedAt-desc':
+          return new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime();
+        case 'addedAt-asc':
+          return new Date(a.addedAt).getTime() - new Date(b.addedAt).getTime();
+        case 'name-asc':
+          return a.game.name.localeCompare(b.game.name);
+        case 'name-desc':
+          return b.game.name.localeCompare(a.game.name);
+        case 'released-desc':
+          const releasedA_desc = a.game.released ? new Date(a.game.released).getTime() : 0;
+          const releasedB_desc = b.game.released ? new Date(b.game.released).getTime() : 0;
+          return releasedB_desc - releasedA_desc;
+        case 'released-asc':
+          const releasedA_asc = a.game.released ? new Date(a.game.released).getTime() : 0;
+          const releasedB_asc = b.game.released ? new Date(b.game.released).getTime() : 0;
+          return releasedA_asc - releasedB_asc;
+        case 'metacritic-desc':
+          // Assuming 'rating' from GameData is used for metacritic
+          return (b.game.rating || 0) - (a.game.rating || 0);
+        default:
+          return 0;
+      }
+    });
+
+    return currentGames;
+  }, [libraryGames, searchTerm, selectedCategory, selectedSort]);
+
+
   if (isInitialLoading && !isDeletingAnyGame) {
     return (
       <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col items-center">
@@ -133,36 +206,87 @@ const LibraryList: React.FC = () => {
     );
   }
 
-  if (libraryGames.length === 0) {
-    // Only show "empty" message if not currently deleting (to avoid flicker)
-    if (!isInitialLoading && !isDeletingAnyGame) {
-      return (
-        <div className="bg-slate-950 text-gray-400 min-h-screen p-10 flex justify-center">
-          <p>Your library is empty. Add some games!</p>
-        </div>
-      );
-    }
-    // If it's loading or deleting, don't show empty message yet
-    return null; // Or show a minimal placeholder if preferred
-  }
-
+  // REVERTED: Keeping original desired image dimensions
   const desiredImageWidth = '300px';
   const desiredImageHeight = '400px';
 
   return (
-    <div className="bg-slate-950 min-h-screen p-10">
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-12 justify-center">
-        {libraryGames.map((item) => (
-          <LibraryGameCard
-            key={item.id}
-            libraryItem={item}
-            imageWidth={desiredImageWidth}
-            imageHeight={desiredImageHeight}
-            onDeleteSuccess={handleGameDeleted}
-            onDeleteStatusChange={handleChildDeleteStatusChange} // Pass the new callback
+    <div className="bg-slate-950 min-h-screen p-3 sm:p-4 md:p-6 lg:p-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div className="relative flex-grow min-w-0 w-full sm:w-auto">
+          <input
+            type="text"
+            placeholder="Search your library"
+            className="w-full pl-10 pr-4 py-2 rounded-md bg-slate-800 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-slate-700"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-        ))}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          <select
+            className="w-full sm:w-auto px-4 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            {categories.map(category => (
+              <option key={category.slug} value={category.slug}>{category.name}</option>
+            ))}
+          </select>
+
+          <select
+            className="w-full sm:w-auto px-4 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            value={selectedSort}
+            onChange={(e) => setSelectedSort(e.target.value)}
+          >
+            {sortOptions.map(option => (
+              <option key={option.value} value={option.value}>{option.name}</option>
+            ))}
+          </select>
+        </div>
       </div>
+
+      <h2 className="text-2xl font-bold mb-6 text-blue-400">My Library</h2>
+
+      {filteredAndSortedGames.length > 0 ? (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-12 justify-center"> {/* REVERTED grid-cols back to original minmax(300px,1fr) */}
+          {filteredAndSortedGames.map((item) => (
+            <LibraryGameCard
+              key={item.id}
+              libraryItem={item}
+              imageWidth={desiredImageWidth}
+              imageHeight={desiredImageHeight}
+              onDeleteSuccess={handleGameDeleted}
+              onDeleteStatusChange={handleChildDeleteStatusChange}
+            />
+          ))}
+        </div>
+      ) : (
+        !isInitialLoading && !isDeletingAnyGame && (
+          <div className="flex items-center justify-center h-full text-gray-400 py-10">
+            <p className="text-lg">No games found in your library matching your criteria.</p>
+          </div>
+        )
+      )}
+
+      {/* Optional: Show loading spinner during subsequent actions if needed, though for library it's typically full refresh or delete handling */}
+      {isInitialLoading && filteredAndSortedGames.length === 0 && (
+        <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col items-center">
+          <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
+          <p>Loading your game library...</p>
+        </div>
+      )}
     </div>
   );
 };
