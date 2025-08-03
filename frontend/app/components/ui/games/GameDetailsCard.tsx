@@ -265,28 +265,17 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
               </div>
             </div>
           </div>
-
-          <div className="bg-fuchsia-900 rounded-lg p-4 flex items-center gap-4 text-sm shadow-md">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-fuchsia-300">
-              <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.532a.75.75 0 0 1 .411-.53ZM9.743 7.82a.75.75 0 0 0-1.06 1.06l2.106 2.106-.316.316a.75.75 0 0 0 1.06 1.06l.316-.316 2.106 2.106a.75.75 0 0 0 1.06-1.06L12.31 11.23l.316-.316a.75.75 0 0 0-1.06-1.06l-.316.316L9.743 7.82Z" clipRule="evenodd" />
-            </svg>
-            <div>
-              <p className="font-semibold text-fuchsia-200">Unlock thrill with EA Play.</p>
-              <p className="text-fuchsia-300">Get unlimited access to a collection of EA's top titles, specials, and 10% off EA digital purchases.</p>
-            </div>
-            <button className="ml-auto px-4 py-2 bg-fuchsia-700 hover:bg-fuchsia-600 rounded-md text-white text-sm shadow-sm">
-              Explore
-            </button>
-          </div>
         </div>
 
-        <div className="lg:col-span-1 bg-slate-900 p-6 rounded-lg shadow-lg self-start sticky top-8" ref={feedbackAreaRef}>
+        {/* Right-side card - Redesigned */}
+        {/* Removed border and border-slate-700 from here */}
+        <div className="lg:col-span-1 bg-slate-950 p-6 rounded-xl shadow-2xl self-start sticky top-8" ref={feedbackAreaRef}>
           <div className="flex justify-center mb-6">
             {game.background_image && (
               <img
                 src={game.background_image}
                 alt={`${game.name} small image`}
-                className="w-24 h-24 object-cover rounded-md border border-slate-700"
+                className="w-32 h-32 object-cover rounded-xl border-2 border-slate-600 shadow-md"
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = '/placeholder-game-logo.png';
@@ -294,111 +283,118 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
               />
             )}
             {!game.background_image && (
-              <div className="w-24 h-24 flex items-center justify-center bg-slate-700 text-slate-400 rounded-md text-xs text-center">
+              <div className="w-32 h-32 flex items-center justify-center bg-slate-800 text-slate-500 rounded-xl text-sm text-center border-2 border-slate-700">
                 No Image
               </div>
             )}
           </div>
 
-          {game.esrb_rating && (
-            <div className="flex items-center gap-2 mb-4 text-slate-200">
-              <span className="text-lg font-bold bg-slate-700 px-2 py-1 rounded">{game.esrb_rating.name.slice(0, 2).toUpperCase()}</span>
-              <span className="text-sm">{game.esrb_rating.name}</span>
+          {/* Changed bg to bg-slate-950 and removed shadow-inner for a flatter look */}
+          <div className="bg-slate-950 rounded-lg p-4 mb-5">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-slate-300 font-semibold text-lg">Base Game</span>
             </div>
-          )}
-          {game.metacritic !== null && (
-            <div className="flex items-center gap-2 mb-4 text-slate-200">
-              <span className={`text-lg font-bold px-2 py-1 rounded
-                ${game.metacritic >= 75 ? 'bg-green-600' : game.metacritic >= 50 ? 'bg-yellow-600' : 'bg-red-600'}`}>
-                {game.metacritic}
-              </span>
-              <span className="text-sm">Metacritic Score</span>
-            </div>
-          )}
 
-          <div className="text-sm mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-slate-400">Base Game</span>
-              <span className="text-lg font-semibold text-slate-50">${game.id === 1 ? '69.99' : 'Price TBD'}</span>
-            </div>
-            <div className="flex items-center text-green-400 mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-1">
-                <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clipRule="evenodd" />
-              </svg>
-              Save 10% with EA Play
+            {game.esrb_rating && (
+              <div className="flex items-center gap-3 mb-2 text-slate-200">
+                {/* Changed w-14 to w-12 */}
+                <span className="text-sm font-semibold bg-blue-700 px-3 py-1 rounded-md w-12 text-center">{game.esrb_rating.name.slice(0, 2).toUpperCase()}</span>
+                <span className="text-sm">ESRB Rating</span>
+              </div>
+            )}
+            {game.metacritic !== null && (
+              <div className="flex items-center gap-3 mb-4 text-slate-200">
+                {/* Changed w-14 to w-12 */}
+                <span className={`text-sm font-semibold px-3 py-1 rounded-md w-12 text-center
+                  ${game.metacritic >= 75 ? 'bg-green-600' : game.metacritic >= 50 ? 'bg-yellow-600' : 'bg-red-600'}`}>
+                  {game.metacritic}
+                </span>
+                <span className="text-sm">Metacritic Score</span>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3 mt-4">
+              <Button
+                variant="addToLibrary"
+                onClick={handleAddToLibrary}
+                loading={isAddingToLibrary}
+                disabled={isLibraryButtonDisabled || isAddingToWishlist}
+                loadingText={libraryButtonText}
+              >
+                {libraryButtonText}
+              </Button>
+              <Button
+                variant="addToWishList"
+                onClick={handleAddToWishList}
+                loading={isAddingToWishlist}
+                disabled={isWishlistButtonDisabled || isAddingToLibrary}
+                loadingText={wishlistButtonText}
+              >
+                {wishlistButtonText}
+              </Button>
             </div>
           </div>
 
-          {/* Button props are correctly set to only affect their own loading state */}
-          <Button
-            variant="addToLibrary"
-            onClick={handleAddToLibrary}
-            loading={isAddingToLibrary}
-            disabled={isLibraryButtonDisabled || isAddingToWishlist}
-            loadingText={libraryButtonText}
-          >
-            {libraryButtonText}
-          </Button>
-          <Button
-            variant="addToWishList"
-            onClick={handleAddToWishList}
-            loading={isAddingToWishlist}
-            disabled={isWishlistButtonDisabled || isAddingToLibrary}
-            loadingText={wishlistButtonText}
-          >
-            {wishlistButtonText}
-          </Button>
-
           {feedback.message && (
-            <div className={`relative p-3 rounded text-center font-semibold mb-4 border
-              ${feedback.type === "Error" ? "bg-red-800 text-red-100 border-red-500"
-                : feedback.type === "Success" ? "bg-green-800 text-green-100 border-green-500"
-                : "bg-blue-800 text-blue-100 border-blue-500"
-              }`}>
+            <div className={`p-3 rounded text-center text-sm font-medium mb-4 border
+              ${feedback.type === "Error" ? "bg-red-900/70 text-red-100 border-red-600"
+                : feedback.type === "Success" ? "bg-green-900/70 text-green-100 border-green-600"
+                : "bg-blue-900/70 text-blue-100 border-blue-600"
+              } bg-opacity-80 backdrop-blur-sm`}>
               {feedback.message}
               <button
                 onClick={() => setFeedback({ message: "", type: "" })}
-                className="absolute top-1 right-2 text-white opacity-70 hover:opacity-100 cursor-pointer"
+                className="absolute top-1 right-2 text-white opacity-70 hover:opacity-100 text-lg"
+                aria-label="Close feedback"
               >
                 &times;
               </button>
             </div>
           )}
 
-          <div className="text-xs text-slate-400 mb-6 border-b border-slate-800 pb-4">
-            <div className="flex justify-between mb-1">
-              <span>Epic Rewards</span>
-              <span className="text-lime-400">Earn 20% Back &gt;</span>
+          <div className="space-y-3 text-sm pt-4">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-slate-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.745 3A23.933 23.933 0 0 0 12 9c2.755 0 5.455-.23 8.11-0.697M7.5 14.25a3 3 0 0 0-3 3h15.75a3 3 0 1 1 0 6H4.5a3 3 0 0 1-3-3m0-10.5h17.25c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-18 0V4.875c0-.621.504-1.125 1.125-1.125Z" />
+                </svg>
+                Developer
+              </span>
+              <span className="text-slate-200 font-medium">{game.developers?.[0]?.name || 'N/A'}</span>
             </div>
-            <div className="flex justify-between mb-1">
-              <span>Refund Type</span>
-              <span>Self-Refundable <span title="Some help text about refund type">&#9432;</span></span>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-slate-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18" />
+                </svg>
+                Publisher
+              </span>
+              <span className="text-slate-200 font-medium">{game.publishers?.[0]?.name || 'N/A'}</span>
             </div>
-          </div>
-
-          <div className="space-y-2 text-sm pt-4">
-            <div className="flex justify-between">
-              <span className="text-slate-400">Developer</span>
-              <span className="text-slate-200">{game.developers?.[0]?.name || 'N/A'}</span>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-slate-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 12h.008v.008H12V12Zm-3 0h.008v.008H9V12Zm-3 0h.008v.008H6V12Zm3 3h.008v.008H9V15Zm-3 0h.008v.008H6V15Zm3 3h.008v.008H9V18Zm-3 0h.008v.008H6V18Z" />
+                </svg>
+                Release Date
+              </span>
+              <span className="text-slate-200 font-medium">{game.released || 'N/A'}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Publisher</span>
-              <span className="text-slate-200">{game.publishers?.[0]?.name || 'N/A'}</span>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-slate-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25M12 9v6" />
+                </svg>
+                Platform
+              </span>
+              <span className="text-slate-200 font-medium">{game.platforms?.[0]?.platform?.name || 'N/A'}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Available</span>
-              <span className="text-slate-200">{game.released || 'N/A'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Platform</span>
-              <span className="text-slate-200">{game.platforms?.[0]?.platform?.name || 'N/A'}</span>
-            </div>
-            <div className="text-blue-400 text-xs mt-2 cursor-pointer hover:underline">
+            <div className="text-blue-400 text-xs mt-3 cursor-pointer hover:underline text-center">
               See All Editions and Add-Ons
             </div>
           </div>
 
-          <div className="flex justify-center gap-4 mt-8 text-sm">
+          <div className="flex justify-center gap-4 mt-8 text-sm border-t border-slate-700 pt-6">
             <button className="flex items-center text-slate-400 hover:text-blue-400 transition duration-200">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186A.75.75 0 0 1 7.5 10.5h6l2.201 2.834c.304.42-.028.96-.516.96H7.5V15a.75.75 0 0 0 1.5 0v-1.5m-4.782-2.186c0-.923.474-1.744 1.256-2.227L15 2.828V2.25a.75.75 0 0 1 1.5 0v.578A2.25 2.25 0 0 0 18 4.5v.75m-8.782 9.093l-2.92 2.92c-.82.82-.095 2.296 1.006 2.296h8.04c1.101 0 1.826-1.476 1.005-2.296l-2.92-2.92m-6.402-1.138A2.25 2.25 0 1 1 15 10.907M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186A.75.75 0 0 1 7.5 10.5h6l2.201 2.834c.304.42-.028.96-.516.96H7.5V15a.75.75 0 0 0 1.5 0v-1.5m-4.782-2.186c0-.923.474-1.744 1.256-2.227L15 2.828V2.25a.75.75 0 0 1 1.5 0v.578A2.25 2.25 0 0 0 18 4.5v.75m-8.782 9.093l-2.92 2.92c-.82.82-.095 2.296 1.006 2.296h8.04c1.101 0 1.826-1.476 1.005-2.296l-2.92-2.92" />
