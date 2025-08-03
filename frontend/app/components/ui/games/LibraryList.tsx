@@ -118,7 +118,7 @@ const LibraryList: React.FC = () => {
   // This is the core change to prevent spinner during delete.
   if (isInitialLoading && !isDeletingAnyGame) {
     return (
-      <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col justify-center items-center">
+      <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col items-center">
         <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
         <p>Loading your game library...</p>
       </div>

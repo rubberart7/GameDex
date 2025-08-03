@@ -4,10 +4,17 @@ import Link from 'next/link';
 export interface Platform {
   id: number;
   name: string;
+  slug: string; // Added slug as it's often useful and present
 }
 
 export interface PlatformObj {
   platform: Platform;
+}
+
+export interface Genre {
+  id: number;
+  name: string;
+  slug: string;
 }
 
 export interface Game {
@@ -18,6 +25,8 @@ export interface Game {
   platforms: PlatformObj[];
   parent_platforms: PlatformObj[];
   released: string;
+  metacritic?: number | null; // Added metacritic as optional and nullable
+  genres: Genre[]; // Added genres to match RAWG data
 }
 
 interface GameCardProps {
@@ -34,6 +43,11 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
             src={game.background_image}
             alt={game.name}
             className="w-full h-67 object-cover transition-transform duration-500"
+            onError={(e) => {
+              // Fallback image if background_image fails to load
+              e.currentTarget.onerror = null; // prevents infinite loop if fallback also fails
+              e.currentTarget.src = '/placeholder-game-image.png'; // Replace with your actual placeholder
+            }}
           />
         </div>
 
@@ -43,24 +57,33 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
               <h2 className="text-stone-100 text-xl font-bold leading-snug line-clamp-2">
                 {game.name}
               </h2>
-              <span className="bg-green-500 text-white text-sm font-semibold px-2 py-1 rounded-full shadow-sm">
-                {game.rating.toFixed(1)}
-              </span>
+              {/* Display rating only if available and not 0 */}
+              {game.rating > 0 && (
+                <span className="bg-green-500 text-white text-sm font-semibold px-2 py-1 rounded-full shadow-sm">
+                  {game.rating.toFixed(1)}
+                </span>
+              )}
             </div>
 
             <div className="text-sm text-slate-400">
-              Released: <span className="text-slate-200">{game.released}</span>
+              Released: <span className="text-slate-200">{game.released || 'N/A'}</span>
             </div>
 
             <div className="flex flex-wrap gap-1">
-              {game.parent_platforms.map((platformObj) => (
-                <span
-                  key={`parent-${platformObj.platform.id}`}
-                  className="bg-slate-800 text-slate-200 px-2 py-0.5 text-xs rounded-full border border-slate-700"
-                >
-                  {platformObj.platform.name}
+              {game.parent_platforms && game.parent_platforms.length > 0 ? (
+                game.parent_platforms.map((platformObj) => (
+                  <span
+                    key={`parent-${platformObj.platform.id}`}
+                    className="bg-slate-800 text-slate-200 px-2 py-0.5 text-xs rounded-full border border-slate-700"
+                  >
+                    {platformObj.platform.name}
+                  </span>
+                ))
+              ) : (
+                <span className="bg-slate-800 text-slate-400 px-2 py-0.5 text-xs rounded-full border border-slate-700">
+                  Platforms N/A
                 </span>
-              ))}
+              )}
             </div>
           </div>
         </div>
