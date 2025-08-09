@@ -168,7 +168,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       ? 'Adding...'
       : 'Add to Wishlist';
 
-  const libraryButtonText = authLoading
+  const libraryButtonText = authLoading 
     ? 'Checking Login...'
     : isAddingToLibrary
       ? 'Adding...'

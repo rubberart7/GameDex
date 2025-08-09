@@ -48,13 +48,29 @@ model Game {
   background_image String?                                           // Optional, as not all games might have this
   rating           Float?                                            // Optional
   released         String?                                           // Optional
-
+  
   // Relations to your collection models
   wishlist         Wishlist[]
   library          UserGameLibrary[]
+  genres           Genre[]             // One-to-many relationship with genres
 
   createdAt        DateTime            @default(now())
   updatedAt        DateTime            @updatedAt
+}
+
+// NEW: Genre model for proper relationship management
+model Genre {
+  id          Int    @id @default(autoincrement())
+  rawgGenreId Int    // The genre ID from RAWG API
+  name        String
+  slug        String
+  gameId      Int
+  
+  // Relationship back to game
+  game        Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  // Ensure we don't have duplicate genres per game
+  @@unique([gameId, rawgGenreId])
 }
 
 // Model for a user's Wishlist entries

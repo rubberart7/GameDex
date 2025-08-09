@@ -1,15 +1,13 @@
+// ========== GET WISHLIST CONTROLLER ==========
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../server';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-
-
 interface AuthenticatedRequest extends Request {
   user?: { userId: number; email: string };
 }
-
 
 export const getWishlistFromDB = async (userId: number) => {
     const wishlistItems = await prisma.wishlist.findMany({ 
@@ -17,7 +15,11 @@ export const getWishlistFromDB = async (userId: number) => {
             userId: userId,
         },
         include: {
-            game: true, 
+            game: {
+                include: {
+                    genres: true // Add this to include genres with each game
+                }
+            }
         },
         orderBy: {
             addedAt: 'desc', 
@@ -25,7 +27,6 @@ export const getWishlistFromDB = async (userId: number) => {
     });
     return wishlistItems;
 };
-
 
 export const getUserWishlist = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
@@ -42,7 +43,6 @@ export const getUserWishlist = async (req: AuthenticatedRequest, res: Response, 
             return;
         }
 
-        
         res.status(200).json({ message: 'Games in wishlist retrieved successfully.', wishlist: wishlist });
         return;
 

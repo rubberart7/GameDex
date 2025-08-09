@@ -5,11 +5,16 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
 const RAWG_API_KEY = process.env.RAWG_API_KEY;
 
 interface AuthenticatedRequest extends Request {
   user?: { userId: number; email: string };
+}
+
+interface RawgGenre {
+  id: number;
+  name: string;
+  slug: string;
 }
 
 interface RawgGameData {
@@ -18,11 +23,15 @@ interface RawgGameData {
   background_image?: string;
   rating?: number;
   released?: string;
+  genres?: RawgGenre[]; // Add genres to the RAWG response interface
 }
 
 const findOrCreateGame = async (rawgId: number, res: Response) => {
   let localGame = await prisma.game.findUnique({
     where: { rawgId: rawgId },
+    include: {
+      genres: true // Include genres when fetching existing games
+    }
   });
 
   if (!localGame) {
@@ -43,6 +52,7 @@ const findOrCreateGame = async (rawgId: number, res: Response) => {
         return null;
       }
 
+      // Create the game with genres
       localGame = await prisma.game.create({
         data: {
           rawgId: rawgGameData.id,
@@ -50,7 +60,17 @@ const findOrCreateGame = async (rawgId: number, res: Response) => {
           background_image: rawgGameData.background_image || null,
           rating: rawgGameData.rating || null,
           released: rawgGameData.released || null,
+          genres: {
+            create: rawgGameData.genres?.map(genre => ({
+              rawgGenreId: genre.id,
+              name: genre.name,
+              slug: genre.slug
+            })) || []
+          }
         },
+        include: {
+          genres: true
+        }
       });
     } catch (rawgError: any) {
       console.error(rawgError.message);
@@ -83,7 +103,11 @@ const createLibraryEntry = async (userId: number, gameId: number) => {
       status: 'owned',
     },
     include: {
-      game: true,
+      game: {
+        include: {
+          genres: true // Include genres in the response
+        }
+      },
     },
   });
   return newLibraryItem;

@@ -9,13 +9,43 @@ import LoadingSpinner from '@/app/components/ui/common/LoadingSpinner';
 const CACHE_KEY_PREFIX = 'cachedGamesList_page_';
 const CACHE_EXPIRATION_MS = 60 * 60 * 1000;
 
-// FIX: Define MAX_GAME_PAGES directly in the frontend component
-// This value MUST match the MAX_GAME_PAGES constant in your backend's games.ts file.
-const MAX_GAME_PAGES = 3; 
+const MAX_GAME_PAGES = 3;
+
+// Helper function to safely get initial state from cache
+const getInitialGamesFromCache = (): { initialGames: Game[]; initialLoading: boolean; initialHasNextPage: boolean; } => {
+  if (typeof window === 'undefined') { // Prevent localStorage access on server-side render
+    return { initialGames: [], initialLoading: true, initialHasNextPage: true };
+  }
+
+  const initialCacheKey = `${CACHE_KEY_PREFIX}1`; // Always check for page 1 on initial load
+  const cachedData = localStorage.getItem(initialCacheKey);
+
+  if (cachedData) {
+    try {
+      const { data, timestamp, nextUrl } = JSON.parse(cachedData);
+      if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
+        console.log("Lazy initialization: Initial state loaded from cache for page 1.");
+        return {
+          initialGames: data,
+          initialLoading: false, // Not loading if data found immediately
+          initialHasNextPage: !!nextUrl // Set initial hasNextPage from cache
+        };
+      } else {
+        console.log("Lazy initialization: Cached data for page 1 expired.");
+        localStorage.removeItem(initialCacheKey);
+      }
+    } catch (e) {
+      console.error("Lazy initialization: Failed to parse cached data:", e);
+      localStorage.removeItem(initialCacheKey);
+    }
+  }
+  return { initialGames: [], initialLoading: true, initialHasNextPage: true };
+};
 
 const GamesList = () => {
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
+  // CORRECTED: Use lazy initialization directly for each state variable
+  const [games, setGames] = useState<Game[]>(() => getInitialGamesFromCache().initialGames);
+  const [loading, setLoading] = useState<boolean>(() => getInitialGamesFromCache().initialLoading);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -24,7 +54,7 @@ const GamesList = () => {
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
-  const [hasNextPage, setHasNextPage] = useState<boolean>(true);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(() => getInitialGamesFromCache().initialHasNextPage);
 
   const categories = [
     { name: 'Action', slug: 'action' },
@@ -56,35 +86,39 @@ const GamesList = () => {
   const fetchGames = useCallback(async (pageNumber: number) => {
     if (isFetchingRef.current) return;
     isFetchingRef.current = true;
-    setLoading(true);
     setError(null);
 
     const cacheKey = `${CACHE_KEY_PREFIX}${pageNumber}`;
     const cachedData = localStorage.getItem(cacheKey);
 
+    const isCacheValid = (cachedData && JSON.parse(cachedData).timestamp && Date.now() - JSON.parse(cachedData).timestamp < CACHE_EXPIRATION_MS);
+
+    // Only set loading to true if we are about to fetch from the network,
+    // and we don't already have data displayed for this page.
+    // If we're navigating to a new page, it will be true. If it's a remount with cache, it will be false.
+    if (!isCacheValid) { // If cache is not valid, we're going to fetch from network
+        setLoading(true);
+    }
+
+
     try {
-      if (cachedData) {
+      if (isCacheValid) {
         try {
-          const { data, timestamp, previousUrl, nextUrl } = JSON.parse(cachedData);
-          if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
-            setGames(data);
-            // FIX: Set hasPreviousPage based on pageNumber directly
-            setHasPreviousPage(pageNumber > 1);
-            setHasNextPage(!!nextUrl);
-            setLoading(false);
-            isFetchingRef.current = false;
-            console.log(`Games for page ${pageNumber} loaded from cache.`);
-            return;
-          } else {
-            console.log(`Cached games for page ${pageNumber} expired, fetching new data.`);
-            localStorage.removeItem(cacheKey);
-          }
+          const { data, nextUrl } = JSON.parse(cachedData);
+          setGames(data);
+          setHasPreviousPage(pageNumber > 1);
+          setHasNextPage(!!nextUrl);
+          setLoading(false); // Done loading from cache
+          isFetchingRef.current = false;
+          console.log(`Games for page ${pageNumber} loaded from cache.`);
+          return; // Exit as data is from cache
         } catch (e) {
           console.error(`Failed to parse cached data for page ${pageNumber}:`, e);
-          localStorage.removeItem(cacheKey);
+          localStorage.removeItem(cacheKey); // Remove corrupted cache
         }
       }
 
+      // If we reach here, cache was invalid or missing, proceed to network fetch
       console.log(`Fetching games from API for page ${pageNumber}...`);
       const res = await fetch(`http://localhost:4000/api/games?page=${pageNumber}`);
       if (!res.ok) {
@@ -98,7 +132,6 @@ const GamesList = () => {
       }));
 
       setGames(newGames);
-      // FIX: Set hasPreviousPage based on pageNumber directly
       setHasPreviousPage(pageNumber > 1);
       setHasNextPage(!!apiResponse.next);
 
@@ -106,7 +139,6 @@ const GamesList = () => {
         const dataToCache = {
           data: newGames,
           timestamp: Date.now(),
-          // FIX: Update previousUrl in cache based on pageNumber directly
           previousUrl: pageNumber > 1 ? `http://localhost:4000/api/games?page=${pageNumber - 1}` : null,
           nextUrl: apiResponse.next,
         };
@@ -119,25 +151,30 @@ const GamesList = () => {
     } catch (err: any) {
       console.error("Error fetching games:", err);
       setError(err.message || "An unknown error occurred while fetching games.");
-      // On actual error (e.g. network down), it's okay to disable previous as we can't fetch anything
-      setHasPreviousPage(false); 
+      setHasPreviousPage(false);
       setHasNextPage(false);
-      setGames([]); // Clear games on fetch error to prevent rendering undefined game
+      setGames([]);
     } finally {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, []);
+  }, []); // Dependencies for useCallback: None needed, as it gets `pageNumber` as argument.
+           // `games.length` and `currentPage` are NOT needed here if logic is self-contained.
+
 
   useEffect(() => {
-    if (currentPage > 0) {
-      fetchGames(currentPage);
-    }
+    // This useEffect is responsible for triggering fetchGames when currentPage changes.
+    // It's clean now.
+    fetchGames(currentPage);
   }, [currentPage, fetchGames]);
 
+
   useEffect(() => {
+    // This effect runs when search/category/sort changes.
+    // It resets currentPage to 1, which then triggers the fetchGames effect.
     setCurrentPage(1);
   }, [searchTerm, selectedCategory, selectedSort]);
+
 
   useEffect(() => {
     let currentGames = [...games];
@@ -186,6 +223,9 @@ const GamesList = () => {
     }
   };
 
+  // --- RENDER LOGIC: Primary Loading Gate ---
+  // Only show the full-screen spinner if `loading` is true AND `games.length` is 0.
+  // This means no data (not even cached) is ready to be displayed.
   if (loading && games.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 bg-slate-950 text-gray-100">
@@ -195,6 +235,7 @@ const GamesList = () => {
     );
   }
 
+  // Show a full-screen error if an error occurred AND there are no games to display
   if (error && games.length === 0) {
     return (
       <div className="flex items-center justify-center h-full min-h-screen p-8 bg-slate-950 text-red-400">
@@ -203,6 +244,10 @@ const GamesList = () => {
     );
   }
 
+  // If we reach here, it means:
+  // 1. `loading` is false (data is ready/fetched/cached)
+  // OR
+  // 2. `games.length > 0` (we have some data to show, even if `loading` is true for a background refresh on subsequent pages)
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen p-3 sm:p-4 md:p-6 lg:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -266,10 +311,9 @@ const GamesList = () => {
       ) : (
         // Only show "No games found" message if not loading AND no games are found after filtering
         !loading && (
-          <div className="flex items-center justify-center h-full text-gray-400 py-10">
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 py-10">
             <p className="text-lg">No games found matching your criteria.</p>
-            {/* Optional: Add a specific message if it's due to the backend page limit */}
-            {currentPage > MAX_GAME_PAGES && ( // Use currentPage > MAX_GAME_PAGES for the message
+            {currentPage > MAX_GAME_PAGES && (
                 <p className="text-sm mt-2 text-gray-500">You've reached the end of available pages due to API limits.</p>
             )}
           </div>
@@ -290,6 +334,7 @@ const GamesList = () => {
           Previous
         </button>
 
+        {/* This span shows "Page X" */}
         <span className="text-lg font-medium text-slate-200">Page {currentPage}</span>
 
         <button
@@ -304,11 +349,10 @@ const GamesList = () => {
         </button>
       </div>
 
-      {/* Optional: Show loading spinner during subsequent page fetches */}
-      {loading && filteredGames.length > 0 && ( // Show only if loading and some games are already displayed
-        <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col items-center">
-          <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
-          <p>Loading your game library...</p>
+      {/* Show small loading spinner during subsequent page fetches if data is already visible */}
+      {loading && filteredGames.length > 0 && (
+        <div className="flex justify-center py-4">
+            <LoadingSpinner className="text-blue-500 w-8 h-8" />
         </div>
       )}
     </div>

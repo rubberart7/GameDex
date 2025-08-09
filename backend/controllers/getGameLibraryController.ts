@@ -4,8 +4,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
-
 interface AuthenticatedRequest extends Request {
   user?: { userId: number; email: string };
 }
@@ -16,8 +14,11 @@ export const getGamesLibraryFromDB = async (userId: number) => {
             userId: userId,
         },
         include: {
-            game: true, 
-                        
+            game: {
+                include: {
+                    genres: true // Add this to include genres with each game
+                }
+            }
         },
         orderBy: {
             addedAt: 'desc', 
@@ -25,7 +26,6 @@ export const getGamesLibraryFromDB = async (userId: number) => {
     });
     return libraryItems;
 };
-
 
 export const getUserLibrary = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
