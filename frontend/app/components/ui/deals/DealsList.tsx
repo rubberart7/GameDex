@@ -409,7 +409,9 @@ const DealsList = () => {
                                         <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                                             Title
                                         </th>
-                                        {/* Removed Deal Rating column header */}
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                            Rating
+                                        </th>
                                         <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                                             Release Date
                                         </th>
@@ -425,7 +427,7 @@ const DealsList = () => {
                                         })
                                     ) : (
                                         <tr>
-                                            <td colSpan={4} className="px-6 py-4 text-center text-gray-400"> {/* Adjusted colSpan to 4 */}
+                                            <td colSpan={5} className="px-6 py-4 text-center text-gray-400">
                                                 {searchTerm || selectedStoreID || minSalePrice > 0 || maxSalePrice < 60
                                                     ? "No deals match your current filters on this page."
                                                     : "No deals found for this page."}

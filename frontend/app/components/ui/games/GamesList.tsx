@@ -73,6 +73,9 @@ const GamesList = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
   const [hasNextPage, setHasNextPage] = useState<boolean>(initialState.initialHasNextPage);
+  
+  // Track if this is the initial mount
+  const isInitialMount = useRef(true);
 
   const categories = [
     { name: 'Action', slug: 'action' },
@@ -112,8 +115,8 @@ const GamesList = () => {
     const isCacheValid = (cachedData && JSON.parse(cachedData).timestamp && Date.now() - JSON.parse(cachedData).timestamp < CACHE_EXPIRATION_MS);
 
     // Only set loading to true if we are about to fetch from the network,
-    // and we don't already have data displayed for this page.
-    if (!isCacheValid && games.length === 0) { // Only show loading if no games and no cache
+    // and we don't already have games displayed (to prevent flicker on initial load)
+    if (!isCacheValid && (games.length === 0 || pageNumber > 1)) { 
         setLoading(true);
     }
 
@@ -174,14 +177,26 @@ const GamesList = () => {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, [games.length]); // Add games.length as dependency
+  }, []); // Remove games.length dependency to prevent stale closures
 
   useEffect(() => {
-    // Only fetch if we don't have initial cached data
-    if (initialState.initialGames.length === 0) {
-      fetchGames(currentPage);
+    // Only skip fetching on the very first mount if we have cached data for page 1
+    if (isInitialMount.current && currentPage === 1 && initialState.initialGames.length > 0) {
+      // We already have page 1 data from cache, but still need to set pagination states
+      setHasPreviousPage(false); // Page 1 never has previous
+      setHasNextPage(initialState.initialHasNextPage); // Use cached hasNext value
+      isInitialMount.current = false; // Mark that initial mount is done
+      return;
     }
-  }, [currentPage, fetchGames, initialState.initialGames.length]);
+    
+    // Mark initial mount as done for any other case
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    }
+    
+    // For all other cases (page > 1 or no cached data or subsequent page 1 visits), fetch normally
+    fetchGames(currentPage);
+  }, [currentPage, fetchGames, initialState.initialGames.length, initialState.initialHasNextPage]);
 
   useEffect(() => {
     // This effect runs when search/category/sort changes.
@@ -231,7 +246,7 @@ const GamesList = () => {
   };
 
   const handlePreviousPage = () => {
-    if (!loading && hasPreviousPage) {
+    if (!loading && hasPreviousPage && currentPage > 1) {
       setCurrentPage(prevPage => prevPage - 1);
     }
   };
