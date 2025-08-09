@@ -12,9 +12,19 @@ const CACHE_EXPIRATION_MS = 60 * 60 * 1000;
 const MAX_GAME_PAGES = 3;
 
 // Helper function to safely get initial state from cache
-const getInitialGamesFromCache = (): { initialGames: Game[]; initialLoading: boolean; initialHasNextPage: boolean; } => {
+const getInitialStateFromCache = (): { 
+  initialGames: Game[]; 
+  initialLoading: boolean; 
+  initialHasNextPage: boolean; 
+  initialFilteredGames: Game[];
+} => {
   if (typeof window === 'undefined') { // Prevent localStorage access on server-side render
-    return { initialGames: [], initialLoading: true, initialHasNextPage: true };
+    return { 
+      initialGames: [], 
+      initialLoading: true, 
+      initialHasNextPage: true,
+      initialFilteredGames: []
+    };
   }
 
   const initialCacheKey = `${CACHE_KEY_PREFIX}1`; // Always check for page 1 on initial load
@@ -28,7 +38,8 @@ const getInitialGamesFromCache = (): { initialGames: Game[]; initialLoading: boo
         return {
           initialGames: data,
           initialLoading: false, // Not loading if data found immediately
-          initialHasNextPage: !!nextUrl // Set initial hasNextPage from cache
+          initialHasNextPage: !!nextUrl, // Set initial hasNextPage from cache
+          initialFilteredGames: data // Set filtered games to match initial games
         };
       } else {
         console.log("Lazy initialization: Cached data for page 1 expired.");
@@ -39,22 +50,29 @@ const getInitialGamesFromCache = (): { initialGames: Game[]; initialLoading: boo
       localStorage.removeItem(initialCacheKey);
     }
   }
-  return { initialGames: [], initialLoading: true, initialHasNextPage: true };
+  return { 
+    initialGames: [], 
+    initialLoading: true, 
+    initialHasNextPage: true,
+    initialFilteredGames: []
+  };
 };
 
 const GamesList = () => {
-  // CORRECTED: Use lazy initialization directly for each state variable
-  const [games, setGames] = useState<Game[]>(() => getInitialGamesFromCache().initialGames);
-  const [loading, setLoading] = useState<boolean>(() => getInitialGamesFromCache().initialLoading);
+  // Get initial state once and use it consistently
+  const initialState = getInitialStateFromCache();
+  
+  const [games, setGames] = useState<Game[]>(initialState.initialGames);
+  const [loading, setLoading] = useState<boolean>(initialState.initialLoading);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedSort, setSelectedSort] = useState<string>('released');
-  const [filteredGames, setFilteredGames] = useState<Game[]>([]);
+  const [filteredGames, setFilteredGames] = useState<Game[]>(initialState.initialFilteredGames);
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
-  const [hasNextPage, setHasNextPage] = useState<boolean>(() => getInitialGamesFromCache().initialHasNextPage);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(initialState.initialHasNextPage);
 
   const categories = [
     { name: 'Action', slug: 'action' },
@@ -95,11 +113,9 @@ const GamesList = () => {
 
     // Only set loading to true if we are about to fetch from the network,
     // and we don't already have data displayed for this page.
-    // If we're navigating to a new page, it will be true. If it's a remount with cache, it will be false.
-    if (!isCacheValid) { // If cache is not valid, we're going to fetch from network
+    if (!isCacheValid && games.length === 0) { // Only show loading if no games and no cache
         setLoading(true);
     }
-
 
     try {
       if (isCacheValid) {
@@ -158,23 +174,20 @@ const GamesList = () => {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, []); // Dependencies for useCallback: None needed, as it gets `pageNumber` as argument.
-           // `games.length` and `currentPage` are NOT needed here if logic is self-contained.
-
+  }, [games.length]); // Add games.length as dependency
 
   useEffect(() => {
-    // This useEffect is responsible for triggering fetchGames when currentPage changes.
-    // It's clean now.
-    fetchGames(currentPage);
-  }, [currentPage, fetchGames]);
-
+    // Only fetch if we don't have initial cached data
+    if (initialState.initialGames.length === 0) {
+      fetchGames(currentPage);
+    }
+  }, [currentPage, fetchGames, initialState.initialGames.length]);
 
   useEffect(() => {
     // This effect runs when search/category/sort changes.
     // It resets currentPage to 1, which then triggers the fetchGames effect.
     setCurrentPage(1);
   }, [searchTerm, selectedCategory, selectedSort]);
-
 
   useEffect(() => {
     let currentGames = [...games];
@@ -224,9 +237,8 @@ const GamesList = () => {
   };
 
   // --- RENDER LOGIC: Primary Loading Gate ---
-  // Only show the full-screen spinner if `loading` is true AND `games.length` is 0.
-  // This means no data (not even cached) is ready to be displayed.
-  if (loading && games.length === 0) {
+  // Only show the full-screen spinner if `loading` is true AND `filteredGames.length` is 0.
+  if (loading && filteredGames.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 bg-slate-950 text-gray-100">
         <LoadingSpinner />
@@ -236,7 +248,7 @@ const GamesList = () => {
   }
 
   // Show a full-screen error if an error occurred AND there are no games to display
-  if (error && games.length === 0) {
+  if (error && filteredGames.length === 0) {
     return (
       <div className="flex items-center justify-center h-full min-h-screen p-8 bg-slate-950 text-red-400">
         <p className="text-lg">Error: {error}</p>
@@ -244,10 +256,7 @@ const GamesList = () => {
     );
   }
 
-  // If we reach here, it means:
-  // 1. `loading` is false (data is ready/fetched/cached)
-  // OR
-  // 2. `games.length > 0` (we have some data to show, even if `loading` is true for a background refresh on subsequent pages)
+  // If we reach here, we have content to show
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen p-3 sm:p-4 md:p-6 lg:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -319,7 +328,6 @@ const GamesList = () => {
           </div>
         )
       )}
-
 
       {/* Pagination Controls */}
       <div className="flex justify-center items-center mt-8 gap-4">
