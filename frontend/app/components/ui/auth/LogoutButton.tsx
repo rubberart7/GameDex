@@ -4,6 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import Button from "../common/Button";
+import { FiLogOut } from "react-icons/fi";
 
 const LogoutButton = () => {
   const { setAccessToken } = useAuth();
@@ -18,7 +19,7 @@ const LogoutButton = () => {
 
       if (res.ok) {
         setAccessToken(null);
-        router.push("/login"); // or use "/" if you prefer going home
+        router.push("/login");
       } else {
         console.error("Logout failed");
       }
@@ -28,7 +29,12 @@ const LogoutButton = () => {
   };
 
   return (
-    <Button variant="destructive" size="lg" onClick={handleLogout}>
+    <Button
+      onClick={handleLogout}
+      // Updated class names for a red color palette
+      className="bg-red-600 text-white hover:bg-red-700 flex gap-2 focus:ring-red-500 rounded-lg px-4 py-2 text-base font-semibold"
+    >
+      <FiLogOut className="w-4 h-4" />
       Logout
     </Button>
   );
