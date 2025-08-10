@@ -47,7 +47,7 @@ export const getUserWishlist = async (req: AuthenticatedRequest, res: Response, 
         return;
 
     } catch (error) {
-        console.error("Error fetching user wishlist:", error);
+        
         res.status(500).json({ message: "Games from the wishlist could not be retrieved."})
         return;
     }

@@ -23,7 +23,7 @@ interface RawgGameData {
   background_image?: string;
   rating?: number;
   released?: string;
-  genres?: RawgGenre[]; // Add genres to the RAWG response interface
+  genres?: RawgGenre[]; 
 }
 
 const findOrCreateGame = async (rawgId: number, res: Response) => {
@@ -73,7 +73,6 @@ const findOrCreateGame = async (rawgId: number, res: Response) => {
         }
       });
     } catch (rawgError: any) {
-      console.error(rawgError.message);
       if (axios.isAxiosError(rawgError) && rawgError.response?.status === 404) {
         res.status(404).json({ message: 'Game not found on RAWG API. Cannot add to library.', type: 'Error' });
         return null;

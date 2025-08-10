@@ -7,8 +7,8 @@ dotenv.config();
 const cheapSharkDealsBaseUrl: string = "https://www.cheapshark.com/api/1.0/deals";
 const cheapSharkStoresBaseUrl: string = "https://www.cheapshark.com/api/1.0/stores";
 
-// Define the maximum number of pages you want to allow
-const MAX_DEAL_PAGES = 5; // You can change this number as needed
+
+const MAX_DEAL_PAGES = 5;
 
 export const getGenDeals = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -19,7 +19,6 @@ export const getGenDeals = async (req: Request, res: Response, next: NextFunctio
 
         // --- NEW LOGIC: Enforce maximum page limit ---
         if (pageNumber >= MAX_DEAL_PAGES) {
-            console.log(`Frontend requested page ${pageNumber}, but maximum allowed pages is ${MAX_DEAL_PAGES}. Returning empty data.`);
             res.status(200).json([]); // Return an empty array or a specific message
             return;
         }
@@ -40,7 +39,7 @@ export const getGenDeals = async (req: Request, res: Response, next: NextFunctio
         return;
 
     } catch (error) {
-        console.error("Error fetching deals from CheapShark API:", error);
+        
         res.status(500).json({ message: "Failed to fetch deals data." });
         return;
 
@@ -54,7 +53,7 @@ export const getStoresData = async (req: Request, res: Response, next: NextFunct
         res.status(200).json(response.data);
         return;
     } catch (error) {
-        console.error("Error fetching stores from CheapShark API:", error);
+        
         res.status(500).json({ message: "Failed to fetch store data." });
         return;
     }

@@ -59,7 +59,7 @@ export const getRecommendations = async (
     }
     const userId = req.user.userId;
 
-    console.log("Game recommendations hit!");
+    
 
     const [ownedGames, wishedGames] = await Promise.all([
       getGamesLibraryFromDB(userId) as Promise<UserCollectionItem[]>,
@@ -76,7 +76,7 @@ export const getRecommendations = async (
     });
 
     if (cachedEntry && cachedEntry.collectionHash === currentCollectionHash) {
-      console.log("Serving recommendations from database cache for user:", userId);
+      
 
       // --- FIX for read-side (image_7e4205.png) ---
       // Instead of casting to Prisma.JsonArray, cast to 'any' first
@@ -94,12 +94,13 @@ export const getRecommendations = async (
           return;
       } else {
           console.warn("Cached recommendations found but are not in expected array format, regenerating.");
+          
           // Fall through to regeneration logic if cached data is malformed
       }
       // --- END FIX for read-side ---
     }
 
-    console.log("Generating new recommendations for user:", userId);
+    
 
     const gameNamesToExclude: string[] = allUserGamesOfInterest.map(item => item.game.name);
 
@@ -140,7 +141,7 @@ export const getRecommendations = async (
       const result = await model.generateContent(prompt);
       aiRecommendationsText = result.response.text();
     } catch (aiError: any) {
-      console.error('Error calling Gemini AI API:', aiError);
+      
       res.status(500).json({ message: 'AI recommendation service is currently unavailable.', type: 'Error' });
       return;
     }
@@ -154,7 +155,7 @@ export const getRecommendations = async (
         throw new Error('AI response format invalid.');
       }
     } catch (parseError) {
-      console.error('Failed to parse AI response as JSON:', parseError);
+      
       res.status(500).json({ message: 'Could not process AI recommendations (invalid format).', type: 'Error' });
       return;
     }
@@ -228,7 +229,7 @@ export const getRecommendations = async (
             }
           }
         } catch (rawgSearchError) {
-          console.warn(`Could not verify game "${aiRec.game_name}" against RAWG:`, rawgSearchError);
+          
         }
       }
 
@@ -278,7 +279,7 @@ export const getRecommendations = async (
     return;
 
   } catch (error) {
-    console.error('Unhandled error in getRecommendations controller:', error);
+    
     res.status(500).json({ message: 'An unexpected server error occurred during recommendation generation.', type: 'Error' });
     return;
   }

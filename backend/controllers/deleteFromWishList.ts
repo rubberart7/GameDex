@@ -4,8 +4,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
-
 interface AuthenticatedRequest extends Request {
   user?: { userId: number; email: string };
 }
@@ -60,7 +58,7 @@ export const deleteFromWishlist = async (req: AuthenticatedRequest, res: Respons
     return;
 
   } catch (error) {
-    console.error("Error deleting game from wishlist:", error);
+    
     res.status(500).json({ message: 'Error: could not delete game from your wishlist.', type: 'Error' });
     return;
     

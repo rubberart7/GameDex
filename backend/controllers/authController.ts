@@ -126,8 +126,6 @@ export const login = async (
     maxAge: oneDayMs 
   });
 
-  console.log("Refresh token cookie sent.");
-
   // The backend sets the refresh token as a secure, HTTP-only cookie:
   
   res.status(200).json({ 

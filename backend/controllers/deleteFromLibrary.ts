@@ -26,10 +26,10 @@ export const deleteFromLibrary = async (req: AuthenticatedRequest, res: Response
             return;
         }
         const userId = req.user.userId;
-        console.log("Got the user id");
+        
 
         const { gameId: rawgGameId } = req.body; 
-        console.log("Got the gameID information")
+        
 
         if (!rawgGameId) {
             res.status(400).json({ message: 'Game ID (rawgId) is required in the request body.', type: 'Error' });

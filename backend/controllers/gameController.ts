@@ -16,7 +16,7 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
         const page = parseInt(req.query.page as string) || 1;
 
         if (page > MAX_GAME_PAGES) {
-            console.log(`Frontend requested page ${page} for games, but maximum allowed pages is ${MAX_GAME_PAGES}. Returning empty data.`);
+            
 
             // Construct the 'previous' URL dynamically for the page *before* the requested one
             // This is cleaner and aligns with how RAWG handles 'previous' links normally
@@ -46,7 +46,7 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
         return;
 
     } catch (error) {
-        console.error("Error fetching games from RAWG API:", error);
+        
         res.status(500).json({ message: "Failed to fetch games data." });
         return;
     }

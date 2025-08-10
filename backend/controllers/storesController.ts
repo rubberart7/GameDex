@@ -10,8 +10,9 @@ export const getStores = async (req: Request, res: Response, next: NextFunction)
     try {
         const response = await axios.get(cheapSharkStores);
         res.status(200).json(response.data);
+        return;
     } catch (error) {
-        next(error)
+        res.status(500).json({message : "Could not retrieve stores information.", type: "Error"});
     }
 }
 

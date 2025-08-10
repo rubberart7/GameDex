@@ -46,7 +46,7 @@ export const getUserLibrary = async (req: AuthenticatedRequest, res: Response, n
         return;
 
     } catch (error) {
-        console.error("Error fetching user library:", error);
+        
         res.status(500).json({ message: "Games from the library could not be retrieved."});
         return;
     }

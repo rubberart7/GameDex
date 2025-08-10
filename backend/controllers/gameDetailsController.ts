@@ -39,7 +39,7 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
     } catch (screenshotError: any) {
       // It's good to log this but not necessarily return an error to the user
       // if only screenshots fail. The main game details are usually more critical.
-      console.warn(`Could not fetch screenshots for game ${gameId}:`, screenshotError.message);
+      
       gameData.screenshots = []; // Ensure 'screenshots' property exists, even if empty
     }
 
@@ -56,6 +56,6 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
       res.status(error.response.status).json({ message: "Failed to fetch game details from external API." });
       return;
     }
-    next(error);
+    res.status(error.response.status).json({ message: "Failed to fetch game details from the API." });
   }
 };
