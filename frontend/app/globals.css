@@ -185,14 +185,7 @@ html, body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Soft hover shadow */
 }
 
-.hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
 
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
-}
 
 
 

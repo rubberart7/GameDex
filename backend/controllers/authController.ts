@@ -156,6 +156,11 @@ export const logout = async (req: Request, res: Response) => {
       // });
     }
 
+    if (!refreshToken) {
+        res.status(200).json({ message: "You are already logged out." });
+        return;
+    }
+
     res.clearCookie("jwt", { httpOnly: true, secure: false, sameSite: "lax" });
     res.status(200).json({ message: "Logged out" });
   } catch (error) {

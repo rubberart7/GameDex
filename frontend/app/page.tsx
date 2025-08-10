@@ -61,14 +61,7 @@ export default function Home() {
               </Button>
             </Link>
 
-            <Link href="/new">
-              <Button variant="default" size="lg">
-                Check New Page
-              </Button>
-            </Link>
-
-            <LogoutButton>
-            </LogoutButton>
+            
 
           </div>
         </div>
