@@ -19,7 +19,7 @@ const LogoutButton = () => {
 
       if (res.ok) {
         setAccessToken(null);
-        router.push("/login");
+        router.push("/");
       } else {
         console.error("Logout failed");
       }
