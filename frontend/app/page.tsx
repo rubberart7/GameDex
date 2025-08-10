@@ -1,13 +1,30 @@
+// app/page.tsx
+
+"use client";
+
 import React from "react";
 import Button from "./components/ui/common/Button";
 import HomeNavBar from "./components/ui/navigation/HomeNavBar";
 import Link from "next/link";
 import LogoutButton from "./components/ui/auth/LogoutButton";
+import { useAuth } from "./context/AuthContext";
+import LoadingSpinner from "./components/ui/common/LoadingSpinner"; // Make sure to import your spinner component
 
 export default function Home() {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 bg-slate-950 text-gray-100">
+        <LoadingSpinner />
+        <p className="mt-4 text-lg">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen flex flex-col">
-      <HomeNavBar />  
+      <HomeNavBar />
 
       <section className="flex-grow bg-gray-950 text-gray-100 flex flex-col items-center justify-center px-4">
         <div className="max-w-3xl text-center space-y-6">
@@ -49,15 +66,13 @@ export default function Home() {
                 Check New Page
               </Button>
             </Link>
-            
+
             <LogoutButton>
-              
             </LogoutButton>
-            
+
           </div>
         </div>
       </section>
     </main>
   );
 }
-

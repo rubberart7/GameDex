@@ -279,9 +279,9 @@ const DealsList = () => {
         <section className="flex flex-shrink flex-col items-center py-8 px-4 bg-gray-950 text-gray-100 min-h-screen relative">
             {/* Loading Overlay */}
             {showLoadingOverlay && (
-                <div className="absolute inset-0 bg-slate-950 bg-opacity-70 flex flex-col items-center justify-center z-50 transition-opacity duration-300">
-                    <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
-                    <p className="text-lg text-slate-100">Loading deals...</p>
+                <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 bg-slate-950 text-gray-100">
+                    <LoadingSpinner />
+                    <p className="mt-4 text-lg">Loading games...</p>
                 </div>
             )}
 
