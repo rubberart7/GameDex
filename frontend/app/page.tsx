@@ -6,12 +6,11 @@ import React from "react";
 import Button from "./components/ui/common/Button";
 import HomeNavBar from "./components/ui/navigation/HomeNavBar";
 import Link from "next/link";
-import LogoutButton from "./components/ui/auth/LogoutButton";
 import { useAuth } from "./context/AuthContext";
 import LoadingSpinner from "./components/ui/common/LoadingSpinner"; // Make sure to import your spinner component
 
 export default function Home() {
-  const { loading } = useAuth();
+  const { accessToken, loading } = useAuth();
 
   if (loading) {
     return (
@@ -49,11 +48,19 @@ export default function Home() {
               </Button>
             </Link>
 
-            <Link href="/main">
+            <div>
+              {
+                accessToken ?  <Link href="/main">
+              <Button variant="ghost" size="lg">
+                Continue
+              </Button>
+            </Link> : <Link href="/main">
               <Button variant="ghost" size="lg">
                 Continue as Guest
               </Button>
             </Link>
+              }
+            </div>
 
             <Link href="/signup">
               <Button variant="outline" size="lg">
