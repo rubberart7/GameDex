@@ -6,8 +6,6 @@ import { generateAccessToken, generateRefreshToken } from "../libs/utils";
 
 dotenv.config();
 
-
-
 interface RegisterRequestBody {
   fullName: string;
   email: string;
@@ -93,14 +91,14 @@ export const login = async (
   const user = await findUserByEmail(email);
 
   if (!user) {
-    res.status(400).json({ message: "Username not correct!", type: "Error" });
+    res.status(400).json({ message: "Fields are incorrect!", type: "Error" });
     return;
   }
 
   const isCorrectPassword = await bcrypt.compare(password, user.password);
 
   if (!isCorrectPassword) {
-    res.status(400).json({ message: "Password incorrect!", type: "Error" });
+    res.status(400).json({ message: "Fields are incorrect!", type: "Error" });
     return
   }
 
@@ -108,7 +106,7 @@ export const login = async (
   const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
   if (!accessTokenSecret || !refreshTokenSecret) {
-    res.status(500).json({ message: "Missing JWT secret", type: "Error" });
+    res.status(500).json({ message: "Server issue.", type: "Error" });
     return;
   } 
 
