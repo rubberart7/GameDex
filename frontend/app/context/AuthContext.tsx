@@ -20,18 +20,17 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   fetchNewAccessToken: async () => null,
   accessTokenExpiration: null,
-  userCollectionsVersion: 0, // Default value
-  incrementUserCollectionsVersion: () => {}, // Default empty implementation
+  userCollectionsVersion: 0, 
+  incrementUserCollectionsVersion: () => {}, 
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [accessTokenExpiration, setAccessTokenExpiration] = useState<number | null>(null);
-  // State to track changes in user's collections
+  
   const [userCollectionsVersion, setUserCollectionsVersion] = useState(0);
 
-  // Function to increment the version number, signaling a change
   const incrementUserCollectionsVersion = () => {
     setUserCollectionsVersion(prev => prev + 1);
   };
@@ -62,7 +61,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return true;
     }
     const currentTime = Date.now() / 1000;
-    // Check if token expires within the next 30 seconds (buffer)
     return accessTokenExpiration < currentTime + 30;
   };
 
@@ -103,7 +101,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    // Provide the userCollectionsVersion and increment function
     <AuthContext.Provider value={{ accessToken, setAccessToken, loading, fetchNewAccessToken, accessTokenExpiration, userCollectionsVersion, incrementUserCollectionsVersion }}>
       {children}
     </AuthContext.Provider>

@@ -1,16 +1,13 @@
 @import "tailwindcss";
 
-/* In your main CSS file, or directly in a <style> tag for testing */
 html, body {
   margin: 0;
   padding: 0;
-  /* You might also consider overflow-x: hidden if you only expect vertical scrolling */
-  /* overflow-x: hidden; */
+  
   box-sizing: border-box;
   overflow-x: hidden;
 }
 
-/* Sidebar Links code */
 
 .full-link-itm {
   padding: 10px;
@@ -23,7 +20,7 @@ html, body {
   user-select: none;
   will-change: transform, background-color, color, box-shadow;
   border-radius: 0.5rem;
-  backdrop-filter: blur(2px); /* Subtle depth effect */
+  backdrop-filter: blur(2px); 
 }
 
 .full-link-itm:hover,
@@ -32,7 +29,7 @@ html, body {
   color: white;
   transform: scale(1.05);
   z-index: 10;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Soft hover shadow */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
 }
 
 .side-bar-icon {
@@ -43,31 +40,31 @@ html, body {
 .full-link-itm:hover .side-bar-icon,
 .full-link-itm:focus .side-bar-icon {
   transform: scale(1.15);
-  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6)); /* blue glow */
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6)); 
 }
 
 
 .full-link-itm:hover,
 .full-link-itm:focus {
-  background-color: #334155; /* Dark slate blue background on hover/focus */
-  color: white;              /* Change text color to white on hover/focus */
-  transform: scale(1.1);     /* Slightly scale up the entire item */
-  z-index: 10;               /* Bring hovered item above others */
+  background-color: #334155; 
+  color: white;              
+  transform: scale(1.1);     
+  z-index: 10;               
 }
 
 
 
 .side-bar-icon {
-  transition: transform 0.3s ease;  /* Smooth scaling transition for icons */
-  will-change: transform;            /* Optimize transform property for performance */
+  transition: transform 0.3s ease;  
+  will-change: transform;            
 }
 
 .full-link-itm:hover .side-bar-icon,
 .full-link-itm:focus .side-bar-icon {
-  transform: scale(1.15);  /* Slightly scale up icons on hover/focus */
+  transform: scale(1.15);  
 }
 
-/* image shine effect code on game card*/
+
 
 .relative-shine {
   position: relative;
@@ -98,30 +95,28 @@ html, body {
   opacity: 1;
 }
 
-/* scrollbar custom css */
 
-/* For Chrome, Safari, Edge */
 ::-webkit-scrollbar {
-  width: 12px;               /* width of vertical scrollbar */
-  height: 12px;              /* height of horizontal scrollbar */
+  width: 12px;               
+  height: 12px;             
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e293b;       /* dark slate background track */
+  background: #1e293b;       
   border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #3b82f6; /* blue thumb */
+  background-color: #3b82f6; 
   border-radius: 8px;
-  border: 3px solid #1e293b; /* adds padding around thumb */
+  border: 3px solid #1e293b; 
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #2563eb; /* darker blue on hover */
+  background-color: #2563eb; 
 }
 
-/* Firefox */
+
 * {
   scrollbar-width: thin;
   scrollbar-color: #3b82f6 #1e293b;
@@ -142,8 +137,7 @@ html, body {
   height: 1px;
   background-color: #0fcfff;
   transform-origin: center;
-  transform: scaleY(0.25);  /* scales line to half pixel height */
-  z-index: 10;
+  transform: scaleY(0.25);  
 }
 
 .nav-lines::before {
@@ -154,7 +148,7 @@ html, body {
   bottom: 0;
 }
 
-/* Deals Row */
+
 
 
 /* New Links */
@@ -163,7 +157,7 @@ html, body {
   padding: 1.25rem;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-  color: #ffffff; /* Default text color, e.g., text-gray-300 */
+  color: #ffffff; 
   font-weight:500;
   transition:
     transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -174,7 +168,7 @@ html, body {
   user-select: none;
   will-change: transform, background-color, color, box-shadow;
   border-radius: 0.5rem;
-  backdrop-filter: blur(2px); /* Subtle depth effect */
+  backdrop-filter: blur(2px); 
 }
 
 .new-link-itm:hover,
@@ -182,7 +176,7 @@ html, body {
   background-color: #334155;
   color: white;
   z-index: 10;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Soft hover shadow */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
 }
 
 

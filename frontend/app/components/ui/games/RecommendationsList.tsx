@@ -83,7 +83,7 @@ const RecommendationsList: React.FC = () => {
     };
 
     fetchRecommendations();
-  }, [accessToken, authLoading, fetchNewAccessToken, userCollectionsVersion]); // userCollectionsVersion remains in dependencies
+  }, [accessToken, authLoading, fetchNewAccessToken, userCollectionsVersion]); 
 
   if (loading) {
     return (

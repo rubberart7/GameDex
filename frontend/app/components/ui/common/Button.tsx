@@ -20,7 +20,6 @@ const buttonVariants = cva(
           "bg-transparent text-blue-400 hover:bg-blue-800/20 focus:ring-blue-500",
         link:
           "text-blue-400 underline-offset-4 hover:underline focus:ring-blue-500",
-        // The signup button is now a darker blue color
         signup:
           "bg-slate-700 text-white hover:bg-blue-900 focus:ring-blue-700 flex gap-2",
         addToWishList:

@@ -5,16 +5,16 @@ const BrowseGamesIcon = (props: React.SVGProps<SVGSVGElement>) => {
     <svg
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      fill="none" // Set fill to 'none' for the overall SVG
-      stroke="currentColor" // Apply stroke color from parent
-      strokeWidth={1.5} // Apply stroke width
+      fill="none" 
+      stroke="currentColor"
+      strokeWidth={1.5} 
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="size-6" // Control size with className
+      className="size-6" 
       {...props}
     >
       <g>
-        {/* Lines for the D-pad like element */}
+        
         <line x1="7.125" y1="11.8474" x2="7.125" y2="9.134" />
         <line x1="5.7683" y1="10.4907" x2="8.4817" y2="10.4907" />
         <path

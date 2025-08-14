@@ -3,7 +3,6 @@ import ProjectLogo from '../../icons/ProjectLogo';
 import Link from 'next/link';
 import DealsIcon from '../../icons/DealsIcon';
 import LibraryIcon from '../../icons/LibraryIcon';
-import SettingsIcon from '../../icons/SettingsIcon';
 import HomeIcon from '../../icons/HomeIcon';
 import BrowseGamesIcon from '../../icons/BrowseGamesIcon';
 import WishListIcon from '../../icons/WishListIcon';

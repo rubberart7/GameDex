@@ -1,5 +1,5 @@
-// components/GameNameClickable.tsx
-"use client"; // This directive marks it as a Client Component
+
+"use client"; 
 
 import React from 'react';
 
@@ -13,7 +13,7 @@ const METACRITIC_BASE_URL = "https://www.metacritic.com";
 const GameNameClickable: React.FC<GameNameClickableProps> = ({ title, metacriticLink }) => {
 
     const handleNameClick = (e: React.MouseEvent<HTMLHeadingElement>) => {
-        // Stop propagation just in case this h2 is inside another clickable element
+        
         e.stopPropagation();
 
         if (metacriticLink) {

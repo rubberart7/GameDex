@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
-// No useRouter import needed here
 
 interface GameData {
   id: number;
@@ -27,7 +26,6 @@ interface WishListCardProps {
   imageWidth?: string;
   imageHeight?: string;
   onDeleteSuccess: (deletedItemId: number) => void;
-  // NEW: Callback to inform parent about delete operation status
   onDeleteStatusChange: (isDeleting: boolean) => void;
 }
 
@@ -36,9 +34,8 @@ const WishListCard: React.FC<WishListCardProps> = ({
   imageWidth = '215px',
   imageHeight = '300px',
   onDeleteSuccess,
-  onDeleteStatusChange // Destructure the new prop
+  onDeleteStatusChange 
 }) => {
-  // Re-introduced isDeletingFromWishList state to control "Deleting..." text
   const [isDeletingFromWishList, setIsDeletingFromWishList] = useState(false);
   const [feedback, setFeedback] = useState<{ message: string; type: "Error" | "Success" | "Info" | "" }>({
     message: "",
@@ -51,8 +48,8 @@ const WishListCard: React.FC<WishListCardProps> = ({
 
   const handleDeleteClick = async () => {
     setFeedback({ message: "", type: "" });
-    setIsDeletingFromWishList(true); // Set loading state for "Deleting..." text
-    onDeleteStatusChange(true); // Inform parent that a delete is starting
+    setIsDeletingFromWishList(true); 
+    onDeleteStatusChange(true); 
 
     try {
       if (authLoading) {
@@ -121,14 +118,12 @@ const WishListCard: React.FC<WishListCardProps> = ({
       console.error('Network error deleting game from WishList:', err);
       setFeedback({ message: `Network error or server unavailable: ${err.message || 'Please try again.'}`, type: 'Error' });
     } finally {
-      setIsDeletingFromWishList(false); // Reset individual button loading state
-      onDeleteStatusChange(false); // Inform parent that delete is finished
+      setIsDeletingFromWishList(false); 
+      onDeleteStatusChange(false); 
     }
   };
 
-  // Button disabled if auth is loading OR if this specific delete operation is in progress
   const isDeleteButtonDisabled = authLoading || isDeletingFromWishList;
-  // Show "Deleting..." text only if the delete operation is in progress
   const deleteButtonText = isDeletingFromWishList ? 'Deleting...' : 'Delete';
 
   return (

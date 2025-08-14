@@ -1,7 +1,7 @@
-'use client'; // This directive is essential for making it a Client Component
+'use client'; 
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import DealRow, { Deal } from './DealRow'; // Ensure Deal interface is imported
+import DealRow, { Deal } from './DealRow'; 
 import LoadingSpinner from '../common/LoadingSpinner';
 
 export interface StoreImage {
@@ -23,41 +23,38 @@ const CACHE_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
 const ITEMS_PER_PAGE = 60; // This must match the backend's pageSize for deals endpoint
 
 const DealsList = () => {
-    // State for raw fetched data
-    const [allDeals, setAllDeals] = useState<Deal[]>([]); // Deals for the current page
+    
+    const [allDeals, setAllDeals] = useState<Deal[]>([]); 
     const [stores, setStores] = useState<Store[]>([]);
 
-    // State for loading and error handling
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    // State for the search input
     const [searchTerm, setSearchTerm] = useState<string>('');
 
     // --- FILTER STATES ---
     const [selectedStoreID, setSelectedStoreID] = useState<string>('');
-    // Removed minDealRating state
+    
     const [maxSalePrice, setMaxSalePrice] = useState<number>(60);
     const [minSalePrice, setMinSalePrice] = useState<number>(0);
-    // Changed default sort if 'dealRatingDesc' was the only default option.
-    // If you had other default options, choose one that remains.
-    const [sortOrder, setSortOrder] = useState<string>('salePriceAsc'); // Default sort changed
+    
+    const [sortOrder, setSortOrder] = useState<string>('salePriceAsc'); 
 
     // Pagination states
     const [currentPage, setCurrentPage] = useState<number>(0); // 0-indexed page number for API
     const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
-    const [hasNextPage, setHasNextPage] = useState<boolean>(true); // Assume true initially
-    const [isLastPage, setIsLastPage] = useState<boolean>(false); // True if current page returns less than ITEMS_PER_PAGE
+    const [hasNextPage, setHasNextPage] = useState<boolean>(true); 
+    const [isLastPage, setIsLastPage] = useState<boolean>(false); 
 
-    // For inline page input
+    
     const [isEditingPage, setIsEditingPage] = useState<boolean>(false);
-    const [pageInput, setPageInput] = useState<string>(String(currentPage + 1)); // Display 1-indexed
+    const [pageInput, setPageInput] = useState<string>(String(currentPage + 1)); 
     const pageInputRef = useRef<HTMLInputElement>(null);
 
-    // Ref to prevent multiple simultaneous fetches
+    
     const isFetchingRef = useRef(false);
 
-    // --- Data Fetching Function ---
+    
     const fetchDealsAndStores = useCallback(async (pageToFetch: number) => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
@@ -163,14 +160,14 @@ const DealsList = () => {
             setLoading(false);
             isFetchingRef.current = false;
         }
-    }, []); // Empty dependency array as it manages its own state
+    }, []); 
 
     // Effect to trigger fetching when currentPage changes
     useEffect(() => {
         fetchDealsAndStores(currentPage);
     }, [currentPage, fetchDealsAndStores]);
 
-    // Handle page navigation
+    
     const handleNextPage = () => {
         if (!loading && hasNextPage) {
             setCurrentPage(prevPage => prevPage + 1);
@@ -183,7 +180,7 @@ const DealsList = () => {
         }
     };
 
-    // Inline page input handlers
+    
     const handlePageClick = () => {
         setIsEditingPage(true);
         setPageInput(String(currentPage + 1)); // Display 1-indexed page
@@ -194,7 +191,7 @@ const DealsList = () => {
     };
 
     const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // Allow empty string to clear the input
+        
         setPageInput(e.target.value);
     };
 
@@ -204,80 +201,76 @@ const DealsList = () => {
             const isValidPage = !isNaN(pageNum) && pageNum >= 1;
 
             if (isValidPage) {
-                setCurrentPage(pageNum - 1); // Convert to 0-indexed for internal state and API
+                setCurrentPage(pageNum - 1); 
             } else {
                 console.warn(`Invalid page number: ${pageInput}.`);
-                setPageInput(String(currentPage + 1)); // Revert to current page on invalid input
+                setPageInput(String(currentPage + 1)); 
             }
             setIsEditingPage(false);
         }
     };
 
-    // --- FILTERING AND SORTING LOGIC ---
-    // Memoize this function to prevent unnecessary re-calculations
+    
     const applyFiltersAndSort = useCallback(() => {
-        let currentDeals = [...allDeals]; // Start with the deals fetched for the current page
+        let currentDeals = [...allDeals]; 
 
-        // 1. Filter by Search Term (title)
+        
         if (searchTerm) {
             currentDeals = currentDeals.filter(deal =>
                 deal.title.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
-        // 2. Filter by Store ID
+        
         if (selectedStoreID) {
             currentDeals = currentDeals.filter(deal => deal.storeID === selectedStoreID);
         }
 
-        // Removed Deal Rating Filter logic
+        
 
-        // 3. Filter by Sale Price Range (now step 3)
+        
         currentDeals = currentDeals.filter(deal => {
             const salePrice = parseFloat(deal.salePrice || '0');
             return salePrice >= minSalePrice && salePrice <= maxSalePrice;
         });
 
-        // 4. Sort Order (now step 4)
         currentDeals.sort((a, b) => {
             switch (sortOrder) {
                 case 'salePriceAsc':
                     return parseFloat(a.salePrice || '0') - parseFloat(b.salePrice || '0');
                 case 'salePriceDesc':
                     return parseFloat(b.salePrice || '0') - parseFloat(a.salePrice || '0');
-                // Removed dealRatingDesc and dealRatingAsc cases
+                
                 case 'releaseDateDesc':
-                    return (b.releaseDate || 0) - (a.releaseDate || 0); // Unix timestamp, higher is newer
+                    return (b.releaseDate || 0) - (a.releaseDate || 0); 
                 case 'releaseDateAsc':
                     return (a.releaseDate || 0) - (b.releaseDate || 0);
                 default:
-                    return 0; // No change in order if default
+                    return 0; 
             }
         });
 
         return currentDeals;
-    }, [allDeals, searchTerm, selectedStoreID, minSalePrice, maxSalePrice, sortOrder]); // Removed minDealRating from dependencies
+    }, [allDeals, searchTerm, selectedStoreID, minSalePrice, maxSalePrice, sortOrder]); 
 
     const [filteredDeals, setFilteredDeals] = useState<Deal[]>([]);
     useEffect(() => {
         const newFilteredDeals = applyFiltersAndSort();
         setFilteredDeals(newFilteredDeals);
-    }, [allDeals, searchTerm, selectedStoreID, minSalePrice, maxSalePrice, sortOrder, applyFiltersAndSort]); // Removed minDealRating from dependencies
+    }, [allDeals, searchTerm, selectedStoreID, minSalePrice, maxSalePrice, sortOrder, applyFiltersAndSort]); 
 
 
-    // Create a Map for quick lookup of store details by storeID
     const storeMap = new Map<string, Store>();
     stores.forEach(store => {
         storeMap.set(store.storeID, store);
     });
 
-    // Determine if content is loading or if there's an error affecting main display
     const showLoadingOverlay = loading && allDeals.length === 0 && !error;
     const showErrorMessage = error && allDeals.length === 0;
 
     return (
         <section className="flex flex-shrink flex-col items-center py-8 px-4 bg-gray-950 text-gray-100 min-h-screen relative">
-            {/* Loading Overlay */}
+            
             {showLoadingOverlay && (
                 <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 bg-slate-950 text-gray-100">
                     <LoadingSpinner />
@@ -285,7 +278,7 @@ const DealsList = () => {
                 </div>
             )}
 
-            {/* Error Message */}
+            
             {showErrorMessage && (
                 <div className="absolute inset-0 bg-gray-950 bg-opacity-90 flex flex-col items-center justify-center z-50 transition-opacity duration-300">
                     <p className="text-xl text-red-500">Error: {error}</p>
@@ -293,10 +286,10 @@ const DealsList = () => {
                 </div>
             )}
 
-            {/* Main content - only render if not in initial loading/error state */}
+            
             {!showLoadingOverlay && !showErrorMessage && (
                 <>
-                    {/* Page Title and Description */}
+                    
                     <div className="max-w-3xl text-center space-y-6 mb-8">
                         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
                             Discover the{" "}
@@ -310,9 +303,9 @@ const DealsList = () => {
                         </p>
                     </div>
 
-                    {/* Search and Filters */}
+                    
                     <div className="w-full max-w-7xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-900 rounded-lg shadow-inner"> {/* Adjusted grid-cols to 3 */}
-                        {/* Search Bar */}
+                        
                         <div className="col-span-full">
                             <input
                                 type="text"
@@ -323,7 +316,7 @@ const DealsList = () => {
                             />
                         </div>
 
-                        {/* Store Filter */}
+                        
                         <div>
                             <label htmlFor="store-filter" className="block text-sm font-medium text-gray-400 mb-1">Filter by Store</label>
                             <select
@@ -339,9 +332,9 @@ const DealsList = () => {
                             </select>
                         </div>
 
-                        {/* Removed Deal Rating Filter section */}
+                        
 
-                        {/* Price Range Filter */}
+                        
                         <div>
                             <label htmlFor="price-range-filter" className="block text-sm font-medium text-gray-400 mb-1">Price Range: ${minSalePrice.toFixed(2)} - ${maxSalePrice.toFixed(2)}</label>
                             <div className="flex items-center gap-2">
@@ -376,7 +369,7 @@ const DealsList = () => {
                             </div>
                         </div>
 
-                        {/* Sort Order */}
+                        
                         <div>
                             <label htmlFor="sort-order" className="block text-sm font-medium text-gray-400 mb-1">Sort By</label>
                             <select
@@ -385,7 +378,7 @@ const DealsList = () => {
                                 value={sortOrder}
                                 onChange={(e) => setSortOrder(e.target.value)}
                             >
-                                {/* Removed Deal Rating sort options */}
+                                
                                 <option value="salePriceAsc">Price (Low to High)</option>
                                 <option value="salePriceDesc">Price (High to Low)</option>
                                 <option value="releaseDateDesc">Release Date (Newest First)</option>
@@ -394,7 +387,7 @@ const DealsList = () => {
                         </div>
                     </div>
 
-                    {/* Existing Table Container */}
+                    
                     <div className="w-full max-w-7xl mx-auto p-4 overflow-x-auto">
                         <div className="bg-gray-900 rounded-xl shadow-lg overflow-hidden">
                             <table className="min-w-full divide-y divide-gray-700">
@@ -439,7 +432,7 @@ const DealsList = () => {
                         </div>
                     </div>
 
-                    {/* Pagination Controls */}
+                    
                     <div className="flex justify-center items-center mt-8 gap-4">
                         <button
                             onClick={handlePreviousPage}

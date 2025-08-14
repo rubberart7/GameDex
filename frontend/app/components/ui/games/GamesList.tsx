@@ -1,4 +1,3 @@
-// frontend/app/components/ui/games/GamesList.tsx
 
 "use client";
 
@@ -11,7 +10,6 @@ const CACHE_EXPIRATION_MS = 60 * 60 * 1000;
 
 const MAX_GAME_PAGES = 3;
 
-// Helper function to safely get initial state from cache
 const getInitialStateFromCache = (): { 
   initialGames: Game[]; 
   initialLoading: boolean; 
@@ -37,9 +35,9 @@ const getInitialStateFromCache = (): {
         console.log("Lazy initialization: Initial state loaded from cache for page 1.");
         return {
           initialGames: data,
-          initialLoading: false, // Not loading if data found immediately
-          initialHasNextPage: !!nextUrl, // Set initial hasNextPage from cache
-          initialFilteredGames: data // Set filtered games to match initial games
+          initialLoading: false, 
+          initialHasNextPage: !!nextUrl, 
+          initialFilteredGames: data 
         };
       } else {
         console.log("Lazy initialization: Cached data for page 1 expired.");
@@ -59,7 +57,6 @@ const getInitialStateFromCache = (): {
 };
 
 const GamesList = () => {
-  // Get initial state once and use it consistently
   const initialState = getInitialStateFromCache();
   
   const [games, setGames] = useState<Game[]>(initialState.initialGames);
@@ -74,7 +71,7 @@ const GamesList = () => {
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
   const [hasNextPage, setHasNextPage] = useState<boolean>(initialState.initialHasNextPage);
   
-  // Track if this is the initial mount
+  
   const isInitialMount = useRef(true);
 
   const categories = [
@@ -114,8 +111,7 @@ const GamesList = () => {
 
     const isCacheValid = (cachedData && JSON.parse(cachedData).timestamp && Date.now() - JSON.parse(cachedData).timestamp < CACHE_EXPIRATION_MS);
 
-    // Only set loading to true if we are about to fetch from the network,
-    // and we don't already have games displayed (to prevent flicker on initial load)
+    
     if (!isCacheValid && (games.length === 0 || pageNumber > 1)) { 
         setLoading(true);
     }
@@ -127,17 +123,17 @@ const GamesList = () => {
           setGames(data);
           setHasPreviousPage(pageNumber > 1);
           setHasNextPage(!!nextUrl);
-          setLoading(false); // Done loading from cache
+          setLoading(false); 
           isFetchingRef.current = false;
           console.log(`Games for page ${pageNumber} loaded from cache.`);
-          return; // Exit as data is from cache
+          return; 
         } catch (e) {
           console.error(`Failed to parse cached data for page ${pageNumber}:`, e);
-          localStorage.removeItem(cacheKey); // Remove corrupted cache
+          localStorage.removeItem(cacheKey); 
         }
       }
 
-      // If we reach here, cache was invalid or missing, proceed to network fetch
+      
       console.log(`Fetching games from API for page ${pageNumber}...`);
       const res = await fetch(`http://localhost:4000/api/games?page=${pageNumber}`);
       if (!res.ok) {
@@ -177,30 +173,24 @@ const GamesList = () => {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, []); // Remove games.length dependency to prevent stale closures
+  }, []); 
 
   useEffect(() => {
-    // Only skip fetching on the very first mount if we have cached data for page 1
     if (isInitialMount.current && currentPage === 1 && initialState.initialGames.length > 0) {
-      // We already have page 1 data from cache, but still need to set pagination states
-      setHasPreviousPage(false); // Page 1 never has previous
-      setHasNextPage(initialState.initialHasNextPage); // Use cached hasNext value
-      isInitialMount.current = false; // Mark that initial mount is done
+      setHasPreviousPage(false); 
+      setHasNextPage(initialState.initialHasNextPage); 
+      isInitialMount.current = false; 
       return;
     }
     
-    // Mark initial mount as done for any other case
     if (isInitialMount.current) {
       isInitialMount.current = false;
     }
     
-    // For all other cases (page > 1 or no cached data or subsequent page 1 visits), fetch normally
     fetchGames(currentPage);
   }, [currentPage, fetchGames, initialState.initialGames.length, initialState.initialHasNextPage]);
 
   useEffect(() => {
-    // This effect runs when search/category/sort changes.
-    // It resets currentPage to 1, which then triggers the fetchGames effect.
     setCurrentPage(1);
   }, [searchTerm, selectedCategory, selectedSort]);
 
@@ -251,8 +241,6 @@ const GamesList = () => {
     }
   };
 
-  // --- RENDER LOGIC: Primary Loading Gate ---
-  // Only show the full-screen spinner if `loading` is true AND `filteredGames.length` is 0.
   if (loading && filteredGames.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-screen p-8 bg-slate-950 text-gray-100">
@@ -262,7 +250,6 @@ const GamesList = () => {
     );
   }
 
-  // Show a full-screen error if an error occurred AND there are no games to display
   if (error && filteredGames.length === 0) {
     return (
       <div className="flex items-center justify-center h-full min-h-screen p-8 bg-slate-950 text-red-400">
@@ -271,7 +258,6 @@ const GamesList = () => {
     );
   }
 
-  // If we reach here, we have content to show
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen p-3 sm:p-4 md:p-6 lg:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -321,7 +307,6 @@ const GamesList = () => {
 
       <h2 className="text-2xl font-bold mb-6 text-blue-400">Games</h2>
 
-      {/* Conditional rendering for game grid */}
       {filteredGames.length > 0 ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3
                          sm:grid-cols-[repeat(auto-fill,minmax(170px,1fr))] sm:gap-4
@@ -333,7 +318,6 @@ const GamesList = () => {
           ))}
         </div>
       ) : (
-        // Only show "No games found" message if not loading AND no games are found after filtering
         !loading && (
           <div className="flex flex-col items-center justify-center h-full text-gray-400 py-10">
             <p className="text-lg">No games found matching your criteria.</p>
@@ -344,7 +328,6 @@ const GamesList = () => {
         )
       )}
 
-      {/* Pagination Controls */}
       <div className="flex justify-center items-center mt-8 gap-4">
         <button
           onClick={handlePreviousPage}
@@ -357,7 +340,7 @@ const GamesList = () => {
           Previous
         </button>
 
-        {/* This span shows "Page X" */}
+        
         <span className="text-lg font-medium text-slate-200">Page {currentPage}</span>
 
         <button
@@ -372,7 +355,6 @@ const GamesList = () => {
         </button>
       </div>
 
-      {/* Show small loading spinner during subsequent page fetches if data is already visible */}
       {loading && filteredGames.length > 0 && (
         <div className="flex justify-center py-4">
             <LoadingSpinner className="text-blue-500 w-8 h-8" />

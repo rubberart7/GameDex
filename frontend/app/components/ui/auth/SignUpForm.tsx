@@ -47,15 +47,15 @@ const SignUpForm = () => {
         const result = await response.json();
 
         if (!response.ok) {
-          // Show error message from backend
+          
           setFeedback({ message: result.message || 'Registration failed', type: 'Error' });
           return;
         }
 
-        // Show success message
+        
         setFeedback({ message: result.message || 'Registration successful!', type: 'Success' });
 
-        // Clear form on success
+        
         setFullName('');
         setEmail('');
         setPassword('');
@@ -98,7 +98,7 @@ const SignUpForm = () => {
                     />
                   </div>
       
-                  {/* Email Field */}
+                  
                   <div className="flex flex-col gap-2">
                     <label htmlFor="email" className="text-sm font-medium text-gray-300">
                       Email
@@ -115,7 +115,7 @@ const SignUpForm = () => {
                     />
                   </div>
       
-                  {/* Password Field */}
+                  
                   <div className="flex flex-col gap-2 relative">
                     <label htmlFor="password" className="text-sm font-medium text-gray-300">
                       Password
@@ -149,8 +149,7 @@ const SignUpForm = () => {
                       {feedback.message}
                     </div>
                     )}
-                    {/* the above uses conditional rendering so the feedback is only rendered if the message exists */}
-                  {/* Login Button */}
+                   
                   <Button 
                     variant="default" 
                     size="lg" 
@@ -160,10 +159,10 @@ const SignUpForm = () => {
                     Sign Up
                   </Button>
       
-                  {/* Thin Divider */}
+                  
                   <div className="border-t border-gray-700 my-2"></div>
       
-                  {/* Sign Up Link */}
+                  
                   <p className="text-sm text-center text-gray-400">
                     Already have an account?{' '}
                     <Link 

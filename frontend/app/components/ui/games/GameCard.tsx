@@ -4,7 +4,7 @@ import Link from 'next/link';
 export interface Platform {
   id: number;
   name: string;
-  slug: string; // Added slug as it's often useful and present
+  slug: string; 
 }
 
 export interface PlatformObj {
@@ -25,8 +25,8 @@ export interface Game {
   platforms: PlatformObj[];
   parent_platforms: PlatformObj[];
   released: string;
-  metacritic?: number | null; // Added metacritic as optional and nullable
-  genres: Genre[]; // Added genres to match RAWG data
+  metacritic?: number | null; 
+  genres: Genre[]; 
 }
 
 interface GameCardProps {
@@ -44,9 +44,9 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
             alt={game.name}
             className="w-full h-67 object-cover transition-transform duration-500"
             onError={(e) => {
-              // Fallback image if background_image fails to load
-              e.currentTarget.onerror = null; // prevents infinite loop if fallback also fails
-              e.currentTarget.src = '/placeholder-game-image.png'; // Replace with your actual placeholder
+              
+              e.currentTarget.onerror = null; 
+              e.currentTarget.src = '/placeholder-game-image.png'; 
             }}
           />
         </div>
@@ -57,7 +57,7 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
               <h2 className="text-stone-100 text-xl font-bold leading-snug line-clamp-2">
                 {game.name}
               </h2>
-              {/* Display rating only if available and not 0 */}
+              
               {game.rating > 0 && (
                 <span className="bg-green-500 text-white text-sm font-semibold px-2 py-1 rounded-full shadow-sm">
                   {game.rating.toFixed(1)}

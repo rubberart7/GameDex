@@ -141,25 +141,21 @@ const WishList: React.FC = () => {
     fetchUserWishlist();
   }, [accessToken, authLoading, fetchNewAccessToken]);
 
-  // NEW: Filtering and Sorting Logic using useMemo for performance
   const filteredAndSortedGames = useMemo(() => {
     let currentGames = [...wishlistGames];
 
-    // Apply search term filter
     if (searchTerm) {
       currentGames = currentGames.filter(item =>
         item.game.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Apply category filter
     if (selectedCategory) {
       currentGames = currentGames.filter(item =>
         item.game.genres && item.game.genres.some(genre => genre.slug === selectedCategory)
       );
     }
 
-    // Apply sorting
     currentGames.sort((a, b) => {
       switch (selectedSort) {
         case 'addedAt-desc':
@@ -179,7 +175,6 @@ const WishList: React.FC = () => {
           const releasedB_asc = b.game.released ? new Date(b.game.released).getTime() : 0;
           return releasedA_asc - releasedB_asc;
         case 'metacritic-desc':
-          // Assuming 'rating' from GameData is used for metacritic
           return (b.game.rating || 0) - (a.game.rating || 0);
         default:
           return 0;
@@ -207,7 +202,6 @@ const WishList: React.FC = () => {
     );
   }
 
-  // Desired image dimensions - REMAINS UNCHANGED
   const desiredImageWidth = '300px';
   const desiredImageHeight = '400px';
 
@@ -281,7 +275,6 @@ const WishList: React.FC = () => {
         )
       )}
 
-      {/* Optional: Show loading spinner during subsequent actions if needed, though for wishlist it's typically full refresh or delete handling */}
       {isInitialLoading && filteredAndSortedGames.length === 0 && (
         <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col items-center">
           <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />

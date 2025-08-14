@@ -31,7 +31,7 @@ const LogoutButton = () => {
   return (
     <Button
       onClick={handleLogout}
-      // Updated class names for a red color palette
+      
       className="bg-red-600 text-white hover:bg-red-700 flex gap-2 focus:ring-red-500 rounded-lg px-4 py-2 text-base font-semibold"
     >
       <FiLogOut className="w-4 h-4" />

@@ -35,7 +35,6 @@ const HomeNavBar = () => {
             ) : (
               <Link href='/login' passHref>
                 <Button 
-                  // Updated classes to match the size of the logout button
                   className="inline-flex items-center justify-center font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:pointer-events-none cursor-pointer bg-blue-600 text-white hover:bg-blue-700 flex gap-2 focus:ring-blue-500 rounded-lg px-4 py-2 text-base"
                   onClick={() => {}}
                 >
@@ -47,7 +46,7 @@ const HomeNavBar = () => {
 
             <Link href='/signup' passHref>
               <Button
-                // Updated classes to match the size of the logout button
+                
                 className="inline-flex items-center justify-center font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-950 disabled:opacity-50 disabled:pointer-events-none cursor-pointer bg-slate-800 text-white hover:bg-slate-950 focus:ring-slate-700 flex gap-2 rounded-lg px-4 py-2 text-base"
                 onClick={() => {}}
               >

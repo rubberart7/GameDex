@@ -3,10 +3,10 @@ import React from 'react';
 const RecommendationsIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
-      viewBox="0 0 48 48" // Keep original viewBox
+      viewBox="0 0 48 48" 
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
-      className="size-6" // Reverted to default size-6
+      className="size-6" 
       {...props}
     >
       <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>

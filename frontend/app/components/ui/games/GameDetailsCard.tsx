@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Button from '@/app/components/ui/common/Button';
 import { useAuth } from '@/app/context/AuthContext';
-// Removed useRouter import since it's no longer used
+
 
 interface GameDetails {
   id: number;
@@ -267,8 +267,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
           </div>
         </div>
 
-        {/* Right-side card - Redesigned */}
-        {/* Removed border and border-slate-700 from here */}
+        
         <div className="lg:col-span-1 bg-slate-950 p-6 rounded-xl shadow-2xl self-start sticky top-8" ref={feedbackAreaRef}>
           <div className="flex justify-center mb-6">
             {game.background_image && (
@@ -289,7 +288,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
             )}
           </div>
 
-          {/* Changed bg to bg-slate-950 and removed shadow-inner for a flatter look */}
+          
           <div className="bg-slate-950 rounded-lg p-4 mb-5">
             <div className="flex justify-between items-center mb-3">
               <span className="text-slate-300 font-semibold text-lg">Base Game</span>
@@ -297,14 +296,14 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
 
             {game.esrb_rating && (
               <div className="flex items-center gap-3 mb-2 text-slate-200">
-                {/* Changed w-14 to w-12 */}
+                
                 <span className="text-sm font-semibold bg-blue-700 px-3 py-1 rounded-md w-12 text-center">{game.esrb_rating.name.slice(0, 2).toUpperCase()}</span>
                 <span className="text-sm">ESRB Rating</span>
               </div>
             )}
             {game.metacritic !== null && (
               <div className="flex items-center gap-3 mb-4 text-slate-200">
-                {/* Changed w-14 to w-12 */}
+                
                 <span className={`text-sm font-semibold px-3 py-1 rounded-md w-12 text-center
                   ${game.metacritic >= 75 ? 'bg-green-600' : game.metacritic >= 50 ? 'bg-yellow-600' : 'bg-red-600'}`}>
                   {game.metacritic}

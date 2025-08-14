@@ -12,7 +12,7 @@ interface GameData {
   background_image?: string;
   rating?: number;
   released?: string;
-  genres?: { id: number; name: string; slug: string; }[]; // Add genres to GameData
+  genres?: { id: number; name: string; slug: string; }[]; 
 }
 
 interface LibraryItem {
@@ -31,12 +31,10 @@ const LibraryList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isDeletingAnyGame, setIsDeletingAnyGame] = useState(false);
 
-  // NEW: Filtering and Sorting States
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedSort, setSelectedSort] = useState<string>('addedAt-desc'); // Default sort
+  const [selectedSort, setSelectedSort] = useState<string>('addedAt-desc'); 
 
-  // Categories and Sort Options (can be moved to a separate file if reused)
   const categories = [
     { name: 'Action', slug: 'action' },
     { name: 'Adventure', slug: 'adventure' },
@@ -140,25 +138,22 @@ const LibraryList: React.FC = () => {
     fetchUserLibrary();
   }, [accessToken, authLoading, fetchNewAccessToken]);
 
-  // NEW: Filtering and Sorting Logic using useMemo for performance
   const filteredAndSortedGames = useMemo(() => {
     let currentGames = [...libraryGames];
 
-    // Apply search term filter
     if (searchTerm) {
       currentGames = currentGames.filter(item =>
         item.game.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Apply category filter
     if (selectedCategory) {
       currentGames = currentGames.filter(item =>
         item.game.genres && item.game.genres.some(genre => genre.slug === selectedCategory)
       );
     }
 
-    // Apply sorting
+    
     currentGames.sort((a, b) => {
       switch (selectedSort) {
         case 'addedAt-desc':
@@ -178,7 +173,7 @@ const LibraryList: React.FC = () => {
           const releasedB_asc = b.game.released ? new Date(b.game.released).getTime() : 0;
           return releasedA_asc - releasedB_asc;
         case 'metacritic-desc':
-          // Assuming 'rating' from GameData is used for metacritic
+          
           return (b.game.rating || 0) - (a.game.rating || 0);
         default:
           return 0;
@@ -206,7 +201,6 @@ const LibraryList: React.FC = () => {
     );
   }
 
-  // REVERTED: Keeping original desired image dimensions
   const desiredImageWidth = '300px';
   const desiredImageHeight = '400px';
 
@@ -280,7 +274,6 @@ const LibraryList: React.FC = () => {
         )
       )}
 
-      {/* Optional: Show loading spinner during subsequent actions if needed, though for library it's typically full refresh or delete handling */}
       {isInitialLoading && filteredAndSortedGames.length === 0 && (
         <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col items-center">
           <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />

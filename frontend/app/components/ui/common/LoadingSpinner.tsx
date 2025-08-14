@@ -1,11 +1,6 @@
-// components/LoadingSpinner.tsx
-// This component can now be imported into Button.tsx, RequireAuth.tsx, DealsList.tsx, etc.
-// for a compact, inline loading indicator.
-
 import React from 'react';
 
-// You might consider adding a className prop to this simple spinner
-// so you can adjust its size or margin when it's used in different places.
+
 interface LoadingSpinnerProps {
   className?: string;
 }
@@ -13,8 +8,7 @@ interface LoadingSpinnerProps {
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ className }) => {
   return (
     <svg
-      // The default classes make it a small, animating circle.
-      // 'text-current' ensures it inherits the color of its parent text.
+      
       className={`animate-spin h-5 w-5 text-current ${className || ''}`}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"

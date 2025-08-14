@@ -5,8 +5,8 @@ const DealsIcon = (props: React.SVGProps<SVGSVGElement>) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className="size-6" // Use className for size
-      fill="currentColor" // Set fill to currentColor to inherit color
+      className="size-6" 
+      fill="currentColor" 
       {...props}
     >
       <path

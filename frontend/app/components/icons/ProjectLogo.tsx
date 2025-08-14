@@ -1,18 +1,15 @@
-// frontend/app/icons/ProjectLogo.tsx
 
 import React from 'react';
 import Link from 'next/link';
 
-// Define the props interface for ProjectLogo
+
 interface ProjectLogoProps {
-  className?: string; // Add this line to accept className
-  // You can add other props here if needed in the future
+  className?: string; 
+  
 }
 
-// Destructure className from props
 const ProjectLogo = ({ className }: ProjectLogoProps) => {
   return (
-    // Apply the passed className to the outermost div
     <div className={`flex items-center ${className || ''}`}>
       <Link href='/' className='flex items-center'>
         <span

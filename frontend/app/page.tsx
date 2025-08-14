@@ -1,4 +1,3 @@
-// app/page.tsx
 
 "use client";
 
@@ -7,7 +6,7 @@ import Button from "./components/ui/common/Button";
 import HomeNavBar from "./components/ui/navigation/HomeNavBar";
 import Link from "next/link";
 import { useAuth } from "./context/AuthContext";
-import LoadingSpinner from "./components/ui/common/LoadingSpinner"; // Make sure to import your spinner component
+import LoadingSpinner from "./components/ui/common/LoadingSpinner"; 
 
 export default function Home() {
   const { accessToken, loading } = useAuth();
