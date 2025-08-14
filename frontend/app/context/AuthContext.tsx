@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       setAccessToken(token);
     } catch (err) {
-      console.error("Failed to decode token, it might be invalid:", err);
+      
       setAccessToken(null);
       setAccessTokenExpiration(null);
     }
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return null;
       }
     } catch (err) {
-      console.error("Token refresh failed:", err);
+      
       decodeAndSetToken(null);
       return null;
     }

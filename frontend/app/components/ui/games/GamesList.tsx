@@ -32,7 +32,7 @@ const getInitialStateFromCache = (): {
     try {
       const { data, timestamp, nextUrl } = JSON.parse(cachedData);
       if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
-        console.log("Lazy initialization: Initial state loaded from cache for page 1.");
+        
         return {
           initialGames: data,
           initialLoading: false, 
@@ -40,11 +40,9 @@ const getInitialStateFromCache = (): {
           initialFilteredGames: data 
         };
       } else {
-        console.log("Lazy initialization: Cached data for page 1 expired.");
         localStorage.removeItem(initialCacheKey);
       }
     } catch (e) {
-      console.error("Lazy initialization: Failed to parse cached data:", e);
       localStorage.removeItem(initialCacheKey);
     }
   }
@@ -125,16 +123,13 @@ const GamesList = () => {
           setHasNextPage(!!nextUrl);
           setLoading(false); 
           isFetchingRef.current = false;
-          console.log(`Games for page ${pageNumber} loaded from cache.`);
           return; 
         } catch (e) {
-          console.error(`Failed to parse cached data for page ${pageNumber}:`, e);
           localStorage.removeItem(cacheKey); 
         }
       }
 
       
-      console.log(`Fetching games from API for page ${pageNumber}...`);
       const res = await fetch(`http://localhost:4000/api/games?page=${pageNumber}`);
       if (!res.ok) {
         throw new Error(`Failed to fetch games: ${res.statusText}`);
@@ -158,13 +153,10 @@ const GamesList = () => {
           nextUrl: apiResponse.next,
         };
         localStorage.setItem(cacheKey, JSON.stringify(dataToCache));
-        console.log(`Games for page ${pageNumber} fetched and cached.`);
       } catch (e) {
-        console.error(`Failed to cache games data for page ${pageNumber}:`, e);
       }
 
     } catch (err: any) {
-      console.error("Error fetching games:", err);
       setError(err.message || "An unknown error occurred while fetching games.");
       setHasPreviousPage(false);
       setHasNextPage(false);

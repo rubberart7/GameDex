@@ -77,13 +77,11 @@ const DealsList = () => {
                 if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
                     dealsData = data;
                     dealsFromCache = true;
-                    console.log(`Deals for page ${pageToFetch} loaded from cache.`);
+                    
                 } else {
-                    console.log(`Cached deals for page ${pageToFetch} expired, fetching new data.`);
                     localStorage.removeItem(dealsCacheKey);
                 }
             } catch (e) {
-                console.error(`Failed to parse cached deals data for page ${pageToFetch}:`, e);
                 localStorage.removeItem(dealsCacheKey);
             }
         }
@@ -96,13 +94,10 @@ const DealsList = () => {
                 if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
                     storesData = data;
                     storesFromCache = true;
-                    console.log("Store data loaded from cache.");
                 } else {
-                    console.log("Cached store data expired, fetching new data.");
                     localStorage.removeItem(storesCacheKey);
                 }
             } catch (e) {
-                console.error("Failed to parse cached store data:", e);
                 localStorage.removeItem(storesCacheKey);
             }
         }
@@ -110,7 +105,6 @@ const DealsList = () => {
         try {
             // Fetch deals if not from cache
             if (!dealsFromCache) {
-                console.log(`Fetching deals from API for page ${pageToFetch}...`);
                 const dealsRes = await fetch(`http://localhost:4000/api/deals?page=${pageToFetch}`);
                 if (!dealsRes.ok) {
                     throw new Error(`Failed to fetch deals! Status: ${dealsRes.status}`);
@@ -121,7 +115,6 @@ const DealsList = () => {
 
             // Fetch stores if not from cache
             if (!storesFromCache) {
-                console.log("Fetching store data from API...");
                 const storesRes = await fetch('http://localhost:4000/api/stores');
                 if (!storesRes.ok) {
                     throw new Error(`Failed to fetch store data! Status: ${storesRes.status}`);
@@ -144,7 +137,6 @@ const DealsList = () => {
             setHasNextPage(dealsData.length === ITEMS_PER_PAGE); // Only enable next if a full page was returned
 
         } catch (err) {
-            console.error("Error fetching data:", err);
             if (err instanceof Error) {
                 setError(err.message);
             } else {
@@ -203,7 +195,7 @@ const DealsList = () => {
             if (isValidPage) {
                 setCurrentPage(pageNum - 1); 
             } else {
-                console.warn(`Invalid page number: ${pageInput}.`);
+                
                 setPageInput(String(currentPage + 1)); 
             }
             setIsEditingPage(false);
@@ -482,5 +474,4 @@ const DealsList = () => {
         </section>
     );
 };
-
 export default DealsList;
