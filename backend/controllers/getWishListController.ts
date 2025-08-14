@@ -1,4 +1,3 @@
-// ========== GET WISHLIST CONTROLLER ==========
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../server';
 import dotenv from 'dotenv';
@@ -17,7 +16,7 @@ export const getWishlistFromDB = async (userId: number) => {
         include: {
             game: {
                 include: {
-                    genres: true // Add this to include genres with each game
+                    genres: true 
                 }
             }
         },

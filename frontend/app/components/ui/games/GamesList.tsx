@@ -338,7 +338,7 @@ const GamesList = () => {
           <div className="flex flex-col items-center justify-center h-full text-gray-400 py-10">
             <p className="text-lg">No games found matching your criteria.</p>
             {currentPage > MAX_GAME_PAGES && (
-                <p className="text-sm mt-2 text-gray-500">You've reached the end of available pages due to API limits.</p>
+                <p className="text-sm mt-2 text-gray-500">You've reached the end of available pages.</p>
             )}
           </div>
         )

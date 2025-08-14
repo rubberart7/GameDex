@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import prisma from '../server'; // Assuming this is your Prisma client instance
+import prisma from '../server'; 
 import { getGamesLibraryFromDB } from './getGameLibraryController';
 import { getWishlistFromDB } from './getWishListController';
 import dotenv from 'dotenv';
@@ -7,8 +7,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import axios from 'axios';
 import { createHash } from 'crypto';
 
-// REMOVE or COMMENT OUT this line as Prisma.JsonArray is not directly exported
-// import { Prisma } from '@prisma/client'; // <-- REMOVED/COMMENTED
+
 
 dotenv.config();
 
@@ -26,7 +25,7 @@ interface LocalGameData {
   background_image: string | null;
   rating: number | null;
   released: string | null;
-  recommendationReason?: string; // Add this for AI response integration
+  recommendationReason?: string; 
 }
 
 interface UserCollectionItem {
@@ -78,16 +77,13 @@ export const getRecommendations = async (
     if (cachedEntry && cachedEntry.collectionHash === currentCollectionHash) {
       
 
-      // --- FIX for read-side (image_7e4205.png) ---
-      // Instead of casting to Prisma.JsonArray, cast to 'any' first
-      // then to LocalGameData[]. This works around the import issue.
+      
       const recommendationsFromCache: any = cachedEntry.recommendations;
 
-      // Crucial runtime check: ensure the data is actually an array
       if (Array.isArray(recommendationsFromCache)) {
           res.status(200).json({
               message: 'AI-powered recommendations retrieved from cache.',
-              // Final cast to your interface, now safer due to the Array.isArray check
+              
               recommendations: recommendationsFromCache as LocalGameData[],
               type: 'Success',
           });
@@ -95,9 +91,7 @@ export const getRecommendations = async (
       } else {
           console.warn("Cached recommendations found but are not in expected array format, regenerating.");
           
-          // Fall through to regeneration logic if cached data is malformed
       }
-      // --- END FIX for read-side ---
     }
 
     
@@ -246,23 +240,22 @@ export const getRecommendations = async (
     }
 
     if (validatedRecommendations.length > 0) {
-      // --- FIX for write-side (related to InputJsonValue not found if Prisma import removed) ---
-      // Use 'any' here as well, because `Prisma.InputJsonValue` also depends on `import { Prisma } from '@prisma/client';`
+      
       await prisma.userRecommendationCache.upsert({
         where: { userId: userId },
         update: {
-          recommendations: validatedRecommendations as any, // Cast to any
+          recommendations: validatedRecommendations as any, 
           collectionHash: currentCollectionHash,
           cachedAt: new Date(),
         },
         create: {
           userId: userId,
-          recommendations: validatedRecommendations as any, // Cast to any
+          recommendations: validatedRecommendations as any, 
           collectionHash: currentCollectionHash,
           cachedAt: new Date(),
         },
       });
-      // --- END FIX for write-side ---
+      
 
       res.status(200).json({
         message: 'AI-powered recommendations generated and cached successfully.',

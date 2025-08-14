@@ -17,11 +17,11 @@ const CLIENT_URL = "http://localhost:3000";
 
 const app = express();
 
-const prisma = new PrismaClient(); // Prisma Client instance is already here, which is good for global management
+const prisma = new PrismaClient(); 
 
 const corsOptions = {
     origin: CLIENT_URL,
-    methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'], // Ensure all methods you use are allowed
+    methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'], 
     credentials: true
 }
 
@@ -38,29 +38,26 @@ app.use('/api/user', userFeaturesRouter);
 
 app.use(errorHandler);
 
-// Capture the server instance returned by app.listen
 const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-// --- NEW: Graceful Shutdown for Prisma Client ---
-// Handles SIGTERM (e.g., sent by process managers like pm2, Kubernetes)
+
 process.on('SIGTERM', async () => {
     console.log('SIGTERM signal received: Closing HTTP server.');
-    server.close(async () => { // Close the Express server
+    server.close(async () => { 
         console.log('HTTP server closed.');
-        await prisma.$disconnect(); // Disconnect Prisma Client
+        await prisma.$disconnect(); 
         console.log('Prisma Client disconnected.');
-        process.exit(0); // Exit the process
+        process.exit(0); 
     });
 });
 
-// Handles SIGINT (e.g., Ctrl+C in the terminal)
 process.on('SIGINT', async () => {
     console.log('SIGINT signal received: Closing HTTP server.');
     server.close(async () => {
         console.log('HTTP server closed.');
-        await prisma.$disconnect(); // Disconnect Prisma Client
+        await prisma.$disconnect(); 
         console.log('Prisma Client disconnected.');
         process.exit(0);
     });

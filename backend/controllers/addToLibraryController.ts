@@ -30,7 +30,7 @@ const findOrCreateGame = async (rawgId: number, res: Response) => {
   let localGame = await prisma.game.findUnique({
     where: { rawgId: rawgId },
     include: {
-      genres: true // Include genres when fetching existing games
+      genres: true 
     }
   });
 
@@ -52,7 +52,7 @@ const findOrCreateGame = async (rawgId: number, res: Response) => {
         return null;
       }
 
-      // Create the game with genres
+      
       localGame = await prisma.game.create({
         data: {
           rawgId: rawgGameData.id,
@@ -104,7 +104,7 @@ const createLibraryEntry = async (userId: number, gameId: number) => {
     include: {
       game: {
         include: {
-          genres: true // Include genres in the response
+          genres: true 
         }
       },
     },
