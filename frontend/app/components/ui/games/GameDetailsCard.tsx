@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Button from '@/app/components/ui/common/Button';
 import { useAuth } from '@/app/context/AuthContext';
+import Image from 'next/image';
 
 
 interface GameDetails {
@@ -193,10 +194,12 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
                 Your browser does not support the video tag.
               </video>
             ) : (
-              <img
+              <Image
                 src={game.background_image}
                 alt={`${game.name} background`}
                 className="w-full h-full object-cover"
+                width={1200}
+                height={675}
               />
             )}
           </div>
@@ -208,7 +211,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
                   onClick={() => setShowTrailer(true)}
                   className={`flex-shrink-0 w-24 h-16 rounded-md overflow-hidden border-2 ${showTrailer ? 'border-blue-500 ring-2 ring-500' : 'border-slate-700'} hover:border-blue-400 transition duration-200 focus:outline-none`}
                 >
-                  <img src={game.clip?.preview || game.background_image} alt="Trailer thumbnail" className="w-full h-full object-cover" />
+                  <Image src={game.clip?.preview || game.background_image} alt="Trailer thumbnail" className="w-full h-full object-cover" width={96} height={64}/>
                 </button>
               )}
               {game.short_screenshots.map((screenshot) => (
@@ -217,7 +220,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
                   onClick={() => setShowTrailer(false)}
                   className={`flex-shrink-0 w-24 h-16 rounded-md overflow-hidden border-2 ${!showTrailer ? 'border-blue-500 ring-2 ring-500' : 'border-slate-700'} hover:border-blue-400 transition duration-200 focus:outline-none`}
                 >
-                  <img src={screenshot.image} alt="Game screenshot" className="w-full h-full object-cover" />
+                  <Image src={screenshot.image} alt="Game screenshot" className="w-full h-full object-cover" width={96} height={64}/>
                 </button>
               ))}
             </div>
@@ -271,10 +274,12 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
         <div className="lg:col-span-1 bg-slate-950 p-6 rounded-xl shadow-2xl self-start sticky top-8" ref={feedbackAreaRef}>
           <div className="flex justify-center mb-6">
             {game.background_image && (
-              <img
+              <Image
                 src={game.background_image}
                 alt={`${game.name} small image`}
                 className="w-32 h-32 object-cover rounded-xl border-2 border-slate-600 shadow-md"
+                width={128}
+                height={128}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = '/placeholder-game-logo.png';

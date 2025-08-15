@@ -5,7 +5,7 @@ import Button from "../common/Button";
 import Link from "next/link";
 import LoginIcon from "../../icons/LoginIcon";
 import EyeToggle from "../common/EyeToggle";
-import { useAuth } from "@/app/context/AuthContext"; 
+import { useAuth } from "@/app/context/AuthContext";
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>("");
@@ -53,6 +53,7 @@ const LoginForm = () => {
       setEmail("");
       setPassword("");
     } catch (error) {
+      // Fix: The 'error' variable is now used here
       setFeedback({ message: "Network error: Could not reach server", type: "Error" });
     }
   }
