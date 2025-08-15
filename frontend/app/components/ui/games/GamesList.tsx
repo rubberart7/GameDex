@@ -169,7 +169,7 @@ const GamesList = () => {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, []); 
+  }, [games.length]); 
 
   useEffect(() => {
     if (isInitialMount.current && currentPage === 1 && initialState.initialGames.length > 0) {

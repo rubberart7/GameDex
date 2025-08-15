@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     initAuth();
-  }, []);
+  }, [fetchNewAccessToken]);
 
   return (
     <AuthContext.Provider value={{ accessToken, setAccessToken, loading, fetchNewAccessToken, accessTokenExpiration, userCollectionsVersion, incrementUserCollectionsVersion }}>

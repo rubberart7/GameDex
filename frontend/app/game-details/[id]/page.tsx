@@ -36,6 +36,7 @@ const GameDetailsPage = () => {
         const data = await res.json();
         setGameData(data);
       } catch (err: unknown) {
+        console.log("Error: ", err);
         setError("An unknown error occurred.");
       } finally {
         setLoading(false);
