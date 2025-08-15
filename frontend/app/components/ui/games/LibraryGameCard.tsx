@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/app/context/AuthContext';
-
 
 interface GameData {
   id: number;
@@ -62,7 +62,7 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         return;
       }
 
-    const response = await fetch(`http://localhost:4000/api/user/delete-from-library`, {
+      const response = await fetch(`http://localhost:4000/api/user/delete-from-library`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +73,6 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
       });
 
       const result = await response.json();
-
 
       if (!response.ok) {
         if (response.status === 401 && result.expired) {
@@ -102,7 +101,7 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
             setFeedback({ message: 'Session expired. Please log in again.', type: 'Error' });
           }
         } else if (response.status === 409 || (response.status === 200 && result.count === 0)) {
-            setFeedback({ message: result.message || 'Game not found in your library. Nothing to delete.', type: 'Info' });
+          setFeedback({ message: result.message || 'Game not found in your library. Nothing to delete.', type: 'Info' });
         } else {
           setFeedback({ message: result.message || 'Failed to delete game from library.', type: 'Error' });
         }
@@ -116,9 +115,9 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         onDeleteSuccess(libraryItem.id);
       }
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Network error deleting game from library:', err);
-      setFeedback({ message: `Network error or server unavailable: ${err.message || 'Please try again.'}`, type: 'Error' });
+      setFeedback({ message: 'Network error or server unavailable: Please try again.', type: 'Error' });
     } finally {
       setIsDeletingFromLibrary(false); 
       onDeleteStatusChange(false); 
@@ -141,12 +140,13 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
       relative
     ">
       <div className="relative overflow-hidden relative-shine"
-            style={{ width: imageWidth, height: imageHeight }}>
+        style={{ width: imageWidth, height: imageHeight }}>
         {game.background_image ? (
-          <img
+          <Image
             src={game.background_image}
             alt={game.name}
-            className="w-full h-full object-cover rounded-t-md transition-transform duration-500"
+            fill
+            className="object-cover rounded-t-md transition-transform duration-500"
           />
         ) : (
           <div

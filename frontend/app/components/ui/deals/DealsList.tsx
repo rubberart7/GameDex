@@ -82,6 +82,7 @@ const DealsList = () => {
                     localStorage.removeItem(dealsCacheKey);
                 }
             } catch (e) {
+                console.error("Error", e);
                 localStorage.removeItem(dealsCacheKey);
             }
         }
@@ -98,6 +99,7 @@ const DealsList = () => {
                     localStorage.removeItem(storesCacheKey);
                 }
             } catch (e) {
+                console.error("Error", e);
                 localStorage.removeItem(storesCacheKey);
             }
         }
@@ -138,8 +140,10 @@ const DealsList = () => {
 
         } catch (err) {
             if (err instanceof Error) {
+                console.error("Error", err);
                 setError(err.message);
             } else {
+                console.error("Error", err);
                 setError('An unknown error occurred during data fetching.');
             }
             // Reset states on error

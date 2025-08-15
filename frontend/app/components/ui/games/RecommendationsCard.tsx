@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 interface RecommendedGameData {
   id: number;
@@ -51,10 +52,11 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
         style={{ width: '100%', height: imageHeight }}
       >
         {game.background_image ? (
-          <img
+          <Image
             src={game.background_image}
             alt={game.name}
-            className="w-full h-full object-cover rounded-t-md transition-transform duration-500"
+            fill
+            className="object-cover rounded-t-md transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400 text-center text-lg rounded-t-md">
@@ -87,7 +89,7 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
             isExpanded ? '' : 'line-clamp-3'
           }`}
         >
-          "{game.recommendationReason}"
+          &quot;{game.recommendationReason}&quot;
         </p>
       </div>
     </div>

@@ -130,7 +130,7 @@ const WishList: React.FC = () => {
 
         setWishlistGames(data.wishlist || []);
 
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Network error fetching wishlist:', err);
         setError('Network error: Could not connect to server.');
       } finally {

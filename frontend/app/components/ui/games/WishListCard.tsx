@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/app/context/AuthContext';
 
 interface GameData {
@@ -114,9 +115,9 @@ const WishListCard: React.FC<WishListCardProps> = ({
         onDeleteSuccess(wishlistItem.id);
       }
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Network error deleting game from WishList:', err);
-      setFeedback({ message: `Network error or server unavailable: ${err.message || 'Please try again.'}`, type: 'Error' });
+      setFeedback({ message: 'Network error or server unavailable: Please try again.', type: 'Error' });
     } finally {
       setIsDeletingFromWishList(false); 
       onDeleteStatusChange(false); 
@@ -140,10 +141,11 @@ const WishListCard: React.FC<WishListCardProps> = ({
       <div className="relative overflow-hidden relative-shine"
             style={{ width: imageWidth, height: imageHeight }}>
         {game.background_image ? (
-          <img
+          <Image
             src={game.background_image}
             alt={game.name}
-            className="w-full h-full object-cover rounded-t-md transition-transform duration-500"
+            fill
+            className="object-cover rounded-t-md transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400 text-center text-lg rounded-t-md">

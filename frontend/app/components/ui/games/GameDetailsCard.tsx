@@ -144,9 +144,9 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       setFeedback({ message: result.message || successMessage, type: 'Success' });
       incrementUserCollectionsVersion();
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(`Error adding game to ${type} collection:`, error);
-      setFeedback({ message: `Network error or server unavailable: ${error.message || 'Please try again.'}`, type: 'Error' });
+      setFeedback({ message: 'Network error or server unavailable: Please try again.', type: 'Error' });
     } finally {
       setIsLoading(false);
     }

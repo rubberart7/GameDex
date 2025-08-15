@@ -53,7 +53,7 @@ const LoginForm = () => {
       setEmail("");
       setPassword("");
     } catch (error) {
-      // Fix: The 'error' variable is now used here
+      console.error("Login Error:", error);
       setFeedback({ message: "Network error: Could not reach server", type: "Error" });
     }
   }

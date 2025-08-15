@@ -74,7 +74,7 @@ const RecommendationsList: React.FC = () => {
         }
 
         setRecommendedGames(data.recommendations || []);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Network error fetching recommendations:', err);
         setError('Network error: Could not connect to server.');
       } finally {

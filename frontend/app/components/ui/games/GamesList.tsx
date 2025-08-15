@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import GameCard, { Game, Platform, PlatformObj, Genre } from './GameCard';
+import GameCard, { Game } from './GameCard';
 import LoadingSpinner from '@/app/components/ui/common/LoadingSpinner';
 
 const CACHE_KEY_PREFIX = 'cachedGamesList_page_';
@@ -43,6 +43,7 @@ const getInitialStateFromCache = (): {
         localStorage.removeItem(initialCacheKey);
       }
     } catch (e) {
+      console.error("Error: ", e);
       localStorage.removeItem(initialCacheKey);
     }
   }
@@ -125,6 +126,7 @@ const GamesList = () => {
           isFetchingRef.current = false;
           return; 
         } catch (e) {
+          console.error("Error: ", e);
           localStorage.removeItem(cacheKey); 
         }
       }
@@ -154,10 +156,12 @@ const GamesList = () => {
         };
         localStorage.setItem(cacheKey, JSON.stringify(dataToCache));
       } catch (e) {
+        console.error("Error: ", e);
       }
 
-    } catch (err: any) {
-      setError(err.message || "An unknown error occurred while fetching games.");
+    } catch (err: unknown) {
+      setError("An unknown error occurred while fetching games.");
+      console.error("Error: ", err);
       setHasPreviousPage(false);
       setHasNextPage(false);
       setGames([]);
@@ -203,15 +207,15 @@ const GamesList = () => {
 
     currentGames.sort((a, b) => {
       switch (selectedSort) {
-        case 'released':
+        case "released":
           const dateA = a.released ? new Date(a.released).getTime() : 0;
           const dateB = b.released ? new Date(b.released).getTime() : 0;
           return dateB - dateA;
-        case 'name-asc':
+        case "name-asc":
           return a.name.localeCompare(b.name);
-        case 'name-desc':
+        case "name-desc":
           return b.name.localeCompare(a.name);
-        case 'metacritic':
+        case "metacritic":
           return (b.metacritic || 0) - (a.metacritic || 0);
         default:
           return 0;
@@ -314,7 +318,7 @@ const GamesList = () => {
           <div className="flex flex-col items-center justify-center h-full text-gray-400 py-10">
             <p className="text-lg">No games found matching your criteria.</p>
             {currentPage > MAX_GAME_PAGES && (
-                <p className="text-sm mt-2 text-gray-500">You've reached the end of available pages.</p>
+                <p className="text-sm mt-2 text-gray-500">You&apos;ve reached the end of available pages.</p>
             )}
           </div>
         )

@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       setAccessToken(token);
     } catch (err) {
-      
+      console.error("Error", err);
       setAccessToken(null);
       setAccessTokenExpiration(null);
     }
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return null;
       }
     } catch (err) {
-      
+      console.error("Error", err)
       decodeAndSetToken(null);
       return null;
     }
