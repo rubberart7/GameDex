@@ -6,12 +6,15 @@ import { useParams } from 'next/navigation';
 import GameDetailsCard from '../../components/ui/games/GameDetailsCard';
 import MainNavBar from '../../components/ui/navigation/MainNavBar';
 import LoadingSpinner from '@/app/components/ui/common/LoadingSpinner';
+import { GameDetails } from '../../components/ui/games/GameDetailsCard';
+
+
 
 const GameDetailsPage = () => {
   const params = useParams();
   const gameId = params.id as string; 
 
-  const [gameData, setGameData] = useState<any | null>(null); 
+  const [gameData, setGameData] = useState<GameDetails | null>(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,8 +35,8 @@ const GameDetailsPage = () => {
         }
         const data = await res.json();
         setGameData(data);
-      } catch (err: any) {
-        setError(err.message || "An unknown error occurred.");
+      } catch (err: unknown) {
+        setError("An unknown error occurred.");
       } finally {
         setLoading(false);
       }

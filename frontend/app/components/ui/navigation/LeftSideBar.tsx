@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 import DealsIcon from '../../icons/DealsIcon';
 import LibraryIcon from '../../icons/LibraryIcon';
@@ -17,7 +16,6 @@ interface LeftSideBarProps {
 }
 
 const LeftSideBar: React.FC<LeftSideBarProps> = ({ className }: LeftSideBarProps) => {
-  const pathname = usePathname();
 
   
 

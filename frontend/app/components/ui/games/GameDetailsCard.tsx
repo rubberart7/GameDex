@@ -6,7 +6,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import Image from 'next/image';
 
 
-interface GameDetails {
+export interface GameDetails {
   id: number;
   name: string;
   description_raw: string;

@@ -138,7 +138,7 @@ const GamesList = () => {
       }
       const apiResponse = await res.json();
 
-      const newGames: Game[] = apiResponse.results.map((game: any) => ({
+      const newGames: Game[] = apiResponse.results.map((game: Game) => ({
         ...game,
         genres: game.genres || [],
       }));
