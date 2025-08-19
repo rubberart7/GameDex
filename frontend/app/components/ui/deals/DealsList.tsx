@@ -276,7 +276,7 @@ const DealsList = () => {
 
             
             {showErrorMessage && (
-                <div className="absolute inset-0 bg-gray-950 bg-opacity-90 flex flex-col items-center justify-center z-50 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-slate-950 bg-opacity-90 flex flex-col items-center justify-center z-50 transition-opacity duration-300">
                     <p className="text-xl text-red-500">Error: {error}</p>
                     <p className="text-md text-gray-400 mt-2">Please check your network connection or the API endpoint.</p>
                 </div>
