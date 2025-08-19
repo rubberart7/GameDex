@@ -5,14 +5,14 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
-    "build": "tsc && npx prisma generate && npm run copy:prisma",
-    "copy:prisma": "cp -r generated dist/",
-    "dev": "ts-node-dev --respawn server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm install && tsc && npx prisma generate",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --respawn server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.9.0",
