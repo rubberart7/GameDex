@@ -1,20 +1,26 @@
 {
   "compilerOptions": {
+    /* Language and Environment */
     "target": "es2022",
     "lib": ["es2022"],
     "module": "commonjs",
-    "rootDir": "./",
     "moduleResolution": "node",
+    "rootDir": "./",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "strict": false,
-    // "noImplicitAny": true,
+    
+    /* Strictness */
+    "strict": true,
+    // "noImplicitAny": true,         // Uncomment if you want to enforce no 'any'
     "strictNullChecks": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    "skipLibCheck": true
+    // "noUnusedLocals": true,        // Uncomment if you want errors for unused variables
+    // "noUnusedParameters": true,    // Uncomment if you want errors for unused parameters
+
+    /* Performance */
+    "skipLibCheck": true,
+    "incremental": true
   },
   "include": [
     "server.ts",
