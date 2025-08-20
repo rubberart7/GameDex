@@ -140,19 +140,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     initAuth();
 
-    // Cleanup function
+    
     return () => {
       isMounted = false;
     };
-  }, []); // Empty dependency array - only run once on mount
+  }, []); 
 
-  // Auto-refresh token before it expires
+  
   useEffect(() => {
     if (!accessToken || !accessTokenExpiration) return;
 
-    const timeUntilExpiry = (accessTokenExpiration * 1000) - Date.now() - (5 * 60 * 1000); // Refresh 5 minutes before expiry
+    const timeUntilExpiry = (accessTokenExpiration * 1000) - Date.now() - (5 * 60 * 1000); 
     
-    if (timeUntilExpiry <= 0) return; // Already expired or about to expire
+    if (timeUntilExpiry <= 0) return; 
 
     const timeoutId = setTimeout(() => {
       console.log('Auto-refreshing token...');
@@ -162,7 +162,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => clearTimeout(timeoutId);
   }, [accessToken, accessTokenExpiration, fetchNewAccessToken]);
 
-  // Enhanced setAccessToken function
+  
   const enhancedSetAccessToken = useCallback((token: string | null) => {
     decodeAndSetToken(token);
   }, [decodeAndSetToken]);

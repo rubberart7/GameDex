@@ -114,7 +114,7 @@ const DealsList = () => {
         try {
             // Fetch deals if not from cache
             if (!dealsFromCache) {
-                const dealsRes = await fetch(`${serverUrl}/api/deals?page=${pageToFetch}`);
+                const dealsRes = await fetch(`${serverUrl}api/deals?page=${pageToFetch}`);
                 if (!dealsRes.ok) {
                     throw new Error(`Failed to fetch deals! Status: ${dealsRes.status}`);
                 }
@@ -126,7 +126,7 @@ const DealsList = () => {
 
             // Fetch stores if not from cache
             if (!storesFromCache) {
-                const storesRes = await fetch(`${serverUrl}/api/stores`);
+                const storesRes = await fetch(`${serverUrl}api/stores`);
                 if (!storesRes.ok) {
                     throw new Error(`Failed to fetch store data! Status: ${storesRes.status}`);
                 }
