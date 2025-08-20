@@ -83,7 +83,7 @@ GEMINI_API_KEY="your_gemini_api_key"
 CLIENT_URL="http://localhost:3000"
 ```
 
-### Frontend (frontend/.env.local)
+### Frontend (frontend/.env)
 ```env
 NEXT_PUBLIC_BACKEND_URL="http://localhost:4000"
 ```
