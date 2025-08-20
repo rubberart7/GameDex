@@ -83,7 +83,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (!res.ok) {
-        const errorText = await res.text();
         decodeAndSetToken(null);
         return null;
       }
