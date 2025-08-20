@@ -71,55 +71,62 @@ const DealsList = () => {
         let dealsFromCache = false;
         let storesFromCache = false;
 
+        // Check if localStorage is available
+        const isLocalStorageAvailable = typeof window !== 'undefined' && window.localStorage;
+
         // Try loading deals from cache
-        const cachedDeals = localStorage.getItem(dealsCacheKey);
-        if (cachedDeals) {
-            try {
-                const { data, timestamp } = JSON.parse(cachedDeals);
-                if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
-                    dealsData = data;
-                    dealsFromCache = true;
-                    
-                } else {
+        if (isLocalStorageAvailable) {
+            const cachedDeals = localStorage.getItem(dealsCacheKey);
+            if (cachedDeals) {
+                try {
+                    const { data, timestamp } = JSON.parse(cachedDeals);
+                    if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
+                        dealsData = data;
+                        dealsFromCache = true;
+                        
+                    } else {
+                        localStorage.removeItem(dealsCacheKey);
+                    }
+                } catch (e) {
+                    console.error("Error", e);
                     localStorage.removeItem(dealsCacheKey);
                 }
-            } catch (e) {
-                console.error("Error", e);
-                localStorage.removeItem(dealsCacheKey);
             }
-        }
 
-        // Try loading stores from cache
-        const cachedStores = localStorage.getItem(storesCacheKey);
-        if (cachedStores) {
-            try {
-                const { data, timestamp } = JSON.parse(cachedStores);
-                if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
-                    storesData = data;
-                    storesFromCache = true;
-                } else {
+            // Try loading stores from cache
+            const cachedStores = localStorage.getItem(storesCacheKey);
+            if (cachedStores) {
+                try {
+                    const { data, timestamp } = JSON.parse(cachedStores);
+                    if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
+                        storesData = data;
+                        storesFromCache = true;
+                    } else {
+                        localStorage.removeItem(storesCacheKey);
+                    }
+                } catch (e) {
+                    console.error("Error", e);
                     localStorage.removeItem(storesCacheKey);
                 }
-            } catch (e) {
-                console.error("Error", e);
-                localStorage.removeItem(storesCacheKey);
             }
         }
 
         try {
             // Fetch deals if not from cache
             if (!dealsFromCache) {
-                const dealsRes = await fetch(`${serverUrl}api/deals?page=${pageToFetch}`);
+                const dealsRes = await fetch(`${serverUrl}/api/deals?page=${pageToFetch}`);
                 if (!dealsRes.ok) {
                     throw new Error(`Failed to fetch deals! Status: ${dealsRes.status}`);
                 }
                 dealsData = await dealsRes.json();
-                localStorage.setItem(dealsCacheKey, JSON.stringify({ data: dealsData, timestamp: Date.now() }));
+                if (isLocalStorageAvailable) {
+                    localStorage.setItem(dealsCacheKey, JSON.stringify({ data: dealsData, timestamp: Date.now() }));
+                }
             }
 
             // Fetch stores if not from cache
             if (!storesFromCache) {
-                const storesRes = await fetch(`${serverUrl}api/stores`);
+                const storesRes = await fetch(`${serverUrl}/api/stores`);
                 if (!storesRes.ok) {
                     throw new Error(`Failed to fetch store data! Status: ${storesRes.status}`);
                 }
@@ -129,7 +136,9 @@ const DealsList = () => {
                     storesData = Object.values(storesData) as Store[]; // Convert object of stores to array
                 }
                 storesData = storesData.filter(store => store.isActive); // Only active stores
-                localStorage.setItem(storesCacheKey, JSON.stringify({ data: storesData, timestamp: Date.now() }));
+                if (isLocalStorageAvailable) {
+                    localStorage.setItem(storesCacheKey, JSON.stringify({ data: storesData, timestamp: Date.now() }));
+                }
             }
 
             setAllDeals(dealsData);
@@ -158,7 +167,7 @@ const DealsList = () => {
             setLoading(false);
             isFetchingRef.current = false;
         }
-    }, []); 
+    }, [serverUrl]); 
 
     // Effect to trigger fetching when currentPage changes
     useEffect(() => {
@@ -267,10 +276,10 @@ const DealsList = () => {
     const showErrorMessage = error && allDeals.length === 0;
 
     return (
-        <section className="flex flex-shrink flex-col items-center py-8 px-4 bg-gray-950 text-gray-100 min-h-screen relative">
+        <section className="flex flex-shrink flex-col items-center py-8 px-4 bg-slate-950 text-gray-100 min-h-screen relative">
             
             {showLoadingOverlay && (
-                <div className="bg-slate-950 text-slate-100 min-h-screen p-10 flex flex-col items-center">
+                <div className="w-full flex flex-col items-center justify-center flex-1 py-20">
                     <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
                     <p>Loading deals...</p>
                 </div>
@@ -278,8 +287,16 @@ const DealsList = () => {
 
             
             {showErrorMessage && (
-                <div className="bg-slate-950 text-red-400 min-h-screen p-10 flex justify-center">
-                    <p>Error: {error}</p>
+                <div className="w-full flex flex-col items-center justify-center flex-1 py-20">
+                    <div className="text-center p-8 bg-red-900/20 border border-red-500/30 rounded-lg">
+                        <p className="text-red-400 text-lg">Error: {error}</p>
+                        <button 
+                            onClick={() => fetchDealsAndStores(currentPage)}
+                            className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                        >
+                            Try Again
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -301,7 +318,7 @@ const DealsList = () => {
                     </div>
 
                     
-                    <div className="w-full max-w-7xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-900 rounded-lg shadow-inner"> {/* Adjusted grid-cols to 3 */}
+                    <div className="w-full max-w-7xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-900 rounded-lg shadow-inner">
                         
                         <div className="col-span-full">
                             <input
@@ -328,8 +345,6 @@ const DealsList = () => {
                                 ))}
                             </select>
                         </div>
-
-                        
 
                         
                         <div>
