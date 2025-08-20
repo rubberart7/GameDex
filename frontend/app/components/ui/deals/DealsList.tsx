@@ -19,11 +19,10 @@ export interface Store {
 
 const CACHE_KEY_DEALS_PREFIX = 'cachedDeals_page_';
 const CACHE_KEY_STORES = 'cachedStores';
-const CACHE_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
-const ITEMS_PER_PAGE = 60; // This must match the backend's pageSize for deals endpoint
+const CACHE_EXPIRATION_MS = 60 * 60 * 1000;
+const ITEMS_PER_PAGE = 60;
 
 const DealsList = () => {
-    
     const [allDeals, setAllDeals] = useState<Deal[]>([]); 
     const [stores, setStores] = useState<Store[]>([]);
 
@@ -32,7 +31,6 @@ const DealsList = () => {
 
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    // --- FILTER STATES ---
     const [selectedStoreID, setSelectedStoreID] = useState<string>('');
     
     const [maxSalePrice, setMaxSalePrice] = useState<number>(60);
@@ -40,23 +38,19 @@ const DealsList = () => {
     
     const [sortOrder, setSortOrder] = useState<string>('salePriceAsc'); 
 
-    // Pagination states
-    const [currentPage, setCurrentPage] = useState<number>(0); // 0-indexed page number for API
+    const [currentPage, setCurrentPage] = useState<number>(0);
     const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
     const [hasNextPage, setHasNextPage] = useState<boolean>(true); 
     const [isLastPage, setIsLastPage] = useState<boolean>(false); 
 
-    
     const [isEditingPage, setIsEditingPage] = useState<boolean>(false);
     const [pageInput, setPageInput] = useState<string>(String(currentPage + 1)); 
     const pageInputRef = useRef<HTMLInputElement>(null);
 
-    
     const isFetchingRef = useRef(false);
 
     const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
-    
     const fetchDealsAndStores = useCallback(async (pageToFetch: number) => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
@@ -71,10 +65,8 @@ const DealsList = () => {
         let dealsFromCache = false;
         let storesFromCache = false;
 
-        // Check if localStorage is available
         const isLocalStorageAvailable = typeof window !== 'undefined' && window.localStorage;
 
-        // Try loading deals from cache
         if (isLocalStorageAvailable) {
             const cachedDeals = localStorage.getItem(dealsCacheKey);
             if (cachedDeals) {
@@ -83,17 +75,14 @@ const DealsList = () => {
                     if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
                         dealsData = data;
                         dealsFromCache = true;
-                        
                     } else {
                         localStorage.removeItem(dealsCacheKey);
                     }
                 } catch (e) {
-                    console.error("Error", e);
                     localStorage.removeItem(dealsCacheKey);
                 }
             }
 
-            // Try loading stores from cache
             const cachedStores = localStorage.getItem(storesCacheKey);
             if (cachedStores) {
                 try {
@@ -105,14 +94,12 @@ const DealsList = () => {
                         localStorage.removeItem(storesCacheKey);
                     }
                 } catch (e) {
-                    console.error("Error", e);
                     localStorage.removeItem(storesCacheKey);
                 }
             }
         }
 
         try {
-            // Fetch deals if not from cache
             if (!dealsFromCache) {
                 const dealsRes = await fetch(`${serverUrl}api/deals?page=${pageToFetch}`);
                 if (!dealsRes.ok) {
@@ -124,18 +111,16 @@ const DealsList = () => {
                 }
             }
 
-            // Fetch stores if not from cache
             if (!storesFromCache) {
                 const storesRes = await fetch(`${serverUrl}api/stores`);
                 if (!storesRes.ok) {
                     throw new Error(`Failed to fetch store data! Status: ${storesRes.status}`);
                 }
                 storesData = await storesRes.json();
-                // CheapShark stores API often returns an object where keys are storeIDs
                 if (!Array.isArray(storesData)) {
-                    storesData = Object.values(storesData) as Store[]; // Convert object of stores to array
+                    storesData = Object.values(storesData) as Store[];
                 }
-                storesData = storesData.filter(store => store.isActive); // Only active stores
+                storesData = storesData.filter(store => store.isActive);
                 if (isLocalStorageAvailable) {
                     localStorage.setItem(storesCacheKey, JSON.stringify({ data: storesData, timestamp: Date.now() }));
                 }
@@ -145,36 +130,30 @@ const DealsList = () => {
             setStores(storesData);
 
             setHasPreviousPage(pageToFetch > 0);
-            // If the number of deals returned is less than ITEMS_PER_PAGE, it's the last page
             setIsLastPage(dealsData.length < ITEMS_PER_PAGE);
-            setHasNextPage(dealsData.length === ITEMS_PER_PAGE); // Only enable next if a full page was returned
+            setHasNextPage(dealsData.length === ITEMS_PER_PAGE);
 
         } catch (err) {
             if (err instanceof Error) {
-                console.error("Error", err);
                 setError(err.message);
             } else {
-                console.error("Error", err);
                 setError('An unknown error occurred during data fetching.');
             }
-            // Reset states on error
             setAllDeals([]);
             setStores([]);
             setHasPreviousPage(false);
             setHasNextPage(false);
-            setIsLastPage(true); // Treat as last page on error to prevent endless attempts
+            setIsLastPage(true);
         } finally {
             setLoading(false);
             isFetchingRef.current = false;
         }
     }, [serverUrl]); 
 
-    // Effect to trigger fetching when currentPage changes
     useEffect(() => {
         fetchDealsAndStores(currentPage);
     }, [currentPage, fetchDealsAndStores]);
 
-    
     const handleNextPage = () => {
         if (!loading && hasNextPage) {
             setCurrentPage(prevPage => prevPage + 1);
@@ -187,10 +166,9 @@ const DealsList = () => {
         }
     };
 
-    
     const handlePageClick = () => {
         setIsEditingPage(true);
-        setPageInput(String(currentPage + 1)); // Display 1-indexed page
+        setPageInput(String(currentPage + 1));
         setTimeout(() => {
             pageInputRef.current?.focus();
             pageInputRef.current?.select();
@@ -198,7 +176,6 @@ const DealsList = () => {
     };
 
     const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        
         setPageInput(e.target.value);
     };
 
@@ -208,34 +185,27 @@ const DealsList = () => {
             const isValidPage = !isNaN(pageNum) && pageNum >= 1;
 
             if (isValidPage) {
-                setCurrentPage(pageNum - 1); 
+                setCurrentPage(pageNum - 1);
             } else {
-                
-                setPageInput(String(currentPage + 1)); 
+                setPageInput(String(currentPage + 1));
             }
             setIsEditingPage(false);
         }
     };
 
-    
     const applyFiltersAndSort = useCallback(() => {
-        let currentDeals = [...allDeals]; 
+        let currentDeals = [...allDeals];
 
-        
         if (searchTerm) {
             currentDeals = currentDeals.filter(deal =>
                 deal.title.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
-        
         if (selectedStoreID) {
             currentDeals = currentDeals.filter(deal => deal.storeID === selectedStoreID);
         }
 
-        
-
-        
         currentDeals = currentDeals.filter(deal => {
             const salePrice = parseFloat(deal.salePrice || '0');
             return salePrice >= minSalePrice && salePrice <= maxSalePrice;
@@ -247,45 +217,41 @@ const DealsList = () => {
                     return parseFloat(a.salePrice || '0') - parseFloat(b.salePrice || '0');
                 case 'salePriceDesc':
                     return parseFloat(b.salePrice || '0') - parseFloat(a.salePrice || '0');
-                
                 case 'releaseDateDesc':
-                    return (b.releaseDate || 0) - (a.releaseDate || 0); 
+                    return (b.releaseDate || 0) - (a.releaseDate || 0);
                 case 'releaseDateAsc':
                     return (a.releaseDate || 0) - (b.releaseDate || 0);
                 default:
-                    return 0; 
+                    return 0;
             }
         });
 
         return currentDeals;
-    }, [allDeals, searchTerm, selectedStoreID, minSalePrice, maxSalePrice, sortOrder]); 
+    }, [allDeals, searchTerm, selectedStoreID, minSalePrice, maxSalePrice, sortOrder]);
 
     const [filteredDeals, setFilteredDeals] = useState<Deal[]>([]);
     useEffect(() => {
         const newFilteredDeals = applyFiltersAndSort();
         setFilteredDeals(newFilteredDeals);
-    }, [allDeals, searchTerm, selectedStoreID, minSalePrice, maxSalePrice, sortOrder, applyFiltersAndSort]); 
-
+    }, [allDeals, searchTerm, selectedStoreID, minSalePrice, maxSalePrice, sortOrder, applyFiltersAndSort]);
 
     const storeMap = new Map<string, Store>();
     stores.forEach(store => {
         storeMap.set(store.storeID, store);
     });
 
-    const showLoadingOverlay = loading && allDeals.length === 0 && !error;
+    const showInitialLoadingOverlay = loading && allDeals.length === 0 && !error && currentPage === 0;
     const showErrorMessage = error && allDeals.length === 0;
 
     return (
         <section className="flex flex-shrink flex-col items-center py-8 px-4 bg-slate-950 text-gray-100 min-h-screen relative">
-            
-            {showLoadingOverlay && (
+            {showInitialLoadingOverlay && (
                 <div className="w-full flex flex-col items-center justify-center flex-1 py-20">
                     <LoadingSpinner className="text-blue-500 w-12 h-12 mb-4" />
                     <p>Loading deals...</p>
                 </div>
             )}
 
-            
             {showErrorMessage && (
                 <div className="w-full flex flex-col items-center justify-center flex-1 py-20">
                     <div className="text-center p-8 bg-red-900/20 border border-red-500/30 rounded-lg">
@@ -300,10 +266,8 @@ const DealsList = () => {
                 </div>
             )}
 
-            
-            {!showLoadingOverlay && !showErrorMessage && (
+            {!showInitialLoadingOverlay && !showErrorMessage && (
                 <>
-                    
                     <div className="max-w-3xl text-center space-y-6 mb-8">
                         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
                             Discover the{" "}
@@ -317,9 +281,7 @@ const DealsList = () => {
                         </p>
                     </div>
 
-                    
                     <div className="w-full max-w-7xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-900 rounded-lg shadow-inner">
-                        
                         <div className="col-span-full">
                             <input
                                 type="text"
@@ -330,7 +292,6 @@ const DealsList = () => {
                             />
                         </div>
 
-                        
                         <div>
                             <label htmlFor="store-filter" className="block text-sm font-medium text-gray-400 mb-1">Filter by Store</label>
                             <select
@@ -346,7 +307,6 @@ const DealsList = () => {
                             </select>
                         </div>
 
-                        
                         <div>
                             <label htmlFor="price-range-filter" className="block text-sm font-medium text-gray-400 mb-1">Price Range: ${minSalePrice.toFixed(2)} - ${maxSalePrice.toFixed(2)}</label>
                             <div className="flex items-center gap-2">
@@ -381,7 +341,6 @@ const DealsList = () => {
                             </div>
                         </div>
 
-                        
                         <div>
                             <label htmlFor="sort-order" className="block text-sm font-medium text-gray-400 mb-1">Sort By</label>
                             <select
@@ -390,7 +349,6 @@ const DealsList = () => {
                                 value={sortOrder}
                                 onChange={(e) => setSortOrder(e.target.value)}
                             >
-                                
                                 <option value="salePriceAsc">Price (Low to High)</option>
                                 <option value="salePriceDesc">Price (High to Low)</option>
                                 <option value="releaseDateDesc">Release Date (Newest First)</option>
@@ -399,7 +357,6 @@ const DealsList = () => {
                         </div>
                     </div>
 
-                    
                     <div className="w-full max-w-7xl mx-auto p-4 overflow-x-auto">
                         <div className="bg-gray-900 rounded-xl shadow-lg overflow-hidden">
                             <table className="min-w-full divide-y divide-gray-700">
@@ -444,50 +401,58 @@ const DealsList = () => {
                         </div>
                     </div>
 
-                    
-                    <div className="flex justify-center items-center mt-8 gap-4">
-                        <button
-                            onClick={handlePreviousPage}
-                            disabled={loading || !hasPreviousPage}
-                            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 mr-2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                            </svg>
-                            Previous
-                        </button>
-
-                        {isEditingPage ? (
-                            <input
-                                ref={pageInputRef}
-                                type="number"
-                                value={pageInput}
-                                onChange={handlePageInputChange}
-                                onKeyDown={handlePageInputSubmit}
-                                onBlur={handlePageInputSubmit}
-                                min="1"
-                                className="w-20 text-center px-2 py-1 rounded-md bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-text"
-                                disabled={loading}
-                            />
-                        ) : (
-                            <span
-                                className="text-lg font-medium text-slate-200 cursor-pointer"
-                                onClick={handlePageClick}
+                    <div className="flex flex-col items-center mt-8">
+                        <div className="flex justify-center items-center gap-4 mb-4">
+                            <button
+                                onClick={handlePreviousPage}
+                                disabled={loading || !hasPreviousPage}
+                                className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer"
                             >
-                                Page {currentPage + 1}
-                            </span>
-                        )}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 mr-2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                                </svg>
+                                Previous
+                            </button>
 
-                        <button
-                            onClick={handleNextPage}
-                            disabled={loading || isLastPage || !hasNextPage}
-                            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer"
-                        >
-                            Next
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 ml-2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
-                        </button>
+                            {isEditingPage ? (
+                                <input
+                                    ref={pageInputRef}
+                                    type="number"
+                                    value={pageInput}
+                                    onChange={handlePageInputChange}
+                                    onKeyDown={handlePageInputSubmit}
+                                    onBlur={handlePageInputSubmit}
+                                    min="1"
+                                    className="w-20 text-center px-2 py-1 rounded-md bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-text"
+                                    disabled={loading}
+                                />
+                            ) : (
+                                <span
+                                    className="text-lg font-medium text-slate-200 cursor-pointer"
+                                    onClick={handlePageClick}
+                                >
+                                    Page {currentPage + 1}
+                                </span>
+                            )}
+
+                            <button
+                                onClick={handleNextPage}
+                                disabled={loading || isLastPage || !hasNextPage}
+                                className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer"
+                            >
+                                Next
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 ml-2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {loading && allDeals.length > 0 && (
+                            <div className="flex flex-col items-center justify-center py-4">
+                                <LoadingSpinner className="text-blue-500 w-8 h-8 mb-2" />
+                                <p className="text-gray-400 text-sm">Loading page {currentPage + 1}...</p>
+                            </div>
+                        )}
                     </div>
                 </>
             )}

@@ -16,7 +16,7 @@ export const getGamesLibraryFromDB = async (userId: number) => {
         include: {
             game: {
                 include: {
-                    genres: true // Add this to include genres with each game
+                    genres: true 
                 }
             }
         },

@@ -50,7 +50,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       setAccessToken(token);
     } catch (err) {
-      console.error("Error decoding token:", err);
       setAccessToken(null);
       setAccessTokenExpiration(null);
     }
@@ -61,77 +60,59 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return true;
     }
     const currentTime = Date.now() / 1000;
-    return accessTokenExpiration < currentTime + 30; // 30 second buffer
+    return accessTokenExpiration < currentTime + 30;
   }, [accessToken, accessTokenExpiration]);
 
   const fetchNewAccessToken = useCallback(async (forceRefresh: boolean = false): Promise<string | null> => {
-    // Don't fetch if we have a valid token and not forcing refresh
     if (!forceRefresh && accessToken && !isAccessTokenExpired()) {
       return accessToken;
     }
 
     if (!serverUrl) {
-      console.error('Server URL not configured');
       return null;
     }
 
     try {
-      console.log('Attempting to refresh access token...');
-      
       const res = await fetch(`${serverUrl}api/auth/refresh`, {
         method: "GET",
-        credentials: "include", // Important: This sends cookies
+        credentials: "include",
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      console.log('Refresh response status:', res.status);
-
       if (!res.ok) {
         const errorText = await res.text();
-        console.log('Refresh failed:', errorText);
         decodeAndSetToken(null);
         return null;
       }
 
       const data = await res.json();
-      console.log('Refresh successful');
 
       if (data.accessToken) {
         decodeAndSetToken(data.accessToken);
         return data.accessToken;
       } else {
-        console.log('No access token in response');
         decodeAndSetToken(null);
         return null;
       }
     } catch (err) {
-      console.error("Error fetching refresh token:", err);
       decodeAndSetToken(null);
       return null;
     }
   }, [serverUrl, accessToken, isAccessTokenExpired, decodeAndSetToken]);
 
-  // Initialize authentication on component mount
   useEffect(() => {
     let isMounted = true;
 
     const initAuth = async () => {
       try {
-        console.log('Initializing authentication...');
         const token = await fetchNewAccessToken(true);
         
         if (isMounted) {
-          if (token) {
-            console.log('Authentication successful');
-          } else {
-            console.log('No valid refresh token found');
-          }
           setLoading(false);
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
         if (isMounted) {
           setLoading(false);
         }
@@ -140,29 +121,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     initAuth();
 
-    
     return () => {
       isMounted = false;
     };
   }, []); 
 
-  
   useEffect(() => {
     if (!accessToken || !accessTokenExpiration) return;
 
-    const timeUntilExpiry = (accessTokenExpiration * 1000) - Date.now() - (5 * 60 * 1000); 
+    const timeUntilExpiry = (accessTokenExpiration * 1000) - Date.now() - (5 * 60 * 1000);
     
-    if (timeUntilExpiry <= 0) return; 
+    if (timeUntilExpiry <= 0) return;
 
     const timeoutId = setTimeout(() => {
-      console.log('Auto-refreshing token...');
       fetchNewAccessToken(true);
     }, timeUntilExpiry);
 
     return () => clearTimeout(timeoutId);
   }, [accessToken, accessTokenExpiration, fetchNewAccessToken]);
 
-  
   const enhancedSetAccessToken = useCallback((token: string | null) => {
     decodeAndSetToken(token);
   }, [decodeAndSetToken]);

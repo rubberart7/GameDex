@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -16,7 +15,7 @@ const getInitialStateFromCache = (): {
   initialHasNextPage: boolean; 
   initialFilteredGames: Game[];
 } => {
-  if (typeof window === 'undefined') { // Prevent localStorage access on server-side render
+  if (typeof window === 'undefined') {
     return { 
       initialGames: [], 
       initialLoading: true, 
@@ -25,14 +24,13 @@ const getInitialStateFromCache = (): {
     };
   }
 
-  const initialCacheKey = `${CACHE_KEY_PREFIX}1`; // Always check for page 1 on initial load
+  const initialCacheKey = `${CACHE_KEY_PREFIX}1`;
   const cachedData = localStorage.getItem(initialCacheKey);
 
   if (cachedData) {
     try {
       const { data, timestamp, nextUrl } = JSON.parse(cachedData);
       if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
-        
         return {
           initialGames: data,
           initialLoading: false, 
@@ -70,10 +68,12 @@ const GamesList = () => {
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
   const [hasNextPage, setHasNextPage] = useState<boolean>(initialState.initialHasNextPage);
   
-  
   const isInitialMount = useRef(true);
 
   const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
+  console.log(serverUrl);
+
 
   const categories = [
     { name: 'Action', slug: 'action' },
@@ -112,7 +112,6 @@ const GamesList = () => {
 
     const isCacheValid = (cachedData && JSON.parse(cachedData).timestamp && Date.now() - JSON.parse(cachedData).timestamp < CACHE_EXPIRATION_MS);
 
-    
     if (!isCacheValid && (games.length === 0 || pageNumber > 1)) { 
         setLoading(true);
     }
@@ -133,7 +132,6 @@ const GamesList = () => {
         }
       }
 
-      
       const res = await fetch(`${serverUrl}api/games?page=${pageNumber}`);
       if (!res.ok) {
         throw new Error(`Failed to fetch games: ${res.statusText}`);
@@ -230,12 +228,14 @@ const GamesList = () => {
   const handleNextPage = () => {
     if (!loading && hasNextPage) {
       setCurrentPage(prevPage => prevPage + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handlePreviousPage = () => {
     if (!loading && hasPreviousPage && currentPage > 1) {
       setCurrentPage(prevPage => prevPage - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -338,7 +338,6 @@ const GamesList = () => {
           Previous
         </button>
 
-        
         <span className="text-lg font-medium text-slate-200">Page {currentPage}</span>
 
         <button

@@ -14,7 +14,7 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
     const gameDetailsResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}`, {
       params: { key: gamesApiKey }
     });
-    const gameData = gameDetailsResponse.data; // This will contain background_image, description, etc.
+    const gameData = gameDetailsResponse.data; 
 
     
     try {

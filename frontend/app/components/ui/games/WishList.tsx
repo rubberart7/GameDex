@@ -12,7 +12,7 @@ interface GameData {
   background_image?: string;
   rating?: number;
   released?: string;
-  genres?: { id: number; name: string; slug: string; }[]; // Added genres to GameData
+  genres?: { id: number; name: string; slug: string; }[];
 }
 
 interface WishListItem {
@@ -31,14 +31,12 @@ const WishList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isDeletingAnyGame, setIsDeletingAnyGame] = useState(false);
 
-  // NEW: Filtering and Sorting States
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedSort, setSelectedSort] = useState<string>('addedAt-desc'); // Default sort
+  const [selectedSort, setSelectedSort] = useState<string>('addedAt-desc');
 
   const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
-  // Categories and Sort Options (can be moved to a separate file if reused)
   const categories = [
     { name: 'Action', slug: 'action' },
     { name: 'Adventure', slug: 'adventure' },

@@ -23,7 +23,6 @@ const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
     const allowedOrigins = [
       CLIENT_URL, 
-      "https://game-dex-t4vi.vercel.app", 
       "http://localhost:3000", 
     ];
 

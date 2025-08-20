@@ -149,7 +149,7 @@ export const logout = async (req: Request, res: Response) => {
         return;
     }
 
-    // Use the same cookie settings as login for clearing
+    
     const isProduction = process.env.NODE_ENV === 'production';
     
     res.clearCookie("jwt", { 

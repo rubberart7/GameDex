@@ -44,8 +44,8 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
                         src={game.background_image}
                         alt={game.name}
                         className="w-full h-67 object-cover transition-transform duration-500"
-                        width={320} // You may need to adjust these values
-                        height={268} // You may need to adjust these values
+                        width={320} 
+                        height={268} 
                         onError={(e) => {
                             
                             e.currentTarget.onerror = null; 

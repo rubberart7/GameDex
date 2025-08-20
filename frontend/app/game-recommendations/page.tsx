@@ -1,5 +1,5 @@
 import React from 'react';
-import RecommendationsList from '../components/ui/games/RecommendationsList'; // Import your RecommendationsList component
+import RecommendationsList from '../components/ui/games/RecommendationsList'; 
 import MainNavBar from '../components/ui/navigation/MainNavBar';
 
 const RecommendationsPage: React.FC = () => { 
