@@ -67,31 +67,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const fetchNewAccessToken = async (forceRefresh: boolean = false): Promise<string | null> => {
-    if (!forceRefresh && accessToken && !isAccessTokenExpired()) {
-      return accessToken;
-    }
+  if (!forceRefresh && accessToken && !isAccessTokenExpired()) {
+    return accessToken;
+  }
 
-    try {
-      const res = await fetch(`${serverUrl}api/auth/refresh`, {
-        method: "GET",
-        credentials: "include",
-      });
+  try {
+    const res = await fetch(`${serverUrl}/api/auth/refresh`, {
+      method: "GET",
+      credentials: "include",
+    });
 
-      const data = await res.json();
-
-      if (res.ok && data.accessToken) {
-        decodeAndSetToken(data.accessToken);
-        return data.accessToken;
-      } else {
-        decodeAndSetToken(null);
-        return null;
-      }
-    } catch (err) {
-      console.error("Error", err)
+    if (!res.ok) {
+      console.log('Refresh failed with status:', res.status);
+      const errorText = await res.text();
+      console.log('Refresh error:', errorText);
       decodeAndSetToken(null);
       return null;
     }
-  };
+
+    const data = await res.json();
+
+    if (data.accessToken) {
+      decodeAndSetToken(data.accessToken);
+      return data.accessToken;
+    } else {
+      decodeAndSetToken(null);
+      return null;
+    }
+  } catch (err) {
+    console.error("Refresh token error:", err);
+    decodeAndSetToken(null);
+    return null;
+  }
+};
 
   useEffect(() => {
     async function initAuth() {
@@ -100,7 +108,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     initAuth();
-  }, [fetchNewAccessToken]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ accessToken, setAccessToken, loading, fetchNewAccessToken, accessTokenExpiration, userCollectionsVersion, incrementUserCollectionsVersion }}>

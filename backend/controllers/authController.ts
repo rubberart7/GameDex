@@ -117,10 +117,12 @@ export const login = async (
 
   await associateRefreshToken(user.id, refreshToken, oneDayMs);
 
+  const isProduction = process.env.NODE_ENV === 'production';
+
   res.cookie('jwt', refreshToken, { 
     httpOnly: true, 
-    secure: false, 
-    sameSite: 'lax', 
+    secure: isProduction, 
+    sameSite: isProduction ? 'none' : 'lax', 
     maxAge: oneDayMs 
   });
 
