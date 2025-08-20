@@ -79,6 +79,7 @@ const DealsList = () => {
                         localStorage.removeItem(dealsCacheKey);
                     }
                 } catch (e) {
+                    console.error("Error", e);
                     localStorage.removeItem(dealsCacheKey);
                 }
             }
@@ -94,6 +95,7 @@ const DealsList = () => {
                         localStorage.removeItem(storesCacheKey);
                     }
                 } catch (e) {
+                    console.error("Error", e);
                     localStorage.removeItem(storesCacheKey);
                 }
             }

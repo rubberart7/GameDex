@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       setAccessToken(token);
     } catch (err) {
+      console.log("Error", err)
       setAccessToken(null);
       setAccessTokenExpiration(null);
     }
@@ -97,6 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return null;
       }
     } catch (err) {
+      console.log("Error", err)
       decodeAndSetToken(null);
       return null;
     }
@@ -107,12 +109,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const initAuth = async () => {
       try {
-        const token = await fetchNewAccessToken(true);
         
         if (isMounted) {
           setLoading(false);
         }
       } catch (error) {
+        console.log("Error", error);
         if (isMounted) {
           setLoading(false);
         }
