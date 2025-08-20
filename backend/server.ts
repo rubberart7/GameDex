@@ -15,10 +15,7 @@ const PORT = process.env.PORT || 4000;
 
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
-const allowedOrigins = [
-  "http://localhost:3000", // development
-  CLIENT_URL, // production (replace with your actual URL)
-];
+
 
 const app = express();
 
@@ -26,7 +23,12 @@ const prisma = new PrismaClient();
 
 const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-    // Allow requests with no origin (mobile apps, etc.)
+    const allowedOrigins = [
+      CLIENT_URL, // development
+      "https://game-dex-t4vi.vercel.app", // production (replace with your actual URL)
+    ];
+    
+    // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.includes(origin)) {
@@ -36,7 +38,8 @@ const corsOptions = {
     }
   },
   methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
-  credentials: true
+  credentials: true, // This is crucial for cookies
+  optionsSuccessStatus: 200
 };
 
 app.use(express.json());

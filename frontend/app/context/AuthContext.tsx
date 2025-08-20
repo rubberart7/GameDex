@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
 interface AuthContextType {
@@ -9,7 +9,6 @@ interface AuthContextType {
   loading: boolean;
   fetchNewAccessToken: (forceRefresh?: boolean) => Promise<string | null>;
   accessTokenExpiration: number | null;
-  // userCollectionsVersion signals changes in library/wishlist to trigger recommendations re-fetch
   userCollectionsVersion: number;
   incrementUserCollectionsVersion: () => void;
 }
@@ -28,16 +27,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [accessTokenExpiration, setAccessTokenExpiration] = useState<number | null>(null);
-  
   const [userCollectionsVersion, setUserCollectionsVersion] = useState(0);
+
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
   const incrementUserCollectionsVersion = () => {
     setUserCollectionsVersion(prev => prev + 1);
   };
 
-  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-
-  const decodeAndSetToken = (token: string | null) => {
+  const decodeAndSetToken = useCallback((token: string | null) => {
     if (!token) {
       setAccessToken(null);
       setAccessTokenExpiration(null);
@@ -52,66 +50,135 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       setAccessToken(token);
     } catch (err) {
-      console.error("Error", err);
+      console.error("Error decoding token:", err);
       setAccessToken(null);
       setAccessTokenExpiration(null);
     }
-  };
+  }, []);
 
-  const isAccessTokenExpired = (): boolean => {
+  const isAccessTokenExpired = useCallback((): boolean => {
     if (!accessToken || !accessTokenExpiration) {
       return true;
     }
     const currentTime = Date.now() / 1000;
-    return accessTokenExpiration < currentTime + 30;
-  };
+    return accessTokenExpiration < currentTime + 30; // 30 second buffer
+  }, [accessToken, accessTokenExpiration]);
 
-  const fetchNewAccessToken = async (forceRefresh: boolean = false): Promise<string | null> => {
-  if (!forceRefresh && accessToken && !isAccessTokenExpired()) {
-    return accessToken;
-  }
+  const fetchNewAccessToken = useCallback(async (forceRefresh: boolean = false): Promise<string | null> => {
+    // Don't fetch if we have a valid token and not forcing refresh
+    if (!forceRefresh && accessToken && !isAccessTokenExpired()) {
+      return accessToken;
+    }
 
-  try {
-    const res = await fetch(`${serverUrl}/api/auth/refresh`, {
-      method: "GET",
-      credentials: "include",
-    });
-
-    if (!res.ok) {
-      console.log('Refresh failed with status:', res.status);
-      const errorText = await res.text();
-      console.log('Refresh error:', errorText);
-      decodeAndSetToken(null);
+    if (!serverUrl) {
+      console.error('Server URL not configured');
       return null;
     }
 
-    const data = await res.json();
+    try {
+      console.log('Attempting to refresh access token...');
+      
+      const res = await fetch(`${serverUrl}/api/auth/refresh`, {
+        method: "GET",
+        credentials: "include", // Important: This sends cookies
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (data.accessToken) {
-      decodeAndSetToken(data.accessToken);
-      return data.accessToken;
-    } else {
+      console.log('Refresh response status:', res.status);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.log('Refresh failed:', errorText);
+        decodeAndSetToken(null);
+        return null;
+      }
+
+      const data = await res.json();
+      console.log('Refresh successful');
+
+      if (data.accessToken) {
+        decodeAndSetToken(data.accessToken);
+        return data.accessToken;
+      } else {
+        console.log('No access token in response');
+        decodeAndSetToken(null);
+        return null;
+      }
+    } catch (err) {
+      console.error("Error fetching refresh token:", err);
       decodeAndSetToken(null);
       return null;
     }
-  } catch (err) {
-    console.error("Refresh token error:", err);
-    decodeAndSetToken(null);
-    return null;
-  }
-};
+  }, [serverUrl, accessToken, isAccessTokenExpired, decodeAndSetToken]);
 
+  // Initialize authentication on component mount
   useEffect(() => {
-    async function initAuth() {
-      await fetchNewAccessToken(true);
-      setLoading(false);
-    }
+    let isMounted = true;
+
+    const initAuth = async () => {
+      try {
+        console.log('Initializing authentication...');
+        const token = await fetchNewAccessToken(true);
+        
+        if (isMounted) {
+          if (token) {
+            console.log('Authentication successful');
+          } else {
+            console.log('No valid refresh token found');
+          }
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
 
     initAuth();
-  }, []);
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Empty dependency array - only run once on mount
+
+  // Auto-refresh token before it expires
+  useEffect(() => {
+    if (!accessToken || !accessTokenExpiration) return;
+
+    const timeUntilExpiry = (accessTokenExpiration * 1000) - Date.now() - (5 * 60 * 1000); // Refresh 5 minutes before expiry
+    
+    if (timeUntilExpiry <= 0) return; // Already expired or about to expire
+
+    const timeoutId = setTimeout(() => {
+      console.log('Auto-refreshing token...');
+      fetchNewAccessToken(true);
+    }, timeUntilExpiry);
+
+    return () => clearTimeout(timeoutId);
+  }, [accessToken, accessTokenExpiration, fetchNewAccessToken]);
+
+  // Enhanced setAccessToken function
+  const enhancedSetAccessToken = useCallback((token: string | null) => {
+    decodeAndSetToken(token);
+  }, [decodeAndSetToken]);
+
+  const contextValue = {
+    accessToken,
+    setAccessToken: enhancedSetAccessToken,
+    loading,
+    fetchNewAccessToken,
+    accessTokenExpiration,
+    userCollectionsVersion,
+    incrementUserCollectionsVersion,
+  };
 
   return (
-    <AuthContext.Provider value={{ accessToken, setAccessToken, loading, fetchNewAccessToken, accessTokenExpiration, userCollectionsVersion, incrementUserCollectionsVersion }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

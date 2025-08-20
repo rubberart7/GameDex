@@ -121,9 +121,10 @@ export const login = async (
 
   res.cookie('jwt', refreshToken, { 
     httpOnly: true, 
-    secure: isProduction, 
-    sameSite: isProduction ? 'none' : 'lax', 
-    maxAge: oneDayMs 
+    secure: isProduction, // Only use secure in production
+    sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-origin cookies in production
+    maxAge: oneDayMs,
+    domain: isProduction ? undefined : 'localhost' // Don't set domain in production, let browser handle it
   });
 
   // The backend sets the refresh token as a secure, HTTP-only cookie:
