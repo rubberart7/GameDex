@@ -4,7 +4,7 @@ A full-stack video game deal aggregation and recommendation platform built with 
 ---
 
 ## 🚀 Live Demo
-**Frontend:** [https://game-dex-t4vi.vercel.app/](https://game-dex-t4vi.vercel.app/)  
+[https://game-dex-t4vi.vercel.app/](https://game-dex-t4vi.vercel.app/)  
 
 ---
 
@@ -20,18 +20,19 @@ A full-stack video game deal aggregation and recommendation platform built with 
 ---
 
 ## 💻 Tech Stack  
-- **Client:** React, Next.js, TypeScript, Tailwind CSS, React-Toastify  
+- **Client:** React, Next.js, TypeScript, Tailwind CSS  
 - **Server:** Node.js, Express.js, PostgreSQL, Prisma, bcrypt, JSON Web Tokens, Axios, cookie-parser  
-- **APIs:** Google Gemini API, RAWG API, CheapShark API  
+- **APIs:** Google Gemini API, RAWG API
 
 ---
 
 ## ✨ Features
 - **Game Discovery:** Browse a catalog of video games with details like cover art, ratings, and release dates.  
 - **User Authentication:** Secure user registration, login, and logout using JWT and bcrypt for password hashing.  
-- **Library and Wishlist Management:** Add games to your personal library or wishlist and view them on dedicated pages.  
+- **Library and Wishlist Management:** Add games to your personal library or wishlist and view them on dedicated pages.
+- **Deals & Discounts:** Stay updated with the latest game deals and price drops, helping you grab your favorite titles at the best value.  
 - **AI-Powered Recommendations:** Get personalized game suggestions from a Google Gemini-powered AI, based on your library and wishlist preferences.  
-- **Game Details:** View detailed information for each game, including screenshots and trailers, fetched from the RAWG API.  
+- **Game Details:** View detailed information for each game, including screenshots and ratings, fetched from the RAWG API.  
 
 ---
 
@@ -161,8 +162,4 @@ npm run dev
 2. Set the project settings:
    - Framework: Next.js
    - Root Directory: frontend/
-3. Add the necessary environment variables to the Vercel dashboard:
-```ini
-NEXT_PUBLIC_BACKEND_URL = https://gamedex-h1hb.onrender.com
-```
-4. Vercel will automatically build and deploy your application
+3. Vercel will automatically build and deploy your application
