@@ -72,7 +72,7 @@ const GamesList = () => {
 
   const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
-  console.log(serverUrl);
+  
 
 
   const categories = [
