@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log('Attempting to refresh access token...');
       
-      const res = await fetch(`${serverUrl}/api/auth/refresh`, {
+      const res = await fetch(`${serverUrl}api/auth/refresh`, {
         method: "GET",
         credentials: "include", // Important: This sends cookies
         headers: {
