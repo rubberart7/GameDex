@@ -44,28 +44,30 @@ A full-stack video game deal aggregation and recommendation platform built with 
 - npm or yarn  
 - PostgreSQL database (e.g., hosted on Supabase)  
 
-### Getting Started
-Clone the repository:
+# Getting Started
+
+## Clone the repository:
 ```bash
 git clone https://github.com/your-username/your-gamedex-repo.git
 cd gamedex-repo
-Install backend dependencies:
-bash
-Copy
-Edit
+```
+
+## Install backend dependencies:
+```bash
 cd backend
 npm install
-Install frontend dependencies:
-bash
-Copy
-Edit
+```
+
+## Install frontend dependencies:
+```bash
 cd ../frontend
 npm install
-🔐 Environment Variables
-Backend (backend/.env)
-env
-Copy
-Edit
+```
+
+## 🔐 Environment Variables
+
+### Backend (backend/.env)
+```env
 # Database Connection
 DATABASE_URL="postgresql://<user>:<password>@<your-supabase-host>:<port>/<db_name>?pgbouncer=true&pool_timeout=4000&pool_max=2"
 DIRECT_URL="postgresql://<user>:<password>@<your-supabase-direct-host>:<port>/<db_name>"
@@ -80,40 +82,35 @@ GEMINI_API_KEY="your_gemini_api_key"
 
 # Frontend URL (for CORS)
 CLIENT_URL="http://localhost:3000"
-Frontend (frontend/.env.local)
-env
-Copy
-Edit
+```
+
+### Frontend (frontend/.env.local)
+```env
 NEXT_PUBLIC_BACKEND_URL="http://localhost:4000"
-▶️ Run Locally
-Backend
-Navigate to the backend directory.
+```
 
-Run the Prisma migration to set up your database schema:
+## ▶️ Run Locally
 
-bash
-Copy
-Edit
+### Backend
+1. Navigate to the backend directory
+2. Run the Prisma migration to set up your database schema:
+```bash
 npx prisma migrate dev --name init_database_schema
-Start the development server:
-
-bash
-Copy
-Edit
+```
+3. Start the development server:
+```bash
 npm run dev
-Frontend
-Navigate to the frontend directory.
+```
 
-Start the development server:
-
-bash
-Copy
-Edit
+### Frontend
+1. Navigate to the frontend directory
+2. Start the development server:
+```bash
 npm run dev
-📁 Folder Structure
-lua
-Copy
-Edit
+```
+
+## 📁 Folder Structure
+```
 .
 ├── backend/                  # Express.js backend application
 │   ├── controllers/
@@ -150,31 +147,24 @@ Edit
 │   ├── postcss.config.mjs
 │   ├── tsconfig.json
 │   └── README.md
-🚀 Deployment
-Backend (on Render)
-Create a new Web Service on Render.
+```
 
-Connect your GitHub repository for the backend.
+## 🚀 Deployment
 
-Set the Build Command: npm install && npx prisma generate && tsc
+### Backend (on Render)
+1. Create a new Web Service on Render
+2. Connect your GitHub repository for the backend
+3. Set the Build Command: `npm install && npx prisma generate && tsc`
+4. Set the Start Command: `node dist/server.js`
+5. Add all necessary environment variables from your backend/.env file to the Render dashboard
 
-Set the Start Command: node dist/server.js
-
-Add all necessary environment variables from your backend/.env file to the Render dashboard.
-
-Frontend (on Vercel)
-Import your GitHub repository into Vercel.
-
-Set the project settings:
-
-Framework: Next.js
-
-Root Directory: frontend/
-
-Add the necessary environment variables to the Vercel dashboard:
-
-ini
-Copy
-Edit
+### Frontend (on Vercel)
+1. Import your GitHub repository into Vercel
+2. Set the project settings:
+   - Framework: Next.js
+   - Root Directory: frontend/
+3. Add the necessary environment variables to the Vercel dashboard:
+```ini
 NEXT_PUBLIC_BACKEND_URL = https://gamedex-h1hb.onrender.com
-Vercel will automatically build and deploy your application.
+```
+4. Vercel will automatically build and deploy your application
