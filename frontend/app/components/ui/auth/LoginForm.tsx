@@ -6,6 +6,7 @@ import Link from "next/link";
 import LoginIcon from "../../icons/LoginIcon";
 import EyeToggle from "../common/EyeToggle";
 import { useAuth } from "@/app/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>("");
@@ -17,6 +18,7 @@ const LoginForm = () => {
   });
 
   const { accessToken, loading: authLoading, setAccessToken } = useAuth();
+  const router = useRouter();
 
   const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -24,12 +26,12 @@ const LoginForm = () => {
     event.preventDefault();
 
     if (authLoading) {
-        setFeedback({ message: "Checking login status, please wait...", type: "Info" });
-        return;
+      setFeedback({ message: "Checking login status, please wait...", type: "Info" });
+      return;
     }
     if (accessToken) {
-        setFeedback({ message: "You are already logged in.", type: "Info" });
-        return; 
+      setFeedback({ message: "You are already logged in.", type: "Info" });
+      return; 
     }
 
     try {
@@ -51,9 +53,10 @@ const LoginForm = () => {
         setAccessToken(result.accessToken);
       }
 
-      setFeedback({ message: result.message || "Login successful!", type: "Success" });
+      // setFeedback({ message: result.message || "Login successful!", type: "Success" });
       setEmail("");
       setPassword("");
+      router.push("/");
     } catch (error) {
       console.error("Login Error:", error);
       setFeedback({ message: "Network error: Could not reach server", type: "Error" });

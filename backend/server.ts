@@ -17,9 +17,7 @@ const app = express();
 const prisma = new PrismaClient();
 
 
-const isProduction = process.env.NODE_ENV === 'production';
-console.log('Environment:', isProduction ? 'production' : 'development');
-console.log('Client URL:', CLIENT_URL);
+
 
 const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
