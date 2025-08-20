@@ -153,8 +153,8 @@ npm run dev
 ### Backend (on Render)
 1. Create a new Web Service on Render
 2. Connect your GitHub repository for the backend
-3. Set the Build Command: `npm install && npx prisma generate && tsc`
-4. Set the Start Command: `node dist/server.js`
+3. Set the Build Command: `npm run build`
+4. Set the Start Command: `npm start`
 5. Add all necessary environment variables from your backend/.env file to the Render dashboard
 
 ### Frontend (on Vercel)
