@@ -5,7 +5,6 @@ A full-stack video game deal aggregation and recommendation platform built with 
 
 ## 🚀 Live Demo
 **Frontend:** [https://game-dex-t4vi.vercel.app/](https://game-dex-t4vi.vercel.app/)  
-**Backend:** [https://gamedex-h1hb.onrender.com](https://gamedex-h1hb.onrender.com)
 
 ---
 
