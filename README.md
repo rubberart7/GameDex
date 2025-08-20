@@ -32,7 +32,6 @@ A full-stack video game deal aggregation and recommendation platform built with 
 - **Library and Wishlist Management:** Add games to your personal library or wishlist and view them on dedicated pages.  
 - **AI-Powered Recommendations:** Get personalized game suggestions from a Google Gemini-powered AI, based on your library and wishlist preferences.  
 - **Game Details:** View detailed information for each game, including screenshots and trailers, fetched from the RAWG API.  
-- **Responsive Design:** The application is optimized for a seamless experience on both desktop and mobile devices.  
 
 ---
 

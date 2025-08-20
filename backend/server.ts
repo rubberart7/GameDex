@@ -8,32 +8,36 @@ import userFeaturesRouter from './routes/userFeaturesRouter';
 import gameDetailsRoute from './routes/gameDetailsRoute';
 import errorHandler from './middleware/error';
 import cookieParser from "cookie-parser";
-import { PrismaClient } from './generated/prisma'; 
-
+import { PrismaClient } from './generated/prisma';
 
 const PORT = process.env.PORT || 4000;
-
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
-
-
 const app = express();
+const prisma = new PrismaClient();
 
-const prisma = new PrismaClient(); 
+// Add explicit production detection
+const isProduction = process.env.NODE_ENV === 'production';
+console.log('Environment:', isProduction ? 'production' : 'development');
+console.log('Client URL:', CLIENT_URL);
 
 const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
     const allowedOrigins = [
-      CLIENT_URL, // development
-      "https://game-dex-t4vi.vercel.app", // production (replace with your actual URL)
+      CLIENT_URL, // from environment variable
+      "https://game-dex-t4vi.vercel.app", // your exact Vercel URL
+      "http://localhost:3000", // development fallback
     ];
+
+    console.log('Request origin:', origin);
     
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
-    
+
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('Origin not allowed:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -59,22 +63,21 @@ const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-
 process.on('SIGTERM', async () => {
     console.log('SIGTERM signal received: Closing HTTP server.');
-    server.close(async () => { 
+    server.close(async () => {
         console.log('HTTP server closed.');
-        await prisma.$disconnect(); 
+        await prisma.$disconnect();
         console.log('Prisma Client disconnected.');
-        process.exit(0); 
-    });
+        process.exit(0);
+     });
 });
 
 process.on('SIGINT', async () => {
     console.log('SIGINT signal received: Closing HTTP server.');
     server.close(async () => {
         console.log('HTTP server closed.');
-        await prisma.$disconnect(); 
+        await prisma.$disconnect();
         console.log('Prisma Client disconnected.');
         process.exit(0);
     });
