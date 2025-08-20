@@ -73,6 +73,8 @@ const GamesList = () => {
   
   const isInitialMount = useRef(true);
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   const categories = [
     { name: 'Action', slug: 'action' },
     { name: 'Adventure', slug: 'adventure' },
@@ -132,7 +134,7 @@ const GamesList = () => {
       }
 
       
-      const res = await fetch(`http://localhost:4000/api/games?page=${pageNumber}`);
+      const res = await fetch(`${serverUrl}api/games?page=${pageNumber}`);
       if (!res.ok) {
         throw new Error(`Failed to fetch games: ${res.statusText}`);
       }

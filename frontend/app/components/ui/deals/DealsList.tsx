@@ -54,6 +54,8 @@ const DealsList = () => {
     
     const isFetchingRef = useRef(false);
 
+    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
     
     const fetchDealsAndStores = useCallback(async (pageToFetch: number) => {
         if (isFetchingRef.current) return;
@@ -107,7 +109,7 @@ const DealsList = () => {
         try {
             // Fetch deals if not from cache
             if (!dealsFromCache) {
-                const dealsRes = await fetch(`http://localhost:4000/api/deals?page=${pageToFetch}`);
+                const dealsRes = await fetch(`${serverUrl}api/deals?page=${pageToFetch}`);
                 if (!dealsRes.ok) {
                     throw new Error(`Failed to fetch deals! Status: ${dealsRes.status}`);
                 }
@@ -117,7 +119,7 @@ const DealsList = () => {
 
             // Fetch stores if not from cache
             if (!storesFromCache) {
-                const storesRes = await fetch('http://localhost:4000/api/stores');
+                const storesRes = await fetch(`${serverUrl}api/stores`);
                 if (!storesRes.ok) {
                     throw new Error(`Failed to fetch store data! Status: ${storesRes.status}`);
                 }

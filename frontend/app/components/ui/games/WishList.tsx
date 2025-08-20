@@ -36,6 +36,8 @@ const WishList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedSort, setSelectedSort] = useState<string>('addedAt-desc'); // Default sort
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   // Categories and Sort Options (can be moved to a separate file if reused)
   const categories = [
     { name: 'Action', slug: 'action' },
@@ -89,7 +91,7 @@ const WishList: React.FC = () => {
       setError(null);
 
       try {
-        const response = await fetch('http://localhost:4000/api/user/wishlist', {
+        const response = await fetch(`${serverUrl}api/user/wishlist`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -104,7 +106,7 @@ const WishList: React.FC = () => {
           if (response.status === 401 && data.expired) {
             const newAccessToken = await fetchNewAccessToken();
             if (newAccessToken) {
-              const retryResponse = await fetch('http://localhost:4000/api/user/wishlist', {
+              const retryResponse = await fetch(`${serverUrl}api/user/wishlist`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',

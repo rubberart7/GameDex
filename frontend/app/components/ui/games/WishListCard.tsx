@@ -47,6 +47,8 @@ const WishListCard: React.FC<WishListCardProps> = ({
 
   const { game } = wishlistItem;
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   const handleDeleteClick = async () => {
     setFeedback({ message: "", type: "" });
     setIsDeletingFromWishList(true); 
@@ -63,7 +65,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
         return;
       }
 
-      const response = await fetch(`http://localhost:4000/api/user/delete-from-wishlist`, {
+      const response = await fetch(`${serverUrl}api/user/delete-from-wishlist`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +81,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
         if (response.status === 401 && result.expired) {
           const newAccessToken = await fetchNewAccessToken();
           if (newAccessToken) {
-            const retryResponse = await fetch(`http://localhost:4000/api/user/delete-from-wishlist`, {
+            const retryResponse = await fetch(`${serverUrl}api/user/delete-from-wishlist`, {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',

@@ -35,6 +35,8 @@ const LibraryList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedSort, setSelectedSort] = useState<string>('addedAt-desc'); 
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   const categories = [
     { name: 'Action', slug: 'action' },
     { name: 'Adventure', slug: 'adventure' },
@@ -87,7 +89,7 @@ const LibraryList: React.FC = () => {
       setError(null);
 
       try {
-        const response = await fetch('http://localhost:4000/api/user/library', {
+        const response = await fetch(`${serverUrl}api/user/library`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -102,7 +104,7 @@ const LibraryList: React.FC = () => {
           if (response.status === 401 && data.expired) {
             const newAccessToken = await fetchNewAccessToken();
             if (newAccessToken) {
-              const retryResponse = await fetch('http://localhost:4000/api/user/library', {
+              const retryResponse = await fetch(`${serverUrl}api/user/library`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',

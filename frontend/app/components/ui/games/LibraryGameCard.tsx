@@ -46,6 +46,8 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
 
   const { game } = libraryItem;
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   const handleDeleteClick = async () => {
     setFeedback({ message: "", type: "" });
     setIsDeletingFromLibrary(true); 
@@ -62,7 +64,7 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         return;
       }
 
-      const response = await fetch(`http://localhost:4000/api/user/delete-from-library`, {
+      const response = await fetch(`${serverUrl}api/user/delete-from-library`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +80,7 @@ const LibraryGameCard: React.FC<LibraryGameCardProps> = ({
         if (response.status === 401 && result.expired) {
           const newAccessToken = await fetchNewAccessToken();
           if (newAccessToken) {
-            const retryResponse = await fetch(`http://localhost:4000/api/user/delete-from-library`, {
+            const retryResponse = await fetch(`${serverUrl}api/user/delete-from-library`, {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',

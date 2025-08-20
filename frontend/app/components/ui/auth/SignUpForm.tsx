@@ -17,6 +17,8 @@ const SignUpForm = () => {
 
     const [feedback, setFeedback] = useState<{ message: string; type: 'Error' | 'Success' | '' }>({ message: '', type: '' });
 
+    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
     function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
       setFullName(event.target.value);
       setFeedback({ message: '', type: '' }); 
@@ -38,7 +40,7 @@ const SignUpForm = () => {
       const data = { fullName, email, password };
 
       try {
-        const response = await fetch('http://localhost:4000/api/auth/register', {
+        const response = await fetch(`${serverUrl}api/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
@@ -60,7 +62,7 @@ const SignUpForm = () => {
         setEmail('');
         setPassword('');
       } catch (error) {
-        // Fix: Use the 'error' variable by logging it
+        
         console.error("Network error:", error);
         setFeedback({ message: 'Network error: Could not reach server', type: 'Error' });
       }

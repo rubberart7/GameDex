@@ -11,9 +11,9 @@ import cookieParser from "cookie-parser";
 import { PrismaClient } from './generated/prisma'; 
 
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
-const CLIENT_URL = "http://localhost:3000";
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
 const app = express();
 

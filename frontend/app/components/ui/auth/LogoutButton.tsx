@@ -10,9 +10,11 @@ const LogoutButton = () => {
   const { setAccessToken } = useAuth();
   const router = useRouter();
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/auth/logout", {
+      const res = await fetch(`${serverUrl}api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

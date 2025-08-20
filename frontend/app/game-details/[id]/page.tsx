@@ -18,6 +18,8 @@ const GameDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   useEffect(() => {
     if (!gameId) {
       setLoading(false);
@@ -29,7 +31,7 @@ const GameDetailsPage = () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(`http://localhost:4000/api/games/game/${gameId}`);
+        const res = await fetch(`${serverUrl}api/games/game/${gameId}`);
         if (!res.ok) {
           throw new Error(`Failed to fetch game details: ${res.statusText}`);
         }

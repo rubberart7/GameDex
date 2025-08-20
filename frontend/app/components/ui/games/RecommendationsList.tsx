@@ -21,6 +21,8 @@ const RecommendationsList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+  
   useEffect(() => {
     const fetchRecommendations = async () => {
       if (authLoading) return;
@@ -34,7 +36,7 @@ const RecommendationsList: React.FC = () => {
       setError(null);
 
       try {
-        const response = await fetch('http://localhost:4000/api/user/game-recommendations', {
+        const response = await fetch(`${serverUrl}api/user/game-recommendations`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -49,7 +51,7 @@ const RecommendationsList: React.FC = () => {
           if (response.status === 401 && data.expired) {
             const newAccessToken = await fetchNewAccessToken();
             if (newAccessToken) {
-              const retryResponse = await fetch('http://localhost:4000/api/user/game-recommendations', {
+              const retryResponse = await fetch(`${serverUrl}api/user/game-recommendations`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',

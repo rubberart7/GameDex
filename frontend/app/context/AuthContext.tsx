@@ -35,6 +35,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUserCollectionsVersion(prev => prev + 1);
   };
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   const decodeAndSetToken = (token: string | null) => {
     if (!token) {
       setAccessToken(null);
@@ -70,7 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/api/auth/refresh", {
+      const res = await fetch(`${serverUrl}api/auth/refresh`, {
         method: "GET",
         credentials: "include",
       });

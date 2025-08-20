@@ -27,6 +27,7 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const game = recommendedGame;
 
+
   return (
     <div
       onClick={() => setIsExpanded((prev) => !prev)}

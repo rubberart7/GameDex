@@ -18,6 +18,8 @@ const LoginForm = () => {
 
   const { accessToken, loading: authLoading, setAccessToken } = useAuth();
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -31,7 +33,7 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:4000/api/auth/login", {
+      const response = await fetch(`${serverUrl}api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

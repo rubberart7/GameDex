@@ -41,6 +41,8 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
 
   const feedbackAreaRef = useRef<HTMLDivElement>(null);
 
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (feedback.message && feedbackAreaRef.current && !feedbackAreaRef.current.contains(event.target as Node)) {
@@ -98,7 +100,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
       const successMessage = type === 'wishlist' ? 'Added to wishlist!' : 'Added to library!';
       const errorMessagePrefix = type === 'wishlist' ? 'wishlist' : 'library';
 
-      const response = await fetch(`http://localhost:4000/api/user/${endpoint}`, {
+      const response = await fetch(`${serverUrl}api/user/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +116,7 @@ const GameDetailsCard: React.FC<GameDetailsCardProps> = ({ game }) => {
         if (response.status === 401 && result.expired) {
           const newAccessToken = await fetchNewAccessToken();
           if (newAccessToken) {
-            const retryResponse = await fetch(`http://localhost:4000/api/user/${endpoint}`, {
+            const retryResponse = await fetch(`${serverUrl}api/user/${endpoint}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
