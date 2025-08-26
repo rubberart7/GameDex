@@ -118,7 +118,6 @@ npm run dev
 │   ├── middleware/
 │   ├── node_modules/
 │   ├── prisma/
-│   ├── random/
 │   ├── routes/
 │   ├── .env
 │   ├── .gitignore
