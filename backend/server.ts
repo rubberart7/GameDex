@@ -26,7 +26,7 @@ const corsOptions = {
       "http://localhost:3000", 
     ];
 
-    console.log('Request origin:', origin);
+    
     
     
     if (!origin) return callback(null, true);
