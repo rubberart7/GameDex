@@ -109,11 +109,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const initAuth = async () => {
       try {
         
+        await fetchNewAccessToken(true);
+        
         if (isMounted) {
           setLoading(false);
         }
       } catch (error) {
-        console.log("Error", error);
+        console.log("Error during auth initialization:", error);
         if (isMounted) {
           setLoading(false);
         }
@@ -125,7 +127,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       isMounted = false;
     };
-  }, []); 
+  }, [fetchNewAccessToken]); 
 
   useEffect(() => {
     if (!accessToken || !accessTokenExpiration) return;
