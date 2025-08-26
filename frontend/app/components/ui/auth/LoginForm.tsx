@@ -22,6 +22,8 @@ const LoginForm = () => {
 
   const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
+  console.log(serverUrl);
+
   async function sendToBackend(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
