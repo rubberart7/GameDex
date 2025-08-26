@@ -85,7 +85,7 @@ CLIENT_URL="http://localhost:3000"
 
 ### Frontend (frontend/.env)
 ```env
-NEXT_PUBLIC_BACKEND_URL="http://localhost:4000"
+NEXT_PUBLIC_BACKEND_URL="http://localhost:4000/"
 ```
 
 ## ▶️ Run Locally
