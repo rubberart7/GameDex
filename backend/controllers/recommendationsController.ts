@@ -173,7 +173,15 @@ export const getRecommendations = async (
 
       if (!verifiedGame && RAWG_API_KEY) {
         try {
-          const rawgSearchResponse = await axios.get(`https://api.rawg.io/api/games?search=${encodeURIComponent(aiRec.game_name)}&key=${RAWG_API_KEY}`);
+          const rawgSearchResponse = await axios.get(
+            `https://api.rawg.io/api/games?search=${encodeURIComponent(aiRec.game_name)}&key=${RAWG_API_KEY}`,
+            {
+              headers: {
+                'User-Agent': 'GameDex/1.0 (contact@example.com)',
+                'Accept-Encoding': 'gzip, deflate, br',
+              },
+            }
+          );
           const rawgSearchResults = rawgSearchResponse.data.results;
 
           if (rawgSearchResults && rawgSearchResults.length > 0) {

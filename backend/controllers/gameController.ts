@@ -38,6 +38,10 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
                 dates: `${startDate},${endDate}`,
                 page_size: 100,
                 page: page,
+            },
+            headers: {
+                'User-Agent': 'GameDex/1.0 (contact@example.com)',
+                'Accept-Encoding': 'gzip, deflate, br'
             }
         });
         res.status(200).json(response.data);

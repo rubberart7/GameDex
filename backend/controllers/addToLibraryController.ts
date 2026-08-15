@@ -43,6 +43,10 @@ const findOrCreateGame = async (rawgId: number, res: Response) => {
     try {
       const rawgResponse = await axios.get<RawgGameData>(`https://api.rawg.io/api/games/${rawgId}`, {
         params: { key: RAWG_API_KEY },
+        headers: {
+          'User-Agent': 'GameDex/1.0 (contact@example.com)',
+          'Accept-Encoding': 'gzip, deflate, br'
+        }
       });
 
       const rawgGameData = rawgResponse.data;

@@ -12,14 +12,22 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
 
     
     const gameDetailsResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}`, {
-      params: { key: gamesApiKey }
+      params: { key: gamesApiKey },
+      headers: {
+        'User-Agent': 'GameDex/1.0 (contact@example.com)',
+        'Accept-Encoding': 'gzip, deflate, br'
+      }
     });
     const gameData = gameDetailsResponse.data; 
 
     
     try {
       const screenshotsResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}/screenshots`, {
-        params: { key: gamesApiKey }
+        params: { key: gamesApiKey },
+        headers: {
+          'User-Agent': 'GameDex/1.0 (contact@example.com)',
+          'Accept-Encoding': 'gzip, deflate, br'
+        }
       });
       gameData.screenshots = screenshotsResponse.data.results;
 
