@@ -29,7 +29,7 @@ export const getGenDeals = async (req: Request, res: Response, next: NextFunctio
             },
 
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'User-Agent': 'GameDex/1.0 (contact@example.com)',
                 'Accept-Encoding': 'gzip, deflate, br'
             }
         });
@@ -48,8 +48,8 @@ export const getGenDeals = async (req: Request, res: Response, next: NextFunctio
 export const getStoresData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const response = await axios.get(cheapSharkStoresBaseUrl, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+           headers: {
+                'User-Agent': 'GameDex/1.0 (contact@example.com)',
                 'Accept-Encoding': 'gzip, deflate, br'
             }
         });
