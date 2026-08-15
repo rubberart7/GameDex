@@ -57,7 +57,6 @@ export const getStoresData = async (req: Request, res: Response, next: NextFunct
         return;
     } catch (error: any) {
         console.error("CheapShark Stores API Error:", error.response?.data || error.message);
-        
         res.status(500).json({ message: "Failed to fetch store data." });
         return;
     }
