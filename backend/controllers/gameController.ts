@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import prisma from '../server'; // Added prisma import for the fallback
+import prisma from '../server'; 
 
 dotenv.config();
 
@@ -42,6 +42,8 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
                 'Accept-Encoding': 'gzip, deflate, br'
             }
         });
+        
+        // If RAWG works, send their data directly to the frontend and stop
         res.status(200).json(response.data);
         return;
 
@@ -65,14 +67,29 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
             ]);
 
             // Map the local database fields to match the RAWG API response structure exactly
-            const fallbackResults = localGames.map(game => ({
-                id: game.rawgId, // RAWG expects 'id', your DB stores it as 'rawgId'
-                name: game.name,
-                background_image: game.background_image,
-                rating: game.rating,
-                released: game.released,
-                genres: game.genres || []
-            }));
+            const fallbackResults = localGames.map(game => {
+                // Convert the comma-separated string back into the nested object array for the GameCard
+                let formattedParentPlatforms: any[] = [];
+                if (game.platforms) {
+                    formattedParentPlatforms = game.platforms.split(', ').map((platformName, index) => ({
+                        platform: { 
+                            id: index, 
+                            name: platformName,
+                            slug: platformName.toLowerCase().replace(/\s+/g, '-')
+                        }
+                    }));
+                }
+
+                return {
+                    id: game.rawgId, // RAWG expects 'id', your DB stores it as 'rawgId'
+                    name: game.name,
+                    background_image: game.background_image,
+                    rating: game.rating,
+                    released: game.released,
+                    genres: game.genres || [],
+                    parent_platforms: formattedParentPlatforms // Formatted explicitly for the Browse page GameCard
+                };
+            });
 
             // Reconstruct the pagination URLs
             const nextPageUrl = (skipAmount + pageSize < totalLocalGames)
@@ -91,7 +108,7 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
                 next: nextPageUrl,
                 previous: previousPageUrl,
                 results: fallbackResults,
-                isDatabaseFallback: true // Optional flag so frontend knows it's local data
+                isDatabaseFallback: true 
             });
             return;
 

@@ -16,15 +16,15 @@ datasource db {
 }
 
 model User {
-  id                    Int                     @id @default(autoincrement())
+  id                    Int                      @id @default(autoincrement())
   fullName              String
-  email                 String                  @unique
+  email                 String                   @unique
   password              String
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  refreshTokens         RefreshToken[]          // Relation to RefreshToken model
-  wishlist              Wishlist[]              // Relation to Wishlist model
-  library               UserGameLibrary[]       // Relation to UserGame (Library) model
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+  refreshTokens         RefreshToken[]           // Relation to RefreshToken model
+  wishlist              Wishlist[]               // Relation to Wishlist model
+  library               UserGameLibrary[]        // Relation to UserGame (Library) model
   recommendationCache   UserRecommendationCache? // Relation to UserRecommendationCache model
 }
 
@@ -48,6 +48,12 @@ model Game {
   background_image String?                                           // Optional, as not all games might have this
   rating           Float?                                            // Optional
   released         String?                                           // Optional
+  
+  // NEW FIELDS FOR AI DATA FALLBACK
+  description      String?
+  developer        String?
+  publisher        String?
+  platforms        String?                                           // Stored as a simple comma-separated string (e.g., "PC, PlayStation 5")
   
   // Relations to your collection models
   wishlist         Wishlist[]
