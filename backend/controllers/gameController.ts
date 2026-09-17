@@ -7,9 +7,9 @@ dotenv.config();
 
 const gamesApiKey = process.env.RAWG_API_KEY;
 const startDate = '2022-01-01';
-const endDate = `2025-01-08`;
+const endDate = `2026-09-08`;
 
-const MAX_GAME_PAGES = 3; 
+const MAX_GAME_PAGES = 25; 
 
 export const getGamesData = async (req: Request, res: Response, next: NextFunction) => {
     const page = parseInt(req.query.page as string) || 1;
