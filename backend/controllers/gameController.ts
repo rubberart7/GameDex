@@ -43,7 +43,6 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
             }
         });
         
-        // If RAWG works, send their data directly to the frontend and stop
         res.status(200).json(response.data);
         return;
 
@@ -51,24 +50,20 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
         console.error("🚨 RAWG BROWSE GAMES API ERROR. Attempting database fallback...");
 
         try {
-            // THE FALLBACK: Fetch games from local PostgreSQL database
             const pageSize = 100;
             const skipAmount = (page - 1) * pageSize;
 
-            // Fetch the games and the total count concurrently
             const [localGames, totalLocalGames] = await Promise.all([
                 prisma.game.findMany({
                     skip: skipAmount,
                     take: pageSize,
-                    orderBy: { rating: 'desc' }, // Show highest rated games first
+                    orderBy: { rating: 'desc' }, 
                     include: { genres: true } 
                 }),
                 prisma.game.count()
             ]);
 
-            // Map the local database fields to match the RAWG API response structure exactly
             const fallbackResults = localGames.map(game => {
-                // Convert the comma-separated string back into the nested object array for the GameCard
                 let formattedParentPlatforms: any[] = [];
                 if (game.platforms) {
                     formattedParentPlatforms = game.platforms.split(', ').map((platformName, index) => ({
@@ -81,17 +76,17 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
                 }
 
                 return {
-                    id: game.rawgId, // RAWG expects 'id', your DB stores it as 'rawgId'
+                    id: game.rawgId, 
                     name: game.name,
                     background_image: game.background_image,
                     rating: game.rating,
                     released: game.released,
                     genres: game.genres || [],
-                    parent_platforms: formattedParentPlatforms // Formatted explicitly for the Browse page GameCard
+                    parent_platforms: formattedParentPlatforms 
                 };
             });
 
-            // Reconstruct the pagination URLs
+            
             const nextPageUrl = (skipAmount + pageSize < totalLocalGames)
                 ? `${req.protocol}://${req.get('host')}${req.baseUrl}?page=${page + 1}`
                 : null;
@@ -100,9 +95,8 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
                 ? `${req.protocol}://${req.get('host')}${req.baseUrl}?page=${page - 1}`
                 : null;
 
-            console.log(`🟢 Fallback successful! Served ${localGames.length} games from local database.`);
+            console.log(`Fallback successful! Served ${localGames.length} games from local database.`);
 
-            // Return the structured fallback response
             res.status(200).json({
                 count: totalLocalGames,
                 next: nextPageUrl,
@@ -113,10 +107,9 @@ export const getGamesData = async (req: Request, res: Response, next: NextFuncti
             return;
 
         } catch (dbError) {
-            console.error("🚨 Database fallback also failed.", dbError);
+            console.error("Database fallback also failed.", dbError);
         }
 
-        // If everything completely fails, return standard 500 error
         res.status(500).json({ message: "Failed to fetch games data." });
         return;
     }
