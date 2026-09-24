@@ -55,7 +55,6 @@ const LoginForm = () => {
         setAccessToken(result.accessToken);
       }
 
-      // setFeedback({ message: result.message || "Login successful!", type: "Success" });
       setEmail("");
       setPassword("");
       router.push("/");

@@ -12,8 +12,6 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 export const getGameDetails = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const gameId = req.params.id;
-
-    // 1. Try fetching the primary game details from RAWG
     const gameDetailsResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}`, {
       params: { key: gamesApiKey },
       headers: {
@@ -22,8 +20,6 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
       }
     });
     const gameData = gameDetailsResponse.data; 
-
-    // 2. Try fetching screenshots
     try {
       const screenshotsResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}/screenshots`, {
         params: { key: gamesApiKey },
@@ -53,7 +49,6 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
         });
 
         if (localGame) {
-          // If the game exists but is missing description/developer, ask Gemini to fill it in!
           if ((!localGame.description || !localGame.developer) && GEMINI_API_KEY) {
             console.log(`🤖 Using Gemini to generate missing details for ${localGame.name}...`);
             try {
@@ -74,14 +69,14 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
               const cleanedText = result.response.text().replace(/```json\n|\n```/g, '').trim();
               const aiData = JSON.parse(cleanedText);
 
-              // Update the database so we never have to ask Gemini for this game again
+              
               localGame = await prisma.game.update({
                 where: { id: localGame.id },
                 data: {
                   description: aiData.description,
                   developer: aiData.developer,
                   publisher: aiData.publisher,
-                  platforms: aiData.platforms.join(', ') // Save as "PC, PlayStation 5"
+                  platforms: aiData.platforms.join(', ') 
                 },
                 include: { genres: true }
               });
@@ -90,7 +85,7 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
             }
           }
 
-          // Format the simple comma-separated platforms string into the nested object structure RAWG uses
+         
           let formattedPlatforms: any[] = [];
           if (localGame.platforms) {
             formattedPlatforms = localGame.platforms.split(', ').map(platformName => ({
@@ -109,7 +104,7 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
             genres: localGame.genres || [],
             screenshots: [], 
             
-            // Newly populated AI fields!
+            
             description: localGame.description || "Description currently unavailable.",
             description_raw: localGame.description || "Description currently unavailable.",
             developers: localGame.developer ? [{ name: localGame.developer }] : [],
