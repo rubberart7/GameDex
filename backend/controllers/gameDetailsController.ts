@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import prisma from '../server'; 
+import prisma from '../server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 dotenv.config();
@@ -10,8 +10,10 @@ const gamesApiKey = process.env.RAWG_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export const getGameDetails = async (req: Request, res: Response, next: NextFunction) => {
+  const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
   try {
-    const gameId = req.params.id;
+    const gameId = idParam;
     const gameDetailsResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}`, {
       params: { key: gamesApiKey },
       headers: {
@@ -19,7 +21,7 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
         'Accept-Encoding': 'gzip, deflate, br'
       }
     });
-    const gameData = gameDetailsResponse.data; 
+    const gameData = gameDetailsResponse.data;
     try {
       const screenshotsResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}/screenshots`, {
         params: { key: gamesApiKey },
@@ -30,7 +32,7 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
       });
       gameData.screenshots = screenshotsResponse.data.results;
     } catch (screenshotError: any) {
-      gameData.screenshots = []; 
+      gameData.screenshots = [];
     }
 
     res.status(200).json(gameData);
@@ -40,12 +42,12 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
     console.error("🚨 RAWG GAME DETAILS API ERROR. Attempting database fallback & AI augmentation...");
 
     try {
-      const parsedId = parseInt(req.params.id, 10);
-      
+      const parsedId = parseInt(idParam, 10);
+
       if (!isNaN(parsedId)) {
         let localGame = await prisma.game.findFirst({
           where: { rawgId: parsedId },
-          include: { genres: true } 
+          include: { genres: true }
         });
 
         if (localGame) {
@@ -54,7 +56,7 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
             try {
               const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
               const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-              
+
               const prompt = `
                 You are a video game database assistant. Provide missing details for the game "${localGame.name}".
                 Return strictly a JSON object with the following keys:
@@ -69,14 +71,13 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
               const cleanedText = result.response.text().replace(/```json\n|\n```/g, '').trim();
               const aiData = JSON.parse(cleanedText);
 
-              
               localGame = await prisma.game.update({
                 where: { id: localGame.id },
                 data: {
                   description: aiData.description,
                   developer: aiData.developer,
                   publisher: aiData.publisher,
-                  platforms: aiData.platforms.join(', ') 
+                  platforms: aiData.platforms.join(', ')
                 },
                 include: { genres: true }
               });
@@ -85,7 +86,6 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
             }
           }
 
-         
           let formattedPlatforms: any[] = [];
           if (localGame.platforms) {
             formattedPlatforms = localGame.platforms.split(', ').map(platformName => ({
@@ -94,7 +94,7 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
           }
 
           console.log(`🟢 Fallback successful! Served augmented details for ${localGame.name}.`);
-          
+
           res.status(200).json({
             id: localGame.rawgId,
             name: localGame.name,
@@ -102,15 +102,12 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
             rating: localGame.rating,
             released: localGame.released,
             genres: localGame.genres || [],
-            screenshots: [], 
-            
-            
+            screenshots: [],
             description: localGame.description || "Description currently unavailable.",
             description_raw: localGame.description || "Description currently unavailable.",
             developers: localGame.developer ? [{ name: localGame.developer }] : [],
             publishers: localGame.publisher ? [{ name: localGame.publisher }] : [],
             platforms: formattedPlatforms,
-            
             isDatabaseFallback: true
           });
           return;
@@ -128,7 +125,7 @@ export const getGameDetails = async (req: Request, res: Response, next: NextFunc
       res.status(error.response.status).json({ message: "Failed to fetch game details from external API." });
       return;
     }
-    
+
     res.status(500).json({ message: "Failed to fetch game details from the API." });
   }
 };
